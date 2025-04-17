@@ -1,8 +1,9 @@
 # Back-STARS
 SK쉴더스 루키즈 최종프로젝트 백엔드 리포지토리 입니다.
 
+<details>
+<summary>로컬에서 postgreSQL 테스트</summary>
 
-#### 로컬에서 postgreSQL 테스트
 1. Docker 이미지 다운로드 및 컨테이너 실행
     `docker pull postgres:latest`
 
@@ -19,3 +20,5 @@ SK쉴더스 루키즈 최종프로젝트 백엔드 리포지토리 입니다.
     spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
     spring.jpa.hibernate.ddl-auto=update
     ```
+
+</details>
