@@ -24,20 +24,21 @@ public class RoadService {
     }
 
     public String getTrafficData(String id) {
-        // 1. 외부 OpenAPI에서 XML 데이터 받아오기
-        String xmlResponse = restTemplate.getForObject(openApiUrl + id, String.class);
-
-        // 2. XML 데이터를 DTO로 변환
         try {
-            // DTO -> JSON
+            // 1. 외부 OpenAPI에서 XML 데이터 받아오기
+            String xmlResponse = restTemplate.getForObject(openApiUrl + id, String.class);
+
+            // 2. XML 데이터를 DTO로 변환 -> JSON
             ObjectMapper objectMapper = new ObjectMapper();
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(xmlToDto(xmlResponse));
 
             return json;
         } catch (Exception e) {
-            System.out.println(xmlResponse);
-            System.out.println(e.getMessage());
-            throw new InvalidRequestException(e.getMessage(), e);
+            if (e.getMessage() != null && e.getMessage().contains("Failed to select a proxy")) {
+                throw new InvalidRequestException(e.getMessage(), e);
+            }else{
+                throw new RuntimeException(e.getMessage(), e);
+            }
         }
     }
 

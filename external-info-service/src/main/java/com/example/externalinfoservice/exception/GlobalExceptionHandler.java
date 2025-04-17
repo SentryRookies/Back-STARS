@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
     }
 
     // 500 - 9000 - Internal server error
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleInternalServerError(Exception ex) {
         return buildErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
