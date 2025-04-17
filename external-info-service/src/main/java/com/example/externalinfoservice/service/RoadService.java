@@ -3,8 +3,8 @@ package com.example.externalinfoservice.service;
 import com.example.externalinfoservice.dto.RoadDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
+import org.apache.kafka.common.errors.InvalidRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -35,7 +35,9 @@ public class RoadService {
 
             return json;
         } catch (Exception e) {
-            throw new RuntimeException("XML 파싱 실패", e);
+            System.out.println(xmlResponse);
+            System.out.println(e.getMessage());
+            throw new InvalidRequestException(e.getMessage(), e);
         }
     }
 
