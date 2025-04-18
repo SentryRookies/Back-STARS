@@ -108,7 +108,7 @@ public class CafeService {
                     .filter(cafe -> cafe.getPlaceName() == null || !cafe.getPlaceName().contains("(휴업중)"))
                     .collect(Collectors.toList());
 
-            log.info("'{}' 주변 {}개의 카페 중 {}개의 '음식점 > 카페' 카테고리를 찾았습니다.",
+            log.info("'{}' 주변 총 {}개의 카페 중 {}개의 '음식점 > 카페' 카테고리(휴업중 제외)를 찾았습니다.",
                     area.getName(), cafes.size(), filteredCafes.size());
 
             // 필터링된 카페 정보 저장
