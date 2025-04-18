@@ -20,7 +20,6 @@ SK쉴더스 루키즈 최종프로젝트 백엔드 리포지토리 입니다.
     spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
     spring.jpa.hibernate.ddl-auto=update
     ```
-
 </details>
 
 
