@@ -23,11 +23,26 @@ public class Area {
     @Column(name = "category", length = 20, nullable = false)
     private String category;  // 구분
 
-    @Column(name = "x", precision = 10, scale = 6, nullable = false)
-    private BigDecimal x; // 위도
+    @Column(name = "lat", precision = 10, scale = 6, nullable = false)
+    private BigDecimal lat; // 위도
 
-    @Column(name = "y", precision = 10, scale = 6, nullable = false)
-    private BigDecimal y; // 경도
+    @Column(name = "lon", precision = 10, scale = 6, nullable = false)
+    private BigDecimal lon; // 경도
 
 
+    public Object getName() {
+        return this.name;
+    }
+
+    public Long getAreaId() {
+        return this.area_id;
+    }
+
+    public Number getY() {
+        return this.lon;
+    }
+
+    public Number getX() {
+        return this.lat;
+    }
 }
