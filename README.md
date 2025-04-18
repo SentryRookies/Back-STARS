@@ -19,3 +19,19 @@ SK쉴더스 루키즈 최종프로젝트 백엔드 리포지토리 입니다.
     spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
     spring.jpa.hibernate.ddl-auto=update
     ```
+   
+### CAFE DATA
+1. postman에서 설정
+   - Method: POST 
+   - URL: http://localhost:8080/api/cafes/process-all
+   - Auth: Basic Auth
+     - Username: user
+     - Password: docker에서 비번 확인
+
+2. 데이터 확인
+    - docker 또는 터미널에서 확인
+   ```
+   docker exec -it my_postgres bash
+   psql -U root -d stars_db(docker시 여기부터)
+   select * from cafe;
+   ```
