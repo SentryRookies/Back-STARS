@@ -23,19 +23,19 @@ public class RoadDto {
     public static class CityData {
         @XmlElement(name = "ROAD_TRAFFIC_STTS")
         @JsonProperty("road_traffic_stts")
-        private List<RoadTrafficStts> roadTrafficSttsList;
+        private RoadTrafficSttsWrapper roadTrafficSttsWrapper;
     }
 
     @Data
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class RoadTrafficStts {
+    public static class RoadTrafficSttsWrapper {
         @XmlElement(name = "AVG_ROAD_DATA")
         @JsonProperty("avg_road_data")
         private AvgRoadData avgRoadData;
 
         @XmlElement(name = "ROAD_TRAFFIC_STTS")
         @JsonProperty("road_traffic_stts")
-        private RoadTrafficDetail roadTrafficDetail;
+        private List<RoadTrafficDetail> roadTrafficDetailList;
     }
 
 
