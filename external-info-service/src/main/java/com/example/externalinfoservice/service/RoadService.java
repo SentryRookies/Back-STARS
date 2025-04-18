@@ -1,6 +1,7 @@
 package com.example.externalinfoservice.service;
 
 import com.example.externalinfoservice.dto.RoadDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.io.StringReader;
 
 @Service
@@ -33,12 +35,12 @@ public class RoadService {
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(xmlToDto(xmlResponse));
 
             return json;
+        } catch (InvalidRequestException e) {
+            throw new InvalidRequestException(e.getMessage(), e);
+        } catch(IOException e){
+            throw new RuntimeException("외부 API 오류",e);
         } catch (Exception e) {
-            if (e.getMessage() != null && e.getMessage().contains("Failed to select a proxy")) {
-                throw new InvalidRequestException(e.getMessage(), e);
-            }else{
-                throw new RuntimeException(e.getMessage(), e);
-            }
+            throw new RuntimeException("예상치 못한 오류",e);
         }
     }
 
