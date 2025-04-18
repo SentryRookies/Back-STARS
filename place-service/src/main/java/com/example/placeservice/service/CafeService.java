@@ -1,5 +1,6 @@
 package com.example.placeservice.service;
 
+import com.example.placeservice.dto.CafeDto;
 import com.example.placeservice.entity.Area;
 import com.example.placeservice.entity.Cafe;
 import com.example.placeservice.repository.AreaRepository;
@@ -129,5 +130,43 @@ public class CafeService {
         } catch (Exception e) {
             log.error("장소 ID {} 처리 중 오류: {}", area.getAreaId(), e.getMessage(), e);
         }
+    }
+
+    /**
+     * 특정 지역의 카페 목록 조회
+     */
+    @Transactional(readOnly = true)
+    public List<CafeDto> getCafesByAreaId(Long areaId) {
+        List<Cafe> cafes = cafeRepository.findByAreaId(areaId);
+        return cafes.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 모든 카페 목록 조회
+     */
+    @Transactional(readOnly = true)
+    public List<CafeDto> getAllCafes() {
+        List<Cafe> cafes = cafeRepository.findAll();
+        return cafes.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Cafe 엔티티를 DTO로 변환
+     */
+    private CafeDto convertToDto(Cafe cafe) {
+        return CafeDto.builder()
+                .id(cafe.getId())
+                .name(cafe.getName())
+                .address(cafe.getAddress())
+                .lat(cafe.getLat())
+                .lon(cafe.getLon())
+                .phone(cafe.getPhone())
+                .kakaomapUrl(cafe.getKakaomapUrl())
+                .categoryCode(cafe.getCategoryCode())
+                .build();
     }
 }

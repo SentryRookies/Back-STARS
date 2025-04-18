@@ -1,5 +1,6 @@
 package com.example.placeservice.controller;
 
+import com.example.placeservice.dto.CafeDto;
 import com.example.placeservice.service.CafeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/cafes")
+@RequestMapping("/cafes")
 @RequiredArgsConstructor
 public class CafeController {
 
@@ -41,4 +42,15 @@ public class CafeController {
             return ResponseEntity.badRequest().body(response);
         }
     }
+
+    /**
+     * 모든 카페 목록 조회
+     */
+    @GetMapping
+    public ResponseEntity<List<CafeDto>> getAllCafes() {
+        log.info("모든 카페 목록 조회");
+        List<CafeDto> cafes = cafeService.getAllCafes();
+        return ResponseEntity.ok(cafes);
+    }
+
 }
