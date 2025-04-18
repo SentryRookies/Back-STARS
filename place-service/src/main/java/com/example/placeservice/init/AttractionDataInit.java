@@ -4,6 +4,7 @@ import com.example.placeservice.service.AttractionService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+// SB 실행 시, attraction data 저장(area 데이터가 먼저 저장되어 있어야 함)
 @Component
 public class AttractionDataInit implements CommandLineRunner {
 

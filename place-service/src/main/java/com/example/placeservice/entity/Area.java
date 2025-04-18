@@ -1,9 +1,11 @@
 package com.example.placeservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Entity
@@ -32,4 +34,7 @@ public class Area {
     private BigDecimal lon; // 경도
 
 
+    @OneToMany(mappedBy = "area", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Attraction> attractions;
 }

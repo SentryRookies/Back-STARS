@@ -1,6 +1,9 @@
 package com.example.placeservice.service;
 
+import com.example.placeservice.dto.AreaAttractionsDto;
 import com.example.placeservice.dto.AttractionDto;
+import com.example.placeservice.dto.AttractionInfoDto;
+import com.example.placeservice.dto.AttractionListDto;
 import com.example.placeservice.entity.Area;
 import com.example.placeservice.entity.Attraction;
 import com.example.placeservice.repository.AreaRepository;
@@ -8,9 +11,11 @@ import com.example.placeservice.repository.AttractionRepository;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.StringReader;
 import java.math.BigDecimal;
@@ -97,5 +102,55 @@ public class AttractionService {
         // 2km 이내에 없는 관광지 체크
         // System.out.println(table.getTitle()+"위도 :"+table.getMapX()+"경도 :"+table.getMapY() );
         return null;
+    }
+
+    // attraction 목록 DB 불러오기
+    public List<AreaAttractionsDto> getAttractionData() {
+        try {
+                List<Area> areas = areaRepository.findAll();
+
+                return areas.stream()
+                        .map(area -> {
+                            List<AttractionListDto> attractions = area.getAttractions().stream()
+                                    .map(attraction -> new AttractionListDto(
+                                            attraction.getAttraction_id(),
+                                            attraction.getName(),
+                                            attraction.getAddress(),
+                                            attraction.getLat(),
+                                            attraction.getLon()
+                                    )).toList();
+
+                            AreaAttractionsDto dto = new AreaAttractionsDto();
+                            dto.setArea_name(area.getName());
+                            dto.setAttraction_list(attractions);
+                            return dto;
+                        })
+                        .toList();
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException("예상치 못한 오류",e);
+        }
+    }
+
+    public AttractionInfoDto getAttractionInfoData(long placeCode) {
+        try{
+            Attraction attraction = attractionRepository.findById(placeCode)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 관광지 정보를 찾을 수 없습니다."));
+
+            return new AttractionInfoDto(
+                    attraction.getAttraction_id(),
+                    attraction.getName(),
+                    attraction.getAddress(),
+                    attraction.getLat(),
+                    attraction.getLon(),
+                    attraction.getPhone(),
+                    attraction.getHomepage_url(),
+                    attraction.getClose_day(),
+                    attraction.getUse_time()
+            );
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException("예상치 못한 오류",e);
+        }
     }
 }

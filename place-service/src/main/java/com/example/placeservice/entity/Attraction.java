@@ -1,5 +1,6 @@
 package com.example.placeservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -41,8 +42,8 @@ public class Attraction {
     @Column(name="use_time", columnDefinition = "TEXT")
     private String use_time;
 
-    // 👇 추가: ManyToOne 관계 매핑
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "area_id", nullable = false)
     private Area area;
+
 }
