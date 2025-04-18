@@ -23,7 +23,7 @@ SK쉴더스 루키즈 최종프로젝트 백엔드 리포지토리 입니다.
 ### CAFE DATA
 1. postman에서 설정
    - Method: POST 
-   - URL: http://localhost:8080/api/cafes/process-all
+   - URL: http://localhost:8080/cafes/process-all
    - Auth: Basic Auth
      - Username: user
      - Password: docker에서 비번 확인
