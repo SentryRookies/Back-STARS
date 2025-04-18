@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -48,38 +50,6 @@ public class CafeService {
         }
 
         log.info("모든 장소 처리 완료.");
-    }
-
-    /**
-     * 특정 ID 목록의 장소만 처리
-     */
-    @Async
-    public void processAreasByIds(List<Long> areaIds) {
-        log.info("{}개 지정된 장소에 대한 처리를 시작합니다.", areaIds.size());
-
-        for (int i = 0; i < areaIds.size(); i++) {
-            Long areaId = areaIds.get(i);
-            Area area = areaRepository.findById(areaId).orElse(null);
-
-            if (area == null) {
-                log.warn("ID {}인 장소를 찾을 수 없습니다.", areaId);
-                continue;
-            }
-
-            log.info("[{}/{}] '{}' (ID: {}) 처리 중...",
-                    i + 1, areaIds.size(), area.getName(), area.getAreaId());
-
-            processSingleArea(area);
-
-            // API 호출 간격 조절
-            try {
-                Thread.sleep(300);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        log.info("지정된 모든 장소 처리 완료.");
     }
 
     /**
@@ -151,6 +121,24 @@ public class CafeService {
         List<Cafe> cafes = cafeRepository.findAll();
         return cafes.stream()
                 .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * ID, 이름, 위도, 경도만 포함한 모든 카페 목록 조회
+     */
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getAllCafesWithLimitedInfo() {
+        List<Cafe> cafes = cafeRepository.findAll();
+        return cafes.stream()
+                .map(cafe -> {
+                    Map<String, Object> cafeMap = new HashMap<>();
+                    cafeMap.put("id", cafe.getId());
+                    cafeMap.put("name", cafe.getName());
+                    cafeMap.put("lat", cafe.getLat());
+                    cafeMap.put("lon", cafe.getLon());
+                    return cafeMap;
+                })
                 .collect(Collectors.toList());
     }
 

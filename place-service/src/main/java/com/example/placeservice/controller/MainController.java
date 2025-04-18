@@ -3,6 +3,7 @@ package com.example.placeservice.controller;
 import com.example.placeservice.dto.CafeDto;
 import com.example.placeservice.entity.Cafe;
 import com.example.placeservice.service.CafeService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import com.example.placeservice.repository.CafeRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +32,13 @@ public class MainController {
      * 전체 카페 목록 조회
      */
     @GetMapping("/cafe/list")
-    public ResponseEntity<Map<String, Object>> getCafeList() {
+    public ResponseEntity<List<Map<String, Object>>> getCafeList() {
         log.info("카페 목록 조회");
         List<Cafe> cafes = cafeRepository.findAll();
 
+        // ID를 기준으로 정렬
         List<Map<String, Object>> cafeList = cafes.stream()
+                .sorted(Comparator.comparing(Cafe::getId))
                 .map(cafe -> {
                     Map<String, Object> cafeMap = new HashMap<>();
                     cafeMap.put("id", cafe.getId().toString());
@@ -45,10 +49,7 @@ public class MainController {
                 })
                 .collect(Collectors.toList());
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("data", cafeList);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(cafeList);
     }
 
     /**
@@ -58,6 +59,12 @@ public class MainController {
     public ResponseEntity<List<CafeDto>> getCafesByAreaId(@PathVariable Long areaId) {
         log.info("지역 ID {}의 카페 목록 조회", areaId);
         List<CafeDto> cafes = cafeService.getCafesByAreaId(areaId);
-        return ResponseEntity.ok(cafes);
+
+        // ID 기준으로 정렬
+        List<CafeDto> sortedCafes = cafes.stream()
+                .sorted(Comparator.comparing(CafeDto::getId))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(sortedCafes);
     }
 }

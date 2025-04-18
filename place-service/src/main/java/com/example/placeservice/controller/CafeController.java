@@ -47,10 +47,9 @@ public class CafeController {
      * 모든 카페 목록 조회
      */
     @GetMapping
-    public ResponseEntity<List<CafeDto>> getAllCafes() {
+    public ResponseEntity<List<Map<String, Object>>> getAllCafes() {
         log.info("모든 카페 목록 조회");
-        List<CafeDto> cafes = cafeService.getAllCafes();
+        List<Map<String, Object>> cafes = cafeService.getAllCafesWithLimitedInfo();
         return ResponseEntity.ok(cafes);
     }
-
 }
