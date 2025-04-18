@@ -1,9 +1,9 @@
 package com.example.placeservice.service;
 
-import com.example.placeservice.dto.AreaAttractionsDto;
-import com.example.placeservice.dto.AttractionDto;
-import com.example.placeservice.dto.AttractionInfoDto;
-import com.example.placeservice.dto.AttractionListDto;
+import com.example.placeservice.dto.attraction.AreaAttractionsDto;
+import com.example.placeservice.dto.attraction.AttractionDto;
+import com.example.placeservice.dto.attraction.AttractionInfoDto;
+import com.example.placeservice.dto.attraction.AttractionListDto;
 import com.example.placeservice.entity.Area;
 import com.example.placeservice.entity.Attraction;
 import com.example.placeservice.repository.AreaRepository;

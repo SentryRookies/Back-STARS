@@ -1,7 +1,7 @@
 package com.example.placeservice.controller;
 
-import com.example.placeservice.dto.AreaAttractionsDto;
-import com.example.placeservice.dto.AttractionInfoDto;
+import com.example.placeservice.dto.attraction.AreaAttractionsDto;
+import com.example.placeservice.dto.attraction.AttractionInfoDto;
 import com.example.placeservice.service.AttractionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

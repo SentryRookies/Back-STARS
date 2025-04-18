@@ -1,4 +1,4 @@
-package com.example.placeservice.dto;
+package com.example.placeservice.dto.attraction;
 
 import lombok.Data;
 

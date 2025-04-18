@@ -1,7 +1,5 @@
-package com.example.placeservice.dto;
+package com.example.placeservice.dto.attraction;
 
-import com.example.placeservice.entity.Attraction;
-import jakarta.persistence.Column;
 import lombok.Data;
 
 import java.math.BigDecimal;
