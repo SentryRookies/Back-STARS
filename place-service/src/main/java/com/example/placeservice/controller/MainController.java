@@ -74,17 +74,20 @@ public class MainController {
 
         if (cafeOptional.isPresent()) {
             Cafe cafe = cafeOptional.get();
-            Map<String, Object> cafeInfo = new HashMap<>();
+            Map<String, Object> cafeInfo = new LinkedHashMap<>();
             cafeInfo.put("id", cafe.getId());
             cafeInfo.put("name", cafe.getName());
             cafeInfo.put("address", cafe.getAddress());
             cafeInfo.put("phone", cafe.getPhone());
+            cafeInfo.put("category_code", cafe.getCategoryCode());
             cafeInfo.put("kakaomap_url", cafe.getKakaomapUrl());
             cafeInfo.put("lat", cafe.getLat());
             cafeInfo.put("lon", cafe.getLon());
-            cafeInfo.put("category_code", cafe.getCategoryCode());
 
-            return ResponseEntity.ok(Map.of("data", cafeInfo));
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("data", cafeInfo);
+
+            return ResponseEntity.ok(response);
         }
 
         return ResponseEntity.notFound().build();
