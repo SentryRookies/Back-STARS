@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 public interface CafeRepository extends JpaRepository<Cafe, Long> {
     @Query("SELECT c FROM Cafe c WHERE c.area.area_id = :areaId")
@@ -15,4 +16,6 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
     @Modifying
     @Query("DELETE FROM Cafe c WHERE c.area.area_id = :areaId")
     void deleteByAreaId(Long areaId);
+
+    Optional<Cafe> findByKakaomapUrl(String placeCode);
 }

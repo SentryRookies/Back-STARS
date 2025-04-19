@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -156,5 +157,26 @@ public class CafeService {
                 .kakaomapUrl(cafe.getKakaomapUrl())
                 .categoryCode(cafe.getCategoryCode())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> getCafeDetailByPlaceCode(String placeCode) {
+        Optional<Cafe> cafeOptional = cafeRepository.findByKakaomapUrl(placeCode);
+
+        if (cafeOptional.isPresent()) {
+            Cafe cafe = cafeOptional.get();
+            Map<String, Object> cafeInfo = new HashMap<>();
+            cafeInfo.put("name", cafe.getName());
+            cafeInfo.put("address", cafe.getAddress());
+            cafeInfo.put("phone", cafe.getPhone());
+            cafeInfo.put("kakaomap_url", cafe.getKakaomapUrl());
+            cafeInfo.put("lat", cafe.getLat());
+            cafeInfo.put("lon", cafe.getLon());
+            cafeInfo.put("category_code", cafe.getCategoryCode());
+
+            return cafeInfo;
+        }
+
+        return null;
     }
 }

@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -40,7 +37,7 @@ public class MainController {
         List<Map<String, Object>> cafeList = cafes.stream()
                 .sorted(Comparator.comparing(Cafe::getId))
                 .map(cafe -> {
-                    Map<String, Object> cafeMap = new HashMap<>();
+                    Map<String, Object> cafeMap = new LinkedHashMap<>();
                     cafeMap.put("id", cafe.getId().toString());
                     cafeMap.put("name", cafe.getName());
                     cafeMap.put("x", cafe.getLon().toString());
@@ -66,5 +63,30 @@ public class MainController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(sortedCafes);
+    }
+
+    @GetMapping("/info/cafe/{cafeId}")
+    public ResponseEntity<Map<String, Object>> getCafeInfo(@PathVariable Long cafeId) {
+        log.info("카페 ID {}의 상세 정보 조회", cafeId);
+
+        // 카페 ID로 상세 정보 조회
+        Optional<Cafe> cafeOptional = cafeRepository.findById(cafeId);
+
+        if (cafeOptional.isPresent()) {
+            Cafe cafe = cafeOptional.get();
+            Map<String, Object> cafeInfo = new HashMap<>();
+            cafeInfo.put("id", cafe.getId());
+            cafeInfo.put("name", cafe.getName());
+            cafeInfo.put("address", cafe.getAddress());
+            cafeInfo.put("phone", cafe.getPhone());
+            cafeInfo.put("kakaomap_url", cafe.getKakaomapUrl());
+            cafeInfo.put("lat", cafe.getLat());
+            cafeInfo.put("lon", cafe.getLon());
+            cafeInfo.put("category_code", cafe.getCategoryCode());
+
+            return ResponseEntity.ok(Map.of("data", cafeInfo));
+        }
+
+        return ResponseEntity.notFound().build();
     }
 }
