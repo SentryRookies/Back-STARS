@@ -58,6 +58,8 @@ public class RestaurantService {
                         restaurant.setPhone(doc.has("phone") ? doc.get("phone").asText() : null);
                         restaurant.setKakaomap_url(doc.get("place_url").asText());
                         restaurant.setCategory_code(doc.has("category_group_code") ? doc.get("category_group_code").asText() : null);
+                        restaurant.setCategoryGroupName(doc.has("category_group_name") ? doc.get("category_group_name").asText() : null);
+                        restaurant.setCategoryName(doc.has("category_name") ? doc.get("category_name").asText() : null);
 
                         savedRestaurants.add(restaurant);
                         restaurantRepository.save(restaurant);
