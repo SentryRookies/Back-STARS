@@ -27,17 +27,21 @@ public class RestaurantService {
         int page = 1;
         boolean isEnd = false;
         double searchRadius = 1000.0; // 반경 1km
+        int savedCount = 0; // 저장한 음식점 수
 
         while (!isEnd) {
-            // Area의 lat, lon 순서를 반대로 호출해야 함 (DB상에 값이 반대임)
             JsonNode response = kakaoMapClient.searchRestaurantsByCategory(area.getLat(), area.getLon(), page);
 
             if (response.has("documents")) {
                 for (JsonNode doc : response.get("documents")) {
+                    if (savedCount >= 15) { // 15개 저장했으면 바로 종료
+                        isEnd = true;
+                        break;
+                    }
+
                     double restaurantLon = Double.parseDouble(doc.get("x").asText());
                     double restaurantLat = Double.parseDouble(doc.get("y").asText());
 
-                    // 거리 계산할 때도 lat, lon 순서 조심 (Area에서 꺼낼 때)
                     double distance = calculateDistance(
                             area.getLon().doubleValue(), area.getLat().doubleValue(),
                             restaurantLat, restaurantLon
@@ -57,11 +61,14 @@ public class RestaurantService {
 
                         savedRestaurants.add(restaurant);
                         restaurantRepository.save(restaurant);
+                        savedCount++; // 저장한 개수 카운트
                     }
                 }
 
-                isEnd = response.get("meta").get("is_end").asBoolean();
-                page++;
+                if (!isEnd) {
+                    isEnd = response.get("meta").get("is_end").asBoolean();
+                    page++;
+                }
             } else {
                 isEnd = true;
             }

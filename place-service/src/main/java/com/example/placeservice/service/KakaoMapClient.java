@@ -45,4 +45,5 @@ public class KakaoMapClient {
 
         return response.getBody(); // JSON 응답 반환
     }
+
 }
