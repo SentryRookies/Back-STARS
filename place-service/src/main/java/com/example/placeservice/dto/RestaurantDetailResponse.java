@@ -24,6 +24,9 @@ public class RestaurantDetailResponse {
     private String categoryGroupName; // 추가
     private String categoryName; // 추가
 
+    private String kakao_id;
+
+
     public static RestaurantDetailResponse fromEntity(Restaurant restaurant) {
         return RestaurantDetailResponse.builder()
                 .address_name(restaurant.getAddress())
@@ -32,6 +35,7 @@ public class RestaurantDetailResponse {
                 .category_name(restaurant.getCategoryName()) // 고정X (DB)
                 .distance("") // 그대로 비워두기
                 .id(String.valueOf(restaurant.getRestaurantId()))
+                .kakao_id(restaurant.getKakao_id())
                 .phone(restaurant.getPhone())
                 .place_name(restaurant.getName())
                 .place_url(restaurant.getKakaomap_url())

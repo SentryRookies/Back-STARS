@@ -42,6 +42,8 @@ public class Restaurant {
     @Column(length = 20)
     private String category_code; // 카테고리 코드 (FD6: 음식점)
 
+//    @Column(length = 30)
+//    private String kakao_id;  // 카카오 API가 주는 id 저장 (String)
 
     //추가
     @Column(length = 100)
@@ -50,4 +52,17 @@ public class Restaurant {
     @Column(length = 200)
     private String categoryName; // (예시) 음식점 > 한식 > 육류,고기
 
+    @Column(name = "kakao_id", length = 30)
+    private String kakao_id;
+
+    public String getKakao_id() {
+        return kakao_id;
+    }
+
+    public void setKakao_id(String kakao_id) {
+        this.kakao_id = kakao_id;
+    }
+
 }
+
+

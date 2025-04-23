@@ -61,6 +61,8 @@ public class RestaurantService {
                         restaurant.setCategoryGroupName(doc.has("category_group_name") ? doc.get("category_group_name").asText() : null);
                         restaurant.setCategoryName(doc.has("category_name") ? doc.get("category_name").asText() : null);
 
+                        restaurant.setKakao_id(doc.get("id").asText());
+
                         savedRestaurants.add(restaurant);
                         restaurantRepository.save(restaurant);
                         savedCount++; // 저장한 개수 카운트

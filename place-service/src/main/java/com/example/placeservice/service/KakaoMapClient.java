@@ -26,9 +26,9 @@ public class KakaoMapClient {
         // Kakao API 호출 URL 세팅
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl("https://dapi.kakao.com/v2/local/search/category.json")
-                .queryParam("category_group_code", "FD6") // FD6: 음식점 카테고리
-                .queryParam("x", lon) // x: 경도(lon)
-                .queryParam("y", lat) // y: 위도(lat)
+                .queryParam("category_group_code", "FD6") // 음식점 카테고리
+                .queryParam("x", lon) // x: 경도
+                .queryParam("y", lat) // y: 위도
                 .queryParam("sort", "accuracy") // 정확도순 정렬
                 .queryParam("page", page) // 요청 페이지
                 .queryParam("size", 15); // 한 페이지에 최대 15개 결과
