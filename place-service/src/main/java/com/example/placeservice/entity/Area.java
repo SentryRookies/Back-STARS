@@ -38,11 +38,11 @@ public class Area {
         return this.area_id;
     }
 
-    public Number getY() {
+    public Number getX() {
         return this.lon;
     }
 
-    public Number getX() {
+    public Number getY() {
         return this.lat;
     }
 }
