@@ -25,7 +25,7 @@ public class KakaoApiService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${kakao.api.key}")
+    @Value("카카오API")
     private String kakaoApiKey;
 
     private static final String KAKAO_API_BASE_URL = "https://dapi.kakao.com/v2/local";
