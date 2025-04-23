@@ -1,7 +1,7 @@
 package com.example.placeservice.controller;
 
-import com.example.placeservice.dto.AreaAttractionsDto;
-import com.example.placeservice.dto.AttractionInfoDto;
+import com.example.placeservice.dto.attraction.AreaAttractionsDto;
+import com.example.placeservice.dto.attraction.AttractionInfoDto;
 import com.example.placeservice.service.AttractionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +26,7 @@ public class AttractionController {
 
     // 관광지 정보 조회(place-code)
     @GetMapping("info/attraction/{place-code}")
-    public AttractionInfoDto getAttractionInfo(@PathVariable("place-code") long placeCode) {
-        return attractionService.getAttractionInfoData(placeCode);
+    public AttractionInfoDto getAttractionInfo(@PathVariable("place-code") long attractionId) {
+        return attractionService.getAttractionInfoData(attractionId);
     }
 }

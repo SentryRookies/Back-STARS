@@ -1,7 +1,6 @@
 package com.example.externalinfoservice.service;
 
 import com.example.externalinfoservice.dto.RoadDto;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;

@@ -1,9 +1,9 @@
 package com.example.placeservice.service;
 
-import com.example.placeservice.dto.AreaAttractionsDto;
-import com.example.placeservice.dto.AttractionDto;
-import com.example.placeservice.dto.AttractionInfoDto;
-import com.example.placeservice.dto.AttractionListDto;
+import com.example.placeservice.dto.attraction.AreaAttractionsDto;
+import com.example.placeservice.dto.attraction.AttractionDto;
+import com.example.placeservice.dto.attraction.AttractionInfoDto;
+import com.example.placeservice.dto.attraction.AttractionListDto;
 import com.example.placeservice.entity.Area;
 import com.example.placeservice.entity.Attraction;
 import com.example.placeservice.repository.AreaRepository;
@@ -52,23 +52,23 @@ public class AttractionService {
             // 3. DTO → Entity로 변환 (매핑)
             List<Attraction> entities = dto.getAttractions().stream()
                 .map(table -> {
-                    // visit_id 중복 체크
-                    if (attractionRepository.existsByVisitId(table.getId())) return null;
+                    // seoul_attraction_id 중복 체크
+                    if (attractionRepository.existsBySeoulAttractionId(table.getId())) return null;
 
                     // 👇: 조건에 따라 Area 객체를 지정
                     Area area = findAreaByCondition(table, areaList);  // 예: 주소나 지역코드 등으로 판단
                     if (area == null) return null;
 
                     Attraction attraction = new Attraction();
-                    attraction.setVisitId(table.getId());
+                    attraction.setSeoulAttractionId(table.getId());
                     attraction.setName(table.getTitle());
                     attraction.setAddress(table.getNewAddress());
                     attraction.setLat(new BigDecimal(table.getMapX()));
                     attraction.setLon(new BigDecimal(table.getMapY()));
                     attraction.setPhone(table.getTel());
-                    attraction.setHomepage_url(table.getHomepage());
-                    attraction.setClose_day(table.getCloseDay());
-                    attraction.setUse_time(table.getUseTime());
+                    attraction.setHomepageUrl(table.getHomepage());
+                    attraction.setCloseDay(table.getCloseDay());
+                    attraction.setUseTime(table.getUseTime());
 
                     attraction.setArea(area);
 
@@ -113,7 +113,8 @@ public class AttractionService {
                         .map(area -> {
                             List<AttractionListDto> attractions = area.getAttractions().stream()
                                     .map(attraction -> new AttractionListDto(
-                                            attraction.getAttraction_id(),
+                                            attraction.getAttractionId(),
+                                            attraction.getSeoulAttractionId(),
                                             attraction.getName(),
                                             attraction.getAddress(),
                                             attraction.getLat(),
@@ -132,21 +133,22 @@ public class AttractionService {
         }
     }
 
-    public AttractionInfoDto getAttractionInfoData(long placeCode) {
+    public AttractionInfoDto getAttractionInfoData(long attractionId) {
         try{
-            Attraction attraction = attractionRepository.findById(placeCode)
+            Attraction attraction = attractionRepository.findByAttractionId(attractionId)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 관광지 정보를 찾을 수 없습니다."));
 
             return new AttractionInfoDto(
-                    attraction.getAttraction_id(),
+                    attraction.getAttractionId(),
+                    attraction.getSeoulAttractionId(),
                     attraction.getName(),
                     attraction.getAddress(),
                     attraction.getLat(),
                     attraction.getLon(),
                     attraction.getPhone(),
-                    attraction.getHomepage_url(),
-                    attraction.getClose_day(),
-                    attraction.getUse_time()
+                    attraction.getHomepageUrl(),
+                    attraction.getCloseDay(),
+                    attraction.getUseTime()
             );
 
         } catch (RuntimeException e) {

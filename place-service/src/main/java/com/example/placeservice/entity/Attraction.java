@@ -1,6 +1,5 @@
 package com.example.placeservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,10 +11,10 @@ public class Attraction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "attraction_id")
-    private Long attraction_id;
+    private Long attractionId;
 
-    @Column(name = "visit_id", length = 10, nullable = false, unique = true)
-    private String visitId;
+    @Column(name = "seoul_attraction_id", length = 10, nullable = false, unique = true)
+    private String seoulAttractionId;
 
     @Column(name="name", length = 200, nullable = false)
     private String name;
@@ -34,13 +33,13 @@ public class Attraction {
     private String phone;
 
     @Column(name="homepage_url", columnDefinition = "TEXT")
-    private String homepage_url;
+    private String homepageUrl;
 
     @Column(name="close_day", columnDefinition = "TEXT")
-    private String close_day;
+    private String closeDay;
 
     @Column(name="use_time", columnDefinition = "TEXT")
-    private String use_time;
+    private String useTime;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "area_id", nullable = false)
