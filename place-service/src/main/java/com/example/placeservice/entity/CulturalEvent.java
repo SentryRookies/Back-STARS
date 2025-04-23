@@ -21,10 +21,9 @@ public class CulturalEvent {
     private Long eventId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "area_id")
+    @JoinColumn(name = "area_id")  // 외래키 컬럼
     @JsonIgnore
     private Area area;
-
 
     @Column(name = "category", length = 200)
     private String category;

@@ -6,7 +6,6 @@ import com.example.placeservice.entity.CulturalEvent;
 import com.example.placeservice.external.CulturalEventClient;
 import com.example.placeservice.repository.AreaRepository;
 import com.example.placeservice.repository.CulturalEventRepository;
-import com.example.placeservice.service.EventParserService;
 import com.example.placeservice.util.GeoUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
