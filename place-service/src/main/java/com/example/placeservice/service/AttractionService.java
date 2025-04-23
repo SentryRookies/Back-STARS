@@ -63,8 +63,8 @@ public class AttractionService {
                     attraction.setSeoulAttractionId(table.getId());
                     attraction.setName(table.getTitle());
                     attraction.setAddress(table.getNewAddress());
-                    attraction.setLat(new BigDecimal(table.getMapX()));
-                    attraction.setLon(new BigDecimal(table.getMapY()));
+                    attraction.setLat(new BigDecimal(table.getMapY()));
+                    attraction.setLon(new BigDecimal(table.getMapX()));
                     attraction.setPhone(table.getTel());
                     attraction.setHomepageUrl(table.getHomepage());
                     attraction.setCloseDay(table.getCloseDay());
@@ -88,8 +88,8 @@ public class AttractionService {
 
     // 관광지 2km이내 area 계산
     private Area findAreaByCondition(AttractionDto.AttractionTable table, List<Area> areaList) {
-        double lat = Double.parseDouble(table.getMapX());
-        double lon = Double.parseDouble(table.getMapY());
+        double lat = Double.parseDouble(table.getMapY());
+        double lon = Double.parseDouble(table.getMapX());
         for (Area area : areaList) {
             double distance = calculateDistanceKm(
                     lat, lon,
@@ -100,7 +100,7 @@ public class AttractionService {
             }
         }
         // 2km 이내에 없는 관광지 체크
-        // System.out.println(table.getTitle()+"위도 :"+table.getMapX()+"경도 :"+table.getMapY() );
+        // System.out.println(table.getTitle()+"경도:"+table.getMapX()+"위도 :"+table.getMapY() );
         return null;
     }
 
