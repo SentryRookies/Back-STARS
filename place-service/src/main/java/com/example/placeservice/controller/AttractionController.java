@@ -26,7 +26,7 @@ public class AttractionController {
 
     // 관광지 정보 조회(place-code)
     @GetMapping("info/attraction/{place-code}")
-    public AttractionInfoDto getAttractionInfo(@PathVariable("place-code") long placeCode) {
-        return attractionService.getAttractionInfoData(placeCode);
+    public AttractionInfoDto getAttractionInfo(@PathVariable("place-code") long attractionId) {
+        return attractionService.getAttractionInfoData(attractionId);
     }
 }
