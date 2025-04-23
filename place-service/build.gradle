@@ -24,11 +24,18 @@ repositories {
 }
 
 dependencies {
+    // JAXB (XML 파싱)
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    // JAXB Runtime (XML 파싱을 위해 필요)
+    implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.3'
+
+
     // JWT 처리
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
+    implementation 'org.postgresql:postgresql:42.7.2'
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'

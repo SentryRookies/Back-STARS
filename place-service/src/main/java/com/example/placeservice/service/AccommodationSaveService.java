@@ -116,7 +116,6 @@ public class AccommodationSaveService {
     private Long findClosestAreaInMemory(BigDecimal lat, BigDecimal lon, List<Area> areas) {
         double minDistance = 8000.0;
         Long closestAreaId = null;
-        int count = 0;
 
         for (Area area : areas) {
             if (area.getLat() == null || area.getLon() == null) {

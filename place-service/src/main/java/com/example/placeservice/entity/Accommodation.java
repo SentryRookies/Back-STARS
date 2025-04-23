@@ -10,8 +10,8 @@ public class Accommodation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accommodation_id;
 
-    @ManyToOne
-    @JoinColumn(name = "area_id", referencedColumnName = "area_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "area_id", referencedColumnName = "area_id", nullable = false)
     private Area area;
 
     private Long content_id;

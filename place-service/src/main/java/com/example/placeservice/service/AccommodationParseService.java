@@ -1,18 +1,38 @@
 package com.example.placeservice.service;
 
 import com.example.placeservice.dto.AccommodationResponse;
+import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import jakarta.xml.bind.JAXBContext;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class AccommodationParseService {
-    public List<AccommodationResponse.Body.Items.Item> parseXmlData(String xmlData) {
+    private final String serviceKey;
+    private final String baseApiUrl = "http://apis.data.go.kr/B551011/KorService1/searchStay1";
+
+    public AccommodationParseService(@Value("${TOUR_API_KEY}") String serviceKey) {
+        this.serviceKey = serviceKey;
+    }
+
+    public List<AccommodationResponse.Body.Items.Item> parseXmlData() throws IOException {
+        // API 요청 URL 구성
+        String apiUrl = baseApiUrl + "?arrange=A&areaCode=1&ServiceKey=" + serviceKey
+                + "&listYN=Y&MobileOS=ETC&MobileApp=AppTest&numOfRows=500&pageNo=1";
+
+        // HTTP 연결 및 데이터 가져오기
+        String xmlData = fetchXmlData(apiUrl);
+
         if (xmlData == null || xmlData.trim().isEmpty()) {
             throw new IllegalArgumentException("XML 데이터가 비어있습니다.");
         }
@@ -46,15 +66,20 @@ public class AccommodationParseService {
         }
     }
 
-    public void SaveXmlData(String xmlData) {
-        List<AccommodationResponse.Body.Items.Item> items = parseXmlData(xmlData);
+    private String fetchXmlData(String apiUrl) throws IOException {
+        URL url = new URL(apiUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
 
-        // 각 아이템 정보 출력
-        for (AccommodationResponse.Body.Items.Item item : items) {
-            System.out.println("호텔명: " + item.getTitle());
-            System.out.println("주소: " + item.getAddr1() + " " + item.getAddr2());
-            System.out.println("전화번호: " + item.getTel());
-            System.out.println("---------------------------");
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            StringBuilder xmlData = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                xmlData.append(line);
+            }
+            return xmlData.toString();
+        } finally {
+            connection.disconnect(); // 연결 해제
         }
     }
 }

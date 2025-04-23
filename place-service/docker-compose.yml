@@ -18,6 +18,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/stars_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: admin
+    env_file: # .env 파일 로드
+      - .env
     ports:
       - "8080:8080"
     depends_on:
