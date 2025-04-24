@@ -3,7 +3,6 @@ package com.example.placeservice.service;
 import com.example.placeservice.dto.CulturalEventItem;
 import com.example.placeservice.dto.CulturalEventResponse;
 import com.example.placeservice.entity.CulturalEvent;
-import com.example.placeservice.entity.GuArea;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +15,6 @@ import java.util.List;
 public class EventParserService {
 
     private final ObjectMapper objectMapper;
-    private final GuAreaService guAreaService; // 지역 정보를 가져오는 서비스
 
     public List<CulturalEventItem> parse(String jsonResponse) {
         try {
@@ -31,16 +29,13 @@ public class EventParserService {
     public CulturalEvent toEntity(CulturalEventItem item) {
         CulturalEvent event = new CulturalEvent();
 
-        // 1. 지역 매핑
-        GuArea area = guAreaService.findOrCreateArea(item.getGuname());
-        event.setArea(area);
 
         // 2. 필드 매핑 (컬럼명에 맞춰 정확히 매핑)
         event.setCategory(item.getCodename());           // category
         event.setTitle(item.getTitle());                 // title
         event.setAddress(item.getPlace());             // address
-        event.setLat(item.getLat());                     // lat
-        event.setLon(item.getLot());                     // lon
+        event.setLat(item.getLot());                     // lat
+        event.setLon(item.getLat());                     // lon
         event.setTarget(item.getUseTrgt());               // target
         event.setEventFee(item.getUseFee());                // event_fee
         event.setStartDate(item.getStrtdate());         // start_date
