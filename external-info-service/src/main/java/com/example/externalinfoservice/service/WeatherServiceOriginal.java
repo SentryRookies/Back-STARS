@@ -9,14 +9,15 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 @Service
-public class WeatherService {
+public class WeatherServiceOriginal {
 
     private final String weatherApiUrl;
     private final RestTemplate restTemplate;
@@ -32,7 +33,7 @@ public class WeatherService {
         add("SKY_STTS");       // 하늘 상태
     }};
 
-    public WeatherService(RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public WeatherServiceOriginal(RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.weatherApiUrl = "http://openapi.seoul.go.kr:8088/594b4a6559796f683930466466666d/xml/citydata/1/5/";
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;

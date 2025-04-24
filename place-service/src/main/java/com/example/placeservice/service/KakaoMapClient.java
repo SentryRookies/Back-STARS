@@ -17,6 +17,8 @@ public class KakaoMapClient {
     @Value("${kakao.api.key}")
     private String kakaoApiKey;
 
+
+
     public JsonNode searchRestaurantsByCategory(BigDecimal lon, BigDecimal lat, int page) {
         RestTemplate restTemplate = new RestTemplate();
 
