@@ -28,10 +28,10 @@ public class CulturalEvent {
     @Column(name = "category", length = 200)
     private String category;
 
-    @Column(name = "title", length = 50)
+    @Column(name = "title", length = 200)
     private String title;
 
-    @Column(name = "address", length = 50)
+    @Column(name = "address", length = 200)
     private String address;  // PLACE → address
 
     @Column(name = "lat", precision = 10, scale = 6)
@@ -40,7 +40,7 @@ public class CulturalEvent {
     @Column(name = "lon", precision = 10, scale = 6)
     private BigDecimal lon;
 
-    @Column(name = "target", length = 100)
+    @Column(name = "target", length = 200)
     private String target;
 
     @Column(name = "event_fee", columnDefinition = "TEXT")

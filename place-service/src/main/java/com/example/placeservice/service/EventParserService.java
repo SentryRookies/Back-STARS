@@ -34,8 +34,8 @@ public class EventParserService {
         event.setCategory(item.getCodename());           // category
         event.setTitle(item.getTitle());                 // title
         event.setAddress(item.getPlace());             // address
-        event.setLat(item.getLat());                     // lat
-        event.setLon(item.getLot());                     // lon
+        event.setLat(item.getLot());                     // lat
+        event.setLon(item.getLat());                     // lon
         event.setTarget(item.getUseTrgt());               // target
         event.setEventFee(item.getUseFee());                // event_fee
         event.setStartDate(item.getStrtdate());         // start_date
