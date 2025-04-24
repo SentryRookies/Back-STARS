@@ -9,6 +9,8 @@ import java.util.List;
 
 @Data
 @Entity
+@Getter
+@Setter
 public class Area {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

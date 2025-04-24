@@ -8,8 +8,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,19 +23,38 @@ public class ESRoadService {
 
     private static final RestTemplate restTemplate = new RestTemplate();
 
-    public static JsonNode getTrafficData(String areaNm) {
+    public static JsonNode getTrafficData() {
         try {
-            String apiUrl = "http://elasticsearch.seoultravel.life/seoul_citydata_road/_search"; // 외부 API URL
+            // 오늘 날짜 구하기
+            String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String apiUrl = String.format("http://elasticsearch.seoultravel.life/seoul_citydata_road_%s/_search", today);
 
             // JSON Body 생성
             String jsonBody = String.format("{\n" +
-                    "  \"size\": 1,\n" +
-                    "  \"query\": {\n" +
-                    "    \"term\": {\n" +
-                    "      \"road_traffic.area_nm.keyword\": \"%s\"\n" +
+                    "  \"size\": 0,\n" +
+                    "  \"aggs\": {\n" +
+                    "    \"by_area\": {\n" +
+                    "      \"terms\": {\n" +
+                    "        \"field\": \"road_traffic.area_nm.keyword\",\n" +
+                    "        \"size\": 1000  // area_nm 종류 수만큼 충분히\n" +
+                    "      },\n" +
+                    "      \"aggs\": {\n" +
+                    "        \"latest_hit\": {\n" +
+                    "          \"top_hits\": {\n" +
+                    "            \"size\": 1,\n" +
+                    "            \"sort\": [\n" +
+                    "              {\n" +
+                    "                \"road_traffic.road_traffic_time\": {\n" +
+                    "                  \"order\": \"desc\"\n" +
+                    "                }\n" +
+                    "              }\n" +
+                    "            ]\n" +
+                    "          }\n" +
+                    "        }\n" +
+                    "      }\n" +
                     "    }\n" +
                     "  }\n" +
-                    "}", areaNm);
+                    "}\n");
             // 헤더 설정
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -44,15 +69,22 @@ public class ESRoadService {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(String.valueOf(body)); // response는 JSON 문자열
 
-            JsonNode roadTraffic = root
-                    .path("hits")
-                    .path("hits")
-                    .get(0)                      // 첫 번째 결과
-                    .path("_source")
-                    .path("road_traffic");
+            JsonNode buckets = root
+                    .path("aggregations")
+                    .path("by_area")
+                    .path("buckets");
 
+            List<JsonNode> roadTrafficList = new ArrayList<>();
+            for (JsonNode bucket : buckets) {
+                JsonNode latestHit = bucket.path("latest_hit").path("hits").path("hits").get(0); // 첫 번째 hit 선택
+                JsonNode roadTraffic = latestHit.path("_source").path("road_traffic");
+                roadTrafficList.add(roadTraffic);
+            }
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode result = objectMapper.valueToTree(roadTrafficList);
 
-            return roadTraffic; // 외부 API에서 받은 데이터를 그대로 반환
+            return result;
+
         }catch (InvalidRequestException e) {
             throw new InvalidRequestException(e.getMessage(), e);
         }catch (Exception e){
