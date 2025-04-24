@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class WeatherPushScheduler {
+public class PushScheduler {
 
     private final WeatherEsService weatherEsService;
     private final ESRoadService roadService;

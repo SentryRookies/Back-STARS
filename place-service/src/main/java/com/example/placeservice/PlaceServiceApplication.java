@@ -22,11 +22,6 @@ public class PlaceServiceApplication {
         SpringApplication.run(PlaceServiceApplication.class, args);
     }
 
-    
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
 
     @Bean
     public CommandLineRunner initData(RestaurantService restaurantService, RestaurantRepository restaurantRepository, CafeService cafeService) {

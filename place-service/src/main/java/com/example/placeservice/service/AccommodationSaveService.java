@@ -119,7 +119,7 @@ public class AccommodationSaveService {
 
         for (Area area : areas) {
             if (area.getLat() == null || area.getLon() == null) {
-                System.out.println("지역 좌표 오류 : 지역번호 " + area.getArea_id());
+                System.out.println("지역 좌표 오류 : 지역번호 " + area.getAreaId());
                 continue;
             }
             double distance = calculateHaversineDistance(
@@ -127,12 +127,12 @@ public class AccommodationSaveService {
                 area.getLat().doubleValue(), area.getLon().doubleValue()
             );
             if (Double.isNaN(distance)) {
-                System.out.println("거리가 숫자가 아닙니다 : 지역번호 " + area.getArea_id());
+                System.out.println("거리가 숫자가 아닙니다 : 지역번호 " + area.getAreaId());
                 continue;
             }
             if (distance < minDistance) {
                 minDistance = distance;
-                closestAreaId = area.getArea_id();
+                closestAreaId = area.getAreaId();
             }
         }
 
