@@ -63,8 +63,8 @@ public class CafeService {
             cafeRepository.deleteByAreaId(area.getAreaId());
 
             // 주변 카페 검색
-            double latitude = area.getY().doubleValue();
-            double longitude = area.getX().doubleValue();
+            double latitude = area.getLat().doubleValue();
+            double longitude = area.getLon().doubleValue();
 
             if (latitude == 0 || longitude == 0) {
                 log.warn("장소 ID {}의 위도/경도 정보가 없습니다.", area.getAreaId());

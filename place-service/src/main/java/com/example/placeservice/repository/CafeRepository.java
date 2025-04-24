@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CafeRepository extends JpaRepository<Cafe, Long> {
-    @Query("SELECT c FROM Cafe c WHERE c.area.area_id = :areaId")
+    @Query("SELECT c FROM Cafe c WHERE c.area.areaId = :areaId")
     List<Cafe> findByAreaId(@org.springframework.data.repository.query.Param("areaId") Long areaId);
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM Cafe c WHERE c.area.area_id = :areaId")
+    @Query("DELETE FROM Cafe c WHERE c.area.areaId = :areaId")
     void deleteByAreaId(Long areaId);
 
     Optional<Cafe> findByKakaomapUrl(String placeCode);

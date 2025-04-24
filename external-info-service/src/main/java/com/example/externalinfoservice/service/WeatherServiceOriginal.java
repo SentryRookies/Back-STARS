@@ -5,6 +5,7 @@ import com.example.externalinfoservice.repository.AreaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,8 +17,11 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Service
 public class WeatherServiceOriginal {
@@ -38,8 +42,9 @@ public class WeatherServiceOriginal {
         put("맑음", "https://data.seoul.go.kr/SeoulRtd/images/icon/weather/ico_w_sunny.png");
     }};
 
-    public WeatherServiceOriginal(RestTemplate restTemplate, ObjectMapper objectMapper) {
-        this.weatherApiUrl = "http://openapi.seoul.go.kr:8088/594b4a6559796f683930466466666d/xml/citydata/1/5/";
+    public WeatherServiceOriginal(RestTemplate restTemplate,
+                               ObjectMapper objectMapper,
+                               AreaRepository areaRepository) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.areaRepository = areaRepository;

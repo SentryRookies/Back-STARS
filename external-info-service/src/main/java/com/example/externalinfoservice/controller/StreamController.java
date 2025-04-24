@@ -1,6 +1,5 @@
 package com.example.externalinfoservice.controller;
 
-import com.example.externalinfoservice.service.WeatherEsService;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

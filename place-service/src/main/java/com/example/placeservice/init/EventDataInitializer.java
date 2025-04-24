@@ -12,7 +12,7 @@ public class EventDataInitializer implements CommandLineRunner {
     private final CulturalEventService culturalEventService;
 
     @Override
-    public void run(String... args) {
+    public void run(String... args) throws Exception {
         // 애플리케이션 시작 시 데이터를 자동으로 받아와 저장
         culturalEventService.fetchAndSaveAllEvents();
     }
