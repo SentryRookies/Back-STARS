@@ -19,7 +19,6 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // API 호출 및 XML 파싱
         List<AccommodationResponse.Body.Items.Item> items = accommodationParseService.parseXmlData();
-
         // 파싱된 데이터 저장
         accommodationSaveService.saveAccommodation(items);
 

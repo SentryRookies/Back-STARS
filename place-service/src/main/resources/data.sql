@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-INSERT INTO area (seoul_id, name, name_eng, category, lon, lat) VALUES
-=======
 INSERT INTO area (seoul_id, name, name_eng, category, lat, lon) VALUES
->>>>>>> a2b194bec03d45b8e8e92e326efdf5344d2d36da
 ('POI001', '강남 MICE 관광특구', 'Gangnam MICE Special Tourist Zone', '관광특구', 37.5112843816696, 127.06005155384705),
 ('POI002', '동대문 관광특구', 'Dongdaemun Fashion Town Special Tourist Zone', '관광특구', 37.567214101532834, 127.00755049391576),
 ('POI003', '명동 관광특구', 'Myeong-dong Namdaemun Bukchang-dong Da-dong Mugyo-dong Special Tourist Zone', '관광특구', 37.56414013472864, 126.98288393316864),
