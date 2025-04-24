@@ -21,6 +21,7 @@ public class PlaceServiceApplication {
         SpringApplication.run(PlaceServiceApplication.class, args);
     }
 
+    
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();

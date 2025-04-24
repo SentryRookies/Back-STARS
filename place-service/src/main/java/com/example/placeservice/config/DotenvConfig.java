@@ -11,4 +11,5 @@ public class DotenvConfig {
     public Dotenv dotenv() {
         return Dotenv.load(); // .env 파일 자동 로딩
     }
+
 }
