@@ -2,6 +2,7 @@ package com.example.placeservice;
 
 import com.example.placeservice.repository.RestaurantRepository;
 import com.example.placeservice.service.RestaurantService;
+import com.example.placeservice.service.CafeService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,8 +29,9 @@ public class PlaceServiceApplication {
     }
 
     @Bean
-    public CommandLineRunner initData(RestaurantService restaurantService, RestaurantRepository restaurantRepository) {
+    public CommandLineRunner initData(RestaurantService restaurantService, RestaurantRepository restaurantRepository, CafeService cafeService) {
         return args -> {
+            cafeService.processAllAreas();
             if (restaurantRepository.count() > 0) {
                 System.out.println("");
             } else {
