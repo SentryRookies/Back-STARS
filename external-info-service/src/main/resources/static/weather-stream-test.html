@@ -1,0 +1,22 @@
+<!-- weather-stream-test.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>날씨 SSE 테스트</title>
+</head>
+<body>
+<h1>날씨 실시간 수신 중</h1>
+<pre id="output"></pre>
+
+<script>
+    const evtSource = new EventSource("http://localhost:8080/main/info/weather/stream");
+
+    evtSource.addEventListener("weather-update", function (event) {
+        const data = JSON.parse(event.data);
+        console.log("날씨 업데이트 수신:", data);
+        document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+    });
+</script>
+</body>
+</html>

@@ -16,14 +16,11 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
-public class WeatherService {
+public class WeatherServiceOriginal {
 
     @Value("${seoul.api.key}")
     private String apiKey;
@@ -41,9 +38,8 @@ public class WeatherService {
         put("맑음", "https://data.seoul.go.kr/SeoulRtd/images/icon/weather/ico_w_sunny.png");
     }};
 
-    public WeatherService(RestTemplate restTemplate,
-                          ObjectMapper objectMapper,
-                          AreaRepository areaRepository) {
+    public WeatherServiceOriginal(RestTemplate restTemplate, ObjectMapper objectMapper) {
+        this.weatherApiUrl = "http://openapi.seoul.go.kr:8088/594b4a6559796f683930466466666d/xml/citydata/1/5/";
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.areaRepository = areaRepository;

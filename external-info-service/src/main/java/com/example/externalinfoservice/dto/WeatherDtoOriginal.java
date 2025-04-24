@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 @XmlRootElement(name = "SeoulRtd.citydata")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WeatherDto {
+public class WeatherDtoOriginal {
     @XmlElement(name = "WEATHER_STTS")
     @JsonProperty("weather_status")
     private WeatherStatus weatherStatus;

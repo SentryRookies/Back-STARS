@@ -28,7 +28,6 @@ public class Attraction {
     @Column(name = "lon", precision = 10, scale = 6, nullable = false)
     private BigDecimal lon; // 경도
 
-
     @Column(name="phone", length = 30)
     private String phone;
 

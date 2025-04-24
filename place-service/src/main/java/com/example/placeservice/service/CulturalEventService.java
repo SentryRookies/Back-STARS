@@ -1,9 +1,12 @@
 package com.example.placeservice.service;
 
 import com.example.placeservice.dto.CulturalEventItem;
+import com.example.placeservice.entity.Area;
 import com.example.placeservice.entity.CulturalEvent;
 import com.example.placeservice.external.CulturalEventClient;
+import com.example.placeservice.repository.AreaRepository;
 import com.example.placeservice.repository.CulturalEventRepository;
+import com.example.placeservice.util.GeoUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,22 +20,19 @@ public class CulturalEventService {
     private final CulturalEventClient culturalEventClient;
     private final EventParserService eventParserService;
     private final CulturalEventRepository culturalEventRepository;
+    private final AreaRepository areaRepository; // 🔹 추가
 
-    // API에서 데이터를 1000개씩 받아와서 저장하는 메서드
     @Transactional
     public void fetchAndSaveAllEvents() {
-        int[] ranges = {1, 1001, 2001, 3001, 4001, 5001}; // 각 범위의 시작 인덱스
+        int[] ranges = {1, 1001, 2001, 3001, 4001, 5001};
         for (int i = 0; i < ranges.length; i++) {
             int startIndex = ranges[i];
-            int endIndex = startIndex+999;  // endIndex는 1000개씩 데이터를 가져오므로 1000개씩 증가
+            int endIndex = startIndex + 999;
 
-            // API에서 데이터 가져오기
             String jsonData = culturalEventClient.fetchEventData(startIndex, endIndex);
             List<CulturalEventItem> eventItems = eventParserService.parse(jsonData);
 
-            // 데이터가 없다면 더 이상 가져올 데이터가 없다는 의미
             if (!eventItems.isEmpty()) {
-                // 중복 제거하고 저장
                 saveEvents(eventItems);
             }
         }
@@ -40,11 +40,36 @@ public class CulturalEventService {
 
     private void saveEvents(List<CulturalEventItem> eventItems) {
         List<CulturalEvent> events = eventParserService.toEntityList(eventItems);
+        List<Area> areas = areaRepository.findAll(); // 🔹 모든 지역 좌표 불러오기
+
         for (CulturalEvent event : events) {
-            // 중복 처리 로직
-            if (!culturalEventRepository.existsByTitleAndAddressAndStartDate(event.getTitle(), event.getAddress(), event.getStartDate())) {
+            if (!culturalEventRepository.existsByTitleAndAddressAndStartDate(
+                    event.getTitle(), event.getAddress(), event.getStartDate())) {
+
+                // 🔹 행사 위치 기준 가장 가까운 지역 찾기
+                Area nearestArea = findNearestArea(event.getLat().doubleValue(), event.getLon().doubleValue(), areas);
+                event.setArea(nearestArea); // 🔹 지역 설정
+
                 culturalEventRepository.save(event);
             }
         }
+    }
+
+    private Area findNearestArea(double lat, double lon, List<Area> areas) {
+        double minDistance = Double.MAX_VALUE;
+        Area nearestArea = null;
+
+        for (Area area : areas) {
+            double areaLat = area.getLat().doubleValue();
+            double areaLon = area.getLon().doubleValue();
+            double distance = GeoUtils.calculateDistanceKm(lat, lon, areaLat, areaLon);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestArea = area;
+            }
+        }
+
+        return nearestArea;
     }
 }
