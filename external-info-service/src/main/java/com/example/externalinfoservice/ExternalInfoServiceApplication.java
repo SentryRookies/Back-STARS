@@ -10,6 +10,7 @@ public class ExternalInfoServiceApplication {
 
     public static void main(String[] args) {
 
+        
         SpringApplication.run(ExternalInfoServiceApplication.class, args);
     }
 

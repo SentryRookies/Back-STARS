@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/main/info/weather")

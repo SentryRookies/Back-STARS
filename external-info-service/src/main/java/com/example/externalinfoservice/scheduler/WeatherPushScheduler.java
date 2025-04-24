@@ -19,4 +19,5 @@ public class WeatherPushScheduler {
         var weatherList = weatherEsService.getAllWeatherFromES();
         sseWeatherController.sendToClients(weatherList);
     }
+
 }
