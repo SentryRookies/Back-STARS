@@ -1,6 +1,6 @@
 package com.example.placeservice.service;
 
-import com.example.placeservice.dto.AccommodationResponse;
+import com.example.placeservice.dto.accommodation.AccommodationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

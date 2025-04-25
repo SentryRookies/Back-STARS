@@ -1,6 +1,6 @@
 package com.example.placeservice.config;
 
-import com.example.placeservice.dto.AccommodationResponse;
+import com.example.placeservice.dto.accommodation.AccommodationResponse;
 import com.example.placeservice.service.AccommodationParseService;
 import com.example.placeservice.service.AccommodationSaveService;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,6 @@
-package com.example.placeservice.dto;
+package com.example.placeservice.dto.culturalevent;
 
+import com.example.placeservice.dto.Result;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

@@ -1,9 +1,8 @@
 package com.example.placeservice.controller;
 
-import com.example.placeservice.dto.CafeDto;
+import com.example.placeservice.dto.cafe.CafeDto;
 import com.example.placeservice.entity.Cafe;
 import com.example.placeservice.service.CafeService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import com.example.placeservice.repository.CafeRepository;
 import lombok.extern.slf4j.Slf4j;
