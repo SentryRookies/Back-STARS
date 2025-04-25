@@ -1,6 +1,6 @@
 package com.example.placeservice.service;
 
-import com.example.placeservice.dto.CafeDto;
+import com.example.placeservice.dto.cafe.CafeDto;
 import com.example.placeservice.entity.Area;
 import com.example.placeservice.entity.Cafe;
 import com.example.placeservice.repository.AreaRepository;

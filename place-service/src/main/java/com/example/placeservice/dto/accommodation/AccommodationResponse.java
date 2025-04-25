@@ -1,4 +1,4 @@
-package com.example.placeservice.dto;
+package com.example.placeservice.dto.accommodation;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
