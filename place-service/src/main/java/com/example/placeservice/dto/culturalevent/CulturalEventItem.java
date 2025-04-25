@@ -1,4 +1,4 @@
-package com.example.placeservice.dto;
+package com.example.placeservice.dto.culturalevent;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;

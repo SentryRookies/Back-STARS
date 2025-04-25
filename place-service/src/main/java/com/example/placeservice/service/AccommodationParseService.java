@@ -1,6 +1,6 @@
 package com.example.placeservice.service;
 
-import com.example.placeservice.dto.AccommodationResponse;
+import com.example.placeservice.dto.accommodation.AccommodationResponse;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;

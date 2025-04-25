@@ -1,6 +1,6 @@
 package com.example.placeservice.service;
 
-import com.example.placeservice.dto.AccommodationResponse;
+import com.example.placeservice.dto.accommodation.AccommodationResponse;
 import com.example.placeservice.entity.Area;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

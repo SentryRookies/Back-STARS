@@ -1,6 +1,5 @@
 package com.example.placeservice.controller;
 
-import com.example.placeservice.dto.CafeDto;
 import com.example.placeservice.service.CafeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

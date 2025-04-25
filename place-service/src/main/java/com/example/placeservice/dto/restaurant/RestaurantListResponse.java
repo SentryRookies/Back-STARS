@@ -1,4 +1,4 @@
-package com.example.placeservice.dto;
+package com.example.placeservice.dto.restaurant;
 //추가
 import com.example.placeservice.entity.Restaurant;
 import lombok.Builder;

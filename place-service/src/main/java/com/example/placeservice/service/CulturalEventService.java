@@ -1,6 +1,6 @@
 package com.example.placeservice.service;
 
-import com.example.placeservice.dto.CulturalEventItem;
+import com.example.placeservice.dto.culturalevent.CulturalEventItem;
 import com.example.placeservice.entity.Area;
 import com.example.placeservice.entity.CulturalEvent;
 import com.example.placeservice.external.CulturalEventClient;

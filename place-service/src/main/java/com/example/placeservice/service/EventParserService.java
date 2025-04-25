@@ -1,7 +1,7 @@
 package com.example.placeservice.service;
 
-import com.example.placeservice.dto.CulturalEventItem;
-import com.example.placeservice.dto.CulturalEventResponse;
+import com.example.placeservice.dto.culturalevent.CulturalEventItem;
+import com.example.placeservice.dto.culturalevent.CulturalEventResponse;
 import com.example.placeservice.entity.CulturalEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
