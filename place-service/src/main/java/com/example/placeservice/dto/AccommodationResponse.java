@@ -9,7 +9,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@XmlRootElement(name = "response")
+@XmlRootElement(name = "OpenAPI_ServiceResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AccommodationResponse {
     @XmlElement(name = "header")
