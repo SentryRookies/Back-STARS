@@ -12,5 +12,9 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/main/info/weather/stream")
                 .allowedOrigins("*")
                 .allowedMethods("GET");
+
+        registry.addMapping("/main/info/park/stream")
+                .allowedOrigins("*")
+                .allowedMethods("GET");
     }
 }
