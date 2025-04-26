@@ -14,7 +14,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public void registerAdmin(MemberSign dto) {
-        if(memberRepository.existsMemberById(Long.valueOf(String.valueOf(dto.getMemberId())))){
+        if(memberRepository.existsByMemberId(Long.valueOf(String.valueOf(dto.getMemberId())))){
             throw new IllegalStateException("이미 존재하는 ID입니다.");
         }
         Member member = new Member();

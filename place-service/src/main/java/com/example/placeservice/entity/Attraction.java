@@ -40,6 +40,9 @@ public class Attraction {
     @Column(name="use_time", columnDefinition = "TEXT")
     private String useTime;
 
+    @Column(name="kakaomap_url",columnDefinition = "TEXT")
+    private String kakaomapUrl;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "area_id", nullable = false)
     private Area area;

@@ -12,14 +12,16 @@ public class AttractionListDto {
     private String address;
     private BigDecimal lat;
     private BigDecimal lon;
+    private String kakaomap_url;
 
 
-    public AttractionListDto(Long attraction_id,String seoul_attraction_id, String name, String address, BigDecimal lat, BigDecimal lon) {
+    public AttractionListDto(Long attraction_id, String seoul_attraction_id, String name, String address, BigDecimal lat, BigDecimal lon, String kakaomapUrl) {
         this.attraction_id = attraction_id;
         this.seoul_attraction_id = seoul_attraction_id;
         this.name = name;
         this.address = address;
         this.lat = lat;
         this.lon = lon;
+        this.kakaomap_url = kakaomapUrl;
     }
 }
