@@ -31,7 +31,7 @@ public class StreamController {
     }
 
     // 주기적으로 클라이언트에게 push
-    public void sendToClients(List<Map<String, Object>> weatherList, JsonNode trafficList) {
+    public void sendToClients(List<Map<String, Object>> weatherList, JsonNode trafficList, List<Map<String, Object>> parkList) {
         for (SseEmitter emitter : emitters) {
             try {
                 emitter.send(SseEmitter.event()
@@ -40,6 +40,9 @@ public class StreamController {
                 emitter.send(SseEmitter.event()
                         .name("traffic-update")
                         .data(trafficList));
+                emitter.send(SseEmitter.event()
+                        .name("park-update")
+                        .data(parkList));
 
             } catch (IOException e) {
                 emitter.completeWithError(e);

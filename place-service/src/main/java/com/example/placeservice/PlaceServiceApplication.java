@@ -1,5 +1,6 @@
 package com.example.placeservice;
 
+import com.example.placeservice.repository.CafeRepository;
 import com.example.placeservice.repository.RestaurantRepository;
 import com.example.placeservice.repository.CafeRepository;
 import com.example.placeservice.service.RestaurantService;
@@ -9,7 +10,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableAsync
@@ -24,21 +24,19 @@ public class PlaceServiceApplication {
     }
 
     @Bean
-    public CommandLineRunner initData(
-            RestaurantService restaurantService,
-            RestaurantRepository restaurantRepository,
-            CafeService cafeService,
-            CafeRepository cafeRepository
-    ) {
+
+    public CommandLineRunner initData(RestaurantService restaurantService, RestaurantRepository restaurantRepository, CafeService cafeService, CafeRepository cafeRepository) {
         return args -> {
-            if (restaurantRepository.count() > 0) {
-                System.out.println("음식점 데이터가 이미 존재합니다. 건너뜁니다.");
-            } else {
+            // 음식점 데이터 초기화
+            if (restaurantRepository.count() == 0) {
                 System.out.println("음식점 데이터 저장 시작");
                 restaurantService.fetchAndSaveRestaurants();
                 System.out.println("음식점 데이터 저장 완료");
+            } else {
+                System.out.println("음식점 데이터가 이미 존재합니다. 건너뜁니다.");
             }
 
+            // 카페 데이터 초기화
             if (cafeRepository.count() == 0) {
                 System.out.println("카페 데이터 저장 시작");
                 cafeService.processAllAreas();
@@ -46,7 +44,8 @@ public class PlaceServiceApplication {
             } else {
                 System.out.println("카페 데이터가 이미 존재합니다. 건너뜁니다.");
             }
+
+            
         };
     }
-
 }

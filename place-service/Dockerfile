@@ -11,3 +11,5 @@ EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
 
 ARG TOUR_API_KEY
+
+COPY .env .env
