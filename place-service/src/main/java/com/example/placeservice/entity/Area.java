@@ -38,4 +38,6 @@ public class Area {
     @OneToMany(mappedBy = "area", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Attraction> attractions;
+
+
 }

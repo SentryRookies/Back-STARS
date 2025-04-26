@@ -1,5 +1,6 @@
 package com.example.placeservice.controller;
 
+
 import com.example.placeservice.dto.restaurant.RestaurantDetailResponse;
 import com.example.placeservice.dto.restaurant.RestaurantListResponse;
 import com.example.placeservice.service.RestaurantListService;

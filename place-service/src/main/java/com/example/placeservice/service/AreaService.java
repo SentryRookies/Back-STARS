@@ -5,13 +5,16 @@ import com.example.placeservice.entity.Area;
 import com.example.placeservice.repository.AreaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AreaService {
     private final AreaRepository areaRepository;
+
 
     public List<AreaDto> getAreaData() {
         try{

@@ -1,5 +1,6 @@
 package com.example.placeservice.entity;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
