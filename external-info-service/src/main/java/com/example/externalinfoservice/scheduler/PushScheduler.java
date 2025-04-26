@@ -2,6 +2,7 @@ package com.example.externalinfoservice.scheduler;
 
 import com.example.externalinfoservice.controller.StreamController;
 import com.example.externalinfoservice.service.ESRoadService;
+import com.example.externalinfoservice.service.ParkEsService;
 import com.example.externalinfoservice.service.WeatherEsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,6 +14,7 @@ public class PushScheduler {
 
     private final WeatherEsService weatherEsService;
     private final ESRoadService roadService;
+    private final ParkEsService parkEsService;
     private final StreamController streamController;
 
     // 5분마다 날씨 데이터를 SSE 클라이언트에 push
@@ -20,7 +22,8 @@ public class PushScheduler {
     public void pushWeatherToClients() {
         var weatherList = weatherEsService.getAllWeatherFromES();
         var trafficList = roadService.getTrafficData();
-        streamController.sendToClients(weatherList, trafficList);
+        var parkList = parkEsService.getAllParkFromES();
+        streamController.sendToClients(weatherList, trafficList, parkList);
     }
 
 }

@@ -11,14 +11,14 @@ import org.springframework.web.client.RestTemplate;
 import java.io.StringReader;
 
 @Service
-public class ParkService {
+public class ParkServiceOriginal {
 
     @Value("${seoul.api.key}")
     private String apiKey;
 
     private final RestTemplate restTemplate;
 
-    public ParkService(RestTemplate restTemplate) {
+    public ParkServiceOriginal(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
