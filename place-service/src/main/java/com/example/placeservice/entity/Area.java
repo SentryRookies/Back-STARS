@@ -17,7 +17,7 @@ public class Area {
     @Column(name = "area_id")
     private Long areaId;
 
-    @Column(name = "seoul_id", length = 10, nullable = false)
+    @Column(name = "seoul_id", length = 10, nullable = false, unique = true)
     private String seoulId;
 
     @Column(name = "name", length = 50, nullable = false)
