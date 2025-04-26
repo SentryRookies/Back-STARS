@@ -8,6 +8,7 @@ import com.example.placeservice.entity.Area;
 import com.example.placeservice.entity.Attraction;
 import com.example.placeservice.repository.AreaRepository;
 import com.example.placeservice.repository.AttractionRepository;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class AttractionService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final AttractionRepository attractionRepository;
     private final AreaRepository areaRepository;
+    private final AttractionKakaoMapClient attractionKakaoMapClient;
 
     // visitSeoul 관광지 데이터 로드 후 attraction 테이블 저장
     public List<Attraction> fetchDataFromVisitSeoul() {
@@ -52,12 +54,14 @@ public class AttractionService {
             // 3. DTO → Entity로 변환 (매핑)
             List<Attraction> entities = dto.getAttractions().stream()
                 .map(table -> {
+
                     // seoul_attraction_id 중복 체크
                     if (attractionRepository.existsBySeoulAttractionId(table.getId())) return null;
 
                     // 👇: 조건에 따라 Area 객체를 지정
                     Area area = findAreaByCondition(table, areaList);  // 예: 주소나 지역코드 등으로 판단
                     if (area == null) return null;
+
 
                     Attraction attraction = new Attraction();
                     attraction.setSeoulAttractionId(table.getId());
@@ -69,8 +73,24 @@ public class AttractionService {
                     attraction.setHomepageUrl(table.getHomepage());
                     attraction.setCloseDay(table.getCloseDay());
                     attraction.setUseTime(table.getUseTime());
-
                     attraction.setArea(area);
+
+                    // kakaomap_url 추가
+                    String title = table.getTitle();
+                    if (title.length() <= 100){ // 키워드 최대 100글자까지 검색가능
+                        JsonNode kakao_response = attractionKakaoMapClient.searchAttractionByKeyword(title);
+                        if (kakao_response.has("documents")) {
+                            for (JsonNode doc : kakao_response.get("documents")) {
+                                String categoryName = doc.get("category_name").asText();
+                                if (categoryName.contains("여행 > 관광") || categoryName.contains("여행 > 명소")) {
+//                                    System.out.println("🎯 관광 관련 장소: " +table.getTitle()+"는 바로바로 :::"+ doc.get("place_name").asText());
+                                    attraction.setKakaomapUrl(doc.get("place_url").asText());
+                                    break;
+                                }
+                            }
+                        }else{System.out.println("카카오 관광지 검색 결과가 없습니다");}
+                    }else{System.out.println(table.getTitle());}
+
 
                 return attraction;
             })
@@ -104,6 +124,9 @@ public class AttractionService {
         return null;
     }
 
+
+
+
     // attraction 목록 DB 불러오기
     public List<AreaAttractionsDto> getAttractionData() {
         try {
@@ -118,7 +141,8 @@ public class AttractionService {
                                             attraction.getName(),
                                             attraction.getAddress(),
                                             attraction.getLat(),
-                                            attraction.getLon()
+                                            attraction.getLon(),
+                                            attraction.getKakaomapUrl()
                                     )).toList();
 
                             AreaAttractionsDto dto = new AreaAttractionsDto();
@@ -148,7 +172,8 @@ public class AttractionService {
                     attraction.getPhone(),
                     attraction.getHomepageUrl(),
                     attraction.getCloseDay(),
-                    attraction.getUseTime()
+                    attraction.getUseTime(),
+                    attraction.getKakaomapUrl()
             );
 
         } catch (RuntimeException e) {
