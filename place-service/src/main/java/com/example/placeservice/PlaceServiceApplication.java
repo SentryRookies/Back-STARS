@@ -45,7 +45,6 @@ public class PlaceServiceApplication {
                 System.out.println("카페 데이터가 이미 존재합니다. 건너뜁니다.");
             }
 
-            
         };
     }
 }
