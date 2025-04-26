@@ -11,7 +11,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class WeatherEsService {
 
-        
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     // 특정 지역 날씨

@@ -119,7 +119,12 @@ INSERT INTO area (seoul_id, name, name_eng, category, lat, lon) VALUES
 ('POI114', '북창동 먹자골목', 'Bukchang-dong food alley', '발달상권', 37.56181572564952, 126.97747845604616),
 ('POI115', '남대문시장', 'Namdaemun Market', '발달상권', 37.559671004373214, 126.97854410558821),
 <<<<<<< HEAD
+<<<<<<< HEAD
 ('POI116', '익선동', 'Ikseon-dong', '발달상권', 37.5725556, 126.9895286);
 =======
 ('POI116', '익선동', 'Ikseon-dong', '발달상권', 37.5725556, 126.9895286);
 >>>>>>> 1230fbad88e7b4ae62a7080d04646e647a3a6793
+=======
+('POI116', '익선동', 'Ikseon-dong', '발달상권', 37.5725556, 126.9895286)
+ON CONFLICT (seoul_id) DO NOTHING;
+>>>>>>> 7d9e41f58fcc018b3cd8b94bb5aa79ab788ea9b5

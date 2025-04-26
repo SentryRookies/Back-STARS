@@ -1,4 +1,5 @@
-package com.example.placeservice.dto;
+package com.example.placeservice.dto.cafe;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -31,7 +31,7 @@ public class Area {
 =======
     private Long areaId;
 
-    @Column(name = "seoul_id", length = 10, nullable = false)
+    @Column(name = "seoul_id", length = 10, nullable = false, unique = true)
     private String seoulId;
 >>>>>>> 1230fbad88e7b4ae62a7080d04646e647a3a6793
 
@@ -66,5 +66,10 @@ public class Area {
     @OneToMany(mappedBy = "area", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Attraction> attractions;
+<<<<<<< HEAD
 >>>>>>> 1230fbad88e7b4ae62a7080d04646e647a3a6793
+=======
+
+
+>>>>>>> 7d9e41f58fcc018b3cd8b94bb5aa79ab788ea9b5
 }

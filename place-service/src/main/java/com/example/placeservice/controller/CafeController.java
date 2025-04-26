@@ -1,55 +1,96 @@
 package com.example.placeservice.controller;
 
-import com.example.placeservice.dto.CafeDto;
+import com.example.placeservice.dto.cafe.CafeDto;
+import com.example.placeservice.entity.Cafe;
 import com.example.placeservice.service.CafeService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import com.example.placeservice.repository.CafeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/cafes")
+@RequestMapping("/main")
 @RequiredArgsConstructor
 public class CafeController {
 
+    private final CafeRepository cafeRepository;
     private final CafeService cafeService;
 
     /**
-     * 모든 장소의 주변 카페 데이터 처리
+     * 전체 카페 목록 조회
      */
-    @PostMapping("/process-all")
-    public ResponseEntity<Map<String, Object>> processAllAreas() {
-        Map<String, Object> response = new HashMap<>();
+    @GetMapping("/cafe/list")
+    public ResponseEntity<List<Map<String, Object>>> getCafeList() {
+        log.info("카페 목록 조회");
+        List<Cafe> cafes = cafeRepository.findAll();
 
-        try {
-            cafeService.processAllAreas();
+        // ID를 기준으로 정렬
+        List<Map<String, Object>> cafeList = cafes.stream()
+                .sorted(Comparator.comparing(Cafe::getId))
+                .map(cafe -> {
+                    Map<String, Object> cafeMap = new LinkedHashMap<>();
+                    cafeMap.put("id", cafe.getId().toString());
+                    cafeMap.put("name", cafe.getName());
+                    cafeMap.put("x", cafe.getLon().toString());
+                    cafeMap.put("y", cafe.getLat().toString());
+                    return cafeMap;
+                })
+                .collect(Collectors.toList());
 
-            response.put("success", true);
-            response.put("message", "모든 장소의 주변 카페 정보 처리가 시작되었습니다.");
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("처리 중 오류 발생: {}", e.getMessage(), e);
-
-            response.put("success", false);
-            response.put("message", "오류 발생: " + e.getMessage());
-
-            return ResponseEntity.badRequest().body(response);
-        }
+        return ResponseEntity.ok(cafeList);
     }
 
     /**
-     * 모든 카페 목록 조회
+     * 지역 ID를 기준으로 카페 목록 조회
      */
-    @GetMapping
-    public ResponseEntity<List<Map<String, Object>>> getAllCafes() {
-        log.info("모든 카페 목록 조회");
-        List<Map<String, Object>> cafes = cafeService.getAllCafesWithLimitedInfo();
-        return ResponseEntity.ok(cafes);
+    @GetMapping("/cafe/list/{areaId}")
+    public ResponseEntity<List<CafeDto>> getCafesByAreaId(@PathVariable Long areaId) {
+        log.info("지역 ID {}의 카페 목록 조회", areaId);
+        List<CafeDto> cafes = cafeService.getCafesByAreaId(areaId);
+
+        // ID 기준으로 정렬
+        List<CafeDto> sortedCafes = cafes.stream()
+                .sorted(Comparator.comparing(CafeDto::getId))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(sortedCafes);
+    }
+
+    @GetMapping("/info/cafe/{cafeId}")
+    public ResponseEntity<Map<String, Object>> getCafeInfo(@PathVariable Long cafeId) {
+        log.info("카페 ID {}의 상세 정보 조회", cafeId);
+
+        // 카페 ID로 상세 정보 조회
+        Optional<Cafe> cafeOptional = cafeRepository.findById(cafeId);
+
+        if (cafeOptional.isPresent()) {
+            Cafe cafe = cafeOptional.get();
+            Map<String, Object> cafeInfo = new LinkedHashMap<>();
+            cafeInfo.put("id", cafe.getId());
+            cafeInfo.put("name", cafe.getName());
+            cafeInfo.put("address", cafe.getAddress());
+            cafeInfo.put("phone", cafe.getPhone());
+            cafeInfo.put("category_code", cafe.getCategoryCode());
+            cafeInfo.put("kakaomap_url", cafe.getKakaomapUrl());
+            cafeInfo.put("lat", cafe.getLat());
+            cafeInfo.put("lon", cafe.getLon());
+
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("data", cafeInfo);
+
+            return ResponseEntity.ok(response);
+        }
+
+        return ResponseEntity.notFound().build();
     }
 }

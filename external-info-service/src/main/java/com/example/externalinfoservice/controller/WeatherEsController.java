@@ -14,7 +14,7 @@ import java.util.Map;
 @RequestMapping("/main/info/weather")
 public class WeatherEsController {
 
-    
+
     private final WeatherEsService weatherEsService;
 
     @GetMapping(value = {"/{placeCode}", ""}, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -19,7 +19,7 @@ public class AttractionController {
     private final AttractionService attractionService;
 
     // 관광지 목록 조회
-    @GetMapping("/attraction")
+    @GetMapping("/attraction/list")
     public List<AreaAttractionsDto> getAttraction() {
         return attractionService.getAttractionData();
     }
