@@ -4,11 +4,8 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-<<<<<<< HEAD
-=======
 .env
 .dockerignore
->>>>>>> 1230fbad88e7b4ae62a7080d04646e647a3a6793
 
 ### STS ###
 .apt_generated
@@ -40,8 +37,3 @@ out/
 
 ### VS Code ###
 .vscode/
-<<<<<<< HEAD
-=======
-
-.env
->>>>>>> 1230fbad88e7b4ae62a7080d04646e647a3a6793
