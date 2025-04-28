@@ -1,14 +1,7 @@
 package com.example.placeservice;
 
-import com.example.placeservice.repository.CafeRepository;
-import com.example.placeservice.repository.RestaurantRepository;
-import com.example.placeservice.repository.CafeRepository;
-import com.example.placeservice.service.RestaurantService;
-import com.example.placeservice.service.CafeService;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
@@ -23,6 +16,7 @@ public class PlaceServiceApplication {
         SpringApplication.run(PlaceServiceApplication.class, args);
     }
 
+    /*
     @Bean
 
     public CommandLineRunner initData(RestaurantService restaurantService, RestaurantRepository restaurantRepository, CafeService cafeService, CafeRepository cafeRepository) {
@@ -45,7 +39,8 @@ public class PlaceServiceApplication {
                 System.out.println("카페 데이터가 이미 존재합니다. 건너뜁니다.");
             }
 
-            
+
         };
     }
+    */
 }
