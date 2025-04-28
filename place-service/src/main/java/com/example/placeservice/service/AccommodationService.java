@@ -164,9 +164,9 @@ public class AccommodationService {
             accommodation.setType(parts[2]);
         }
         else {
-            accommodation.setType(null);
+            accommodation.setType("구분없음");
         }
-        accommodation.setKakaoUrl(doc.getPlaceUrl());
+        accommodation.setKakaomapUrl(doc.getPlaceUrl());
 
         return accommodation;
     }
@@ -178,7 +178,30 @@ public class AccommodationService {
             AccommodationDto accommodationDto = AccommodationDto.fromEntity(accommodation);
             accommodationDtos.add(accommodationDto);
         }
+        return accommodationDtos;
+    }
 
+    public AccommodationDto getAccommodationById(Long id) {
+        return AccommodationDto.fromEntity(accommodationRepository.findById(id).get());
+    }
+
+    public List<AccommodationDto> getAccommodationByGu(String gu) {
+        List<Accommodation> accommodations = accommodationRepository.findByGu(gu);
+        List<AccommodationDto> accommodationDtos = new ArrayList<>();
+        for (Accommodation accommodation : accommodations) {
+            AccommodationDto accommodationDto = AccommodationDto.fromEntity(accommodation);
+            accommodationDtos.add(accommodationDto);
+        }
+        return accommodationDtos;
+    }
+
+    public List<AccommodationDto> getAccommodationByType(String type) {
+        List<Accommodation> accommodations = accommodationRepository.findByType(type);
+        List<AccommodationDto> accommodationDtos = new ArrayList<>();
+        for (Accommodation accommodation : accommodations) {
+            AccommodationDto accommodationDto = AccommodationDto.fromEntity(accommodation);
+            accommodationDtos.add(accommodationDto);
+        }
         return accommodationDtos;
     }
 }

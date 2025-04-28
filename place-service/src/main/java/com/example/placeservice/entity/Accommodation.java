@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 @Entity
 public class Accommodation {
     @Id
+    @Column(name = "accommodation_id")
     private Long accommodationId;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -24,5 +25,6 @@ public class Accommodation {
     private String phone;
     private String gu;
     private String type;
-    private String kakaoUrl;
+    @Column(name = "kakaomap_url")
+    private String kakaomapUrl;
 }

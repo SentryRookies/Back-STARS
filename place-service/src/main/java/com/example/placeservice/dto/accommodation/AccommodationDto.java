@@ -53,7 +53,7 @@ public class AccommodationDto {
                 entity.getPhone(),
                 entity.getGu(),
                 entity.getType(),
-                entity.getKakaoUrl()
+                entity.getKakaomapUrl()
         );
     }
 }
