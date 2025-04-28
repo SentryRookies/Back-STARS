@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id", nullable = false)
@@ -22,6 +23,7 @@ public class Member {
 
     @Column(name = "user_id", nullable = false, unique = true)
     private String userId;
+
 
     @Column(nullable = false)
     private String password;

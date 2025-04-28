@@ -2,7 +2,7 @@ package com.example.userservice.service;
 
 import com.example.userservice.dto.AuthDto;
 import com.example.userservice.entity.Member;
-import com.example.userservice.repository.MemberRepository;
+import com.example.userservice.repository.jpa.MemberRepository;
 import com.example.userservice.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,20 +22,20 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
 
+    // 로그인
     public AuthDto.LoginResponse login(AuthDto.LoginRequest request) {
-        // 디버깅 로그 추가
         System.out.println("로그인 시도: " + request.getUser_id());
 
-        // 사용자 조회 테스트 - userId로 조회하도록 변경
-        Optional<Member> memberOptional = memberRepository.findByUserId(request.getUser_id());
-        if (memberOptional.isEmpty()) {
-            System.out.println("사용자를 찾을 수 없음: " + request.getUser_id());
-            throw new RuntimeException("User not found");
-        } else {
-            System.out.println("사용자 찾음: ID=" + memberOptional.get().getMemberId() + ", UserID=" + memberOptional.get().getUserId());
-        }
+        // 1. 사용자 조회 (userId로 조회)
+        Member member = memberRepository.findByUserId(request.getUser_id())
+                .orElseThrow(() -> {
+                    System.out.println("사용자를 찾을 수 없음: " + request.getUser_id());
+                    return new RuntimeException("User not found");
+                });
 
-        // 인증 시도 - userId 사용
+        System.out.println("사용자 찾음: ID=" + member.getMemberId() + ", UserID=" + member.getUserId());
+
+        // 2. 인증 시도
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -50,29 +49,34 @@ public class AuthService {
             throw e;
         }
 
-        Member member = memberOptional.get();
-
-        // JWT 토큰 생성 - userId 사용
+        // 3. JWT 토큰 발급
         UserDetails userDetails = new User(member.getUserId(), member.getPassword(), Collections.emptyList());
         String accessToken = jwtUtil.generateToken(userDetails);
         String refreshToken = jwtUtil.generateRefreshToken(userDetails);
 
-        // 리프레시 토큰 저장
+        // 4. Refresh Token Redis 저장
         tokenService.saveRefreshToken(member.getMemberId(), refreshToken);
 
+        // 5. 결과 반환
         return AuthDto.LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .member_id(String.valueOf(member.getMemberId()))  // 내부 ID 추가
-                .user_id(member.getUserId())  // 로그인 ID 추가
+                .member_id(String.valueOf(member.getMemberId()))
+                .user_id(member.getUserId())
                 .nickname(member.getNickname())
                 .build();
     }
 
+    // 로그아웃
     public AuthDto.LogoutResponse logout(AuthDto.LogoutRequest request) {
+        // 1. 사용자의 Redis Refresh Token 삭제
+        Long memberId = Long.parseLong(request.getMemberId());
+        tokenService.deleteRefreshToken(memberId);
+
+        // 2. 성공 리턴
         return AuthDto.LogoutResponse.builder()
                 .success(true)
-                .message("Logout successful")
+                .message("로그아웃 완료: RefreshToken 삭제 완료")
                 .build();
     }
 }

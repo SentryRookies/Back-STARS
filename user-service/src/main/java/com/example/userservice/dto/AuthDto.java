@@ -33,7 +33,11 @@ public class AuthDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class LogoutRequest {
-        private String accessToken;
+        private String memberId;
+
+        public String getMemberId() {
+            return memberId;
+        }
     }
 
     @Data

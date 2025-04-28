@@ -2,7 +2,7 @@ package com.example.userservice.service;
 
 import com.example.userservice.dto.MemberSign;
 import com.example.userservice.entity.Member;
-import com.example.userservice.repository.MemberRepository;
+import com.example.userservice.repository.jpa.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

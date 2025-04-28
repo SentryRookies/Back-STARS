@@ -36,4 +36,10 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+    //비밀번호 암호화 적용
+//    @Bean
+//    public BCryptPasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 }

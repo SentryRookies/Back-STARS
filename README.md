@@ -1,41 +1,24 @@
 # Back-STARS
 SK쉴더스 루키즈 최종프로젝트 백엔드 리포지토리 입니다.
 
-<<<<<<< HEAD
-
-#### 로컬에서 postgreSQL 테스트
-=======
 <details>
 <summary>로컬에서 postgreSQL 테스트</summary>
 
->>>>>>> 1230fbad88e7b4ae62a7080d04646e647a3a6793
 1. Docker 이미지 다운로드 및 컨테이너 실행
     `docker pull postgres:latest`
 
 2. PostgreSQL 컨테이너 실행
-<<<<<<< HEAD
-    `docker run --name my-postgres -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=star -p 5432:5432 -d postgres:latest`
-=======
     `docker run --name my-postgres -e POSTGRES_USER=root -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=stars_db -p 5432:5432 -d postgres:latest`
->>>>>>> 1230fbad88e7b4ae62a7080d04646e647a3a6793
 
 3. Spring Boot 애플리케이션 설정
     - 이제, Spring Boot 애플리케이션에서 PostgreSQL과 연결 설정. application.properties에 PostgreSQL 데이터베이스 설정 추가
     ```
-<<<<<<< HEAD
-    spring.datasource.url=jdbc:postgresql://localhost:5432/star
-    spring.datasource.username=admin
-=======
     spring.datasource.url=jdbc:postgresql://localhost:5432/stars_db
     spring.datasource.username=root
->>>>>>> 1230fbad88e7b4ae62a7080d04646e647a3a6793
     spring.datasource.password=admin
     spring.datasource.driver-class-name=org.postgresql.Driver
     spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
     spring.jpa.hibernate.ddl-auto=update
-<<<<<<< HEAD
-    ```
-=======
     ```
 </details>
 
@@ -51,4 +34,7 @@ SK쉴더스 루키즈 최종프로젝트 백엔드 리포지토리 입니다.
 + select * from area; 로 결과를 본 후, q 를 눌러야 다시 명령창으로 돌아갈 수 있음
 
 </details>
->>>>>>> 1230fbad88e7b4ae62a7080d04646e647a3a6793
+
+<summary>토큰 redis에 저장</summary>
+- 
+

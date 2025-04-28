@@ -1,4 +1,4 @@
-package com.example.userservice.repository;
+package com.example.userservice.repository.redis;
 
 import com.example.userservice.entity.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;

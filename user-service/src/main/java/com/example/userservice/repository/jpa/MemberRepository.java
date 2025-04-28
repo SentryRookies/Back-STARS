@@ -1,4 +1,4 @@
-package com.example.userservice.repository;
+package com.example.userservice.repository.jpa;
 
 import com.example.userservice.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
