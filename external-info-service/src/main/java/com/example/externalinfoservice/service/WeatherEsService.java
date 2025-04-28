@@ -18,7 +18,7 @@ public class WeatherEsService {
     public Map<String, Object> getWeatherFromES(String area) {
         String url = "http://elasticsearch.seoultravel.life/seoul_citydata_weather_20250424/_search";
 
-        Map<String, Object> term = Map.of("weather.area_nm.keyword", area);
+        Map<String, Object> term = Map.of("weather.area_nm", area);
         Map<String, Object> query = Map.of("term", term);
         Map<String, Object> body = Map.of("size", 100, "query", query);
 
@@ -45,7 +45,7 @@ public class WeatherEsService {
                 "size", 0,
                 "aggs", Map.of(
                         "by_area", Map.of(
-                                "terms", Map.of("field", "weather.area_nm.keyword", "size", 1000),
+                                "terms", Map.of("field", "weather.area_nm", "size", 1000),
                                 "aggs", Map.of(
                                         "latest_hit", Map.of(
                                                 "top_hits", Map.of(
