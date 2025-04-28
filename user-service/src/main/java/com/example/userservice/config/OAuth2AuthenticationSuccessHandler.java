@@ -1,4 +1,4 @@
-package com.example.userservice.security.oauth;
+package com.example.userservice.config;
 
 import com.example.userservice.security.JwtUtil;
 import com.example.userservice.service.TokenService;
