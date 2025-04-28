@@ -9,7 +9,7 @@ import lombok.Setter;
 public class MemberSign {
     private Long memberId;
     private String password;
-    private String nickName;
+    private String nickname;
     private String createTime;
 
     public Long getMemberId() {
@@ -21,6 +21,6 @@ public class MemberSign {
     }
 
     public String getNickname() {
-        return nickName;
+        return nickname;
     }
 }

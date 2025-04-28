@@ -47,6 +47,7 @@ dependencies {
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 }
 
 tasks.named('bootBuildImage') {
