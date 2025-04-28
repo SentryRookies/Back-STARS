@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class AdminLogin {
-    private String memberId;
+    private Long memberId;
     private String password;
 }

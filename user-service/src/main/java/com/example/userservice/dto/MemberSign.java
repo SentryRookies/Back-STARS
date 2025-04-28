@@ -7,14 +7,14 @@ import lombok.Setter;
 @Setter
 
 public class MemberSign {
-    private Long memberId;
+    //private Long memberId;
     private String password;
     private String nickname;
     private String createTime;
 
-    public Long getMemberId() {
-        return memberId;
-    }
+//    public Long getMemberId() {
+//        return memberId;
+//    }
 
     public String getPassword() {
         return password;

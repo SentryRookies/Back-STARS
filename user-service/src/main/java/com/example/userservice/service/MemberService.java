@@ -16,9 +16,9 @@ public class MemberService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     public Member registerAdmin(MemberSign dto) {
-        if (memberRepository.existsByMemberId(dto.getMemberId())) {
-            throw new IllegalStateException("이미 존재하는 ID입니다.");
-        }
+//        if (memberRepository.existsByMemberId(dto.getMemberId())) {
+//            throw new IllegalStateException("이미 존재하는 ID입니다.");
+//        }
         if (memberRepository.existsByNickname(dto.getNickname())) {
             throw new IllegalStateException("이미 존재하는 닉네임입니다.");
         }
