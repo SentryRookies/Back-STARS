@@ -1,7 +1,6 @@
 package com.example.placeservice.controller;
 
-import com.example.placeservice.dto.accommodation.AccommodationResponse;
-import com.example.placeservice.service.AccommodationSaveService;
+import com.example.placeservice.dto.accommodation.AccommodationDto;
 import com.example.placeservice.service.AccommodationService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,17 +12,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/main/accommodation")
 public class AccommodationController {
-    private final AccommodationService accommodationService;
-    private final AccommodationSaveService accommodationSaveService;
+    private final AccommodationService accommodationParseService;
 
     // 생성자 주입
-    public AccommodationController(AccommodationService accommodationService, AccommodationSaveService accommodationSaveService) {
-        this.accommodationService = accommodationService;
-        this.accommodationSaveService = accommodationSaveService;
+    public AccommodationController(AccommodationService accommodationParseService) {
+        this.accommodationParseService = accommodationParseService;
     }
 
     @GetMapping("/list")
-    public List<AccommodationResponse.Body.Items.Item> getAccommodations() throws IOException {
-        return accommodationService.getAllAccommodationData();
+    public List<AccommodationDto> getAccommodations() throws IOException {
+        return accommodationParseService.showAccommodations();
     }
 }
