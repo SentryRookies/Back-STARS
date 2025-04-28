@@ -8,7 +8,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,7 +34,7 @@ public class ESRoadService {
                     "  \"aggs\": {\n" +
                     "    \"by_area\": {\n" +
                     "      \"terms\": {\n" +
-                    "        \"field\": \"road_traffic.area_nm.keyword\",\n" +
+                    "        \"field\": \"road_traffic.area_nm\",\n" +
                     "        \"size\": 1000  // area_nm 종류 수만큼 충분히\n" +
                     "      },\n" +
                     "      \"aggs\": {\n" +

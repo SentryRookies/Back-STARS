@@ -20,7 +20,7 @@ public class ParkEsService {
         String url = "http://elasticsearch.seoultravel.life/seoul_citydata_parking_20250424/_search";
         log.info("Requesting park info for areaId: {}", areaId);
 
-        Map<String, Object> term = Map.of("parking.area_nm.keyword", areaId);
+        Map<String, Object> term = Map.of("parking.area_nm", areaId);
         Map<String, Object> query = Map.of("term", term);
         Map<String, Object> body = Map.of("size", 100, "query", query);
 
@@ -59,7 +59,7 @@ public class ParkEsService {
                 "size", 0,
                 "aggs", Map.of(
                         "by_area", Map.of(
-                                "terms", Map.of("field", "parking.area_nm.keyword", "size", 1000),
+                                "terms", Map.of("field", "parking.area_nm", "size", 1000),
                                 "aggs", Map.of(
                                         "latest_hit", Map.of(
                                                 "top_hits", Map.of(
