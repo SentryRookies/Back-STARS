@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-INSERT INTO area (seoul_id, name, name_eng, category, x, y) VALUES
-=======
 INSERT INTO area (seoul_id, name, name_eng, category, lat, lon) VALUES
->>>>>>> 1230fbad88e7b4ae62a7080d04646e647a3a6793
 ('POI001', '강남 MICE 관광특구', 'Gangnam MICE Special Tourist Zone', '관광특구', 37.5112843816696, 127.06005155384705),
 ('POI002', '동대문 관광특구', 'Dongdaemun Fashion Town Special Tourist Zone', '관광특구', 37.567214101532834, 127.00755049391576),
 ('POI003', '명동 관광특구', 'Myeong-dong Namdaemun Bukchang-dong Da-dong Mugyo-dong Special Tourist Zone', '관광특구', 37.56414013472864, 126.98288393316864),
@@ -118,13 +114,5 @@ INSERT INTO area (seoul_id, name, name_eng, category, lat, lon) VALUES
 ('POI113', '청와대', 'Cheongwadae', '공원', 37.58508367407448, 126.97751023085264),
 ('POI114', '북창동 먹자골목', 'Bukchang-dong food alley', '발달상권', 37.56181572564952, 126.97747845604616),
 ('POI115', '남대문시장', 'Namdaemun Market', '발달상권', 37.559671004373214, 126.97854410558821),
-<<<<<<< HEAD
-<<<<<<< HEAD
-('POI116', '익선동', 'Ikseon-dong', '발달상권', 37.5725556, 126.9895286);
-=======
-('POI116', '익선동', 'Ikseon-dong', '발달상권', 37.5725556, 126.9895286);
->>>>>>> 1230fbad88e7b4ae62a7080d04646e647a3a6793
-=======
 ('POI116', '익선동', 'Ikseon-dong', '발달상권', 37.5725556, 126.9895286)
 ON CONFLICT (seoul_id) DO NOTHING;
->>>>>>> 7d9e41f58fcc018b3cd8b94bb5aa79ab788ea9b5

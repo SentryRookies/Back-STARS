@@ -4,4 +4,5 @@ import com.example.placeservice.entity.Accommodation;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AccommodationRepository extends JpaRepository<Accommodation, Long> {
+    boolean existsByAccommodationId(Long accommodationId);
 }
