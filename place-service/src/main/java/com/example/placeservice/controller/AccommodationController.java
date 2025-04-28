@@ -32,7 +32,7 @@ public class AccommodationController {
         return accommodationService.getAccommodationById(accommodation_id);
     }
 
-    @GetMapping("gu/{gu}")
+    @GetMapping("/gu/{gu}")
     public List<AccommodationDto> getAccommodationByGu(@PathVariable String gu) throws IOException {
         return accommodationService.getAccommodationByGu(gu);
     }
