@@ -24,8 +24,6 @@ repositories {
 }
 
 dependencies {
-    // 비동기 처리를 위한 webClient 추가
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
     // JAXB (XML 파싱)
     implementation 'javax.xml.bind:jaxb-api:2.3.1'

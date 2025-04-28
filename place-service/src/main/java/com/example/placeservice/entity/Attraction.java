@@ -28,7 +28,6 @@ public class Attraction {
     @Column(name = "lon", precision = 10, scale = 6, nullable = false)
     private BigDecimal lon; // 경도
 
-
     @Column(name="phone", length = 30)
     private String phone;
 
@@ -40,6 +39,9 @@ public class Attraction {
 
     @Column(name="use_time", columnDefinition = "TEXT")
     private String useTime;
+
+    @Column(name="kakaomap_url",columnDefinition = "TEXT")
+    private String kakaomapUrl;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "area_id", nullable = false)
