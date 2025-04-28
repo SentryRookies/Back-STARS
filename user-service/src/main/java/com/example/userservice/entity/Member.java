@@ -2,22 +2,26 @@ package com.example.userservice.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor // JPA용 기본 생성자
-@AllArgsConstructor // 모든 필드로 객체를 편하게 생성
 @Table(name = "member")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Member {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id",nullable = false)
+    @Column(name = "member_id", nullable = false)
     private Long memberId;
+
+    @Column(name = "user_id", nullable = false, unique = true)
+    private String userId;
 
     @Column(nullable = false)
     private String password;
@@ -25,8 +29,9 @@ public class Member {
     @Column
     private String nickname;
 
-    @Column(name = "create_at")
-    private String createAt;
+    @Column(name = "birth_year")
+    private Short birthYear;
 
-
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }
