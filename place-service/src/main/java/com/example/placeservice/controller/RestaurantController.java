@@ -1,7 +1,8 @@
 package com.example.placeservice.controller;
 
-import com.example.placeservice.dto.RestaurantDetailResponse;
-import com.example.placeservice.dto.RestaurantListResponse;
+
+import com.example.placeservice.dto.restaurant.RestaurantDetailResponse;
+import com.example.placeservice.dto.restaurant.RestaurantListResponse;
 import com.example.placeservice.service.RestaurantListService;
 import com.example.placeservice.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
