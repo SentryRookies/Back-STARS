@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,10 +24,6 @@ public class MemberService {
         return registerMember(dto, "ROLE_USER");
     }
 
-    // 관리자 회원가입
-    public Member registerAdmin(MemberSign dto) {
-        return registerMember(dto, "ROLE_ADMIN");
-    }
 
     // 공통 회원가입 로직
     private Member registerMember(MemberSign dto, String defaultRole) {
@@ -122,5 +120,34 @@ public class MemberService {
                 .role(updatedMember.getRole())
                 .created_at(updatedMember.getCreatedAt())
                 .build();
+    }
+    @Transactional
+    public void deleteMember(String userId) {
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        memberRepository.delete(member);
+    }
+
+
+
+    /**
+     * 모든 회원 목록 조회
+     * @return 모든 회원 정보 목록
+     */
+    public List<MemberDto.MemberResponse> getAllMembers() {
+        List<Member> members = memberRepository.findAll();
+
+        return members.stream()
+                .map(member -> MemberDto.MemberResponse.builder()
+                        .user_id(member.getUserId())
+                        .nickname(member.getNickname())
+                        .birth_year(member.getBirthYear())
+                        .mbti(member.getMbti())
+                        .gender(member.getGender())
+                        .role(member.getRole())
+                        .created_at(member.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
 }
