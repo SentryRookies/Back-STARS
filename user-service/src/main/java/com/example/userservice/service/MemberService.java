@@ -22,10 +22,6 @@ public class MemberService {
         return registerMember(dto, "ROLE_USER");
     }
 
-    // 관리자 회원가입
-    public Member registerAdmin(MemberSign dto) {
-        return registerMember(dto, "ROLE_ADMIN");
-    }
 
     // 공통 회원가입 로직
     private Member registerMember(MemberSign dto, String defaultRole) {
