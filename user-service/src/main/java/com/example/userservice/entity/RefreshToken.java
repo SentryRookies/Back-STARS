@@ -14,6 +14,6 @@ import org.springframework.data.redis.core.RedisHash;
 @RedisHash(value = "refresh_token", timeToLive = 60 * 60 * 24 * 7) // 7일 저장
 public class RefreshToken {
     @Id
-    private String id;   // memberId를 String으로 저장
-    private String refreshToken;
+    private String id;   // memberId를 String으로 저장 (Redis 키)
+    private String refreshToken; // 리프레시 토큰 값
 }
