@@ -20,7 +20,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-public class AdminSignup {
+public class SignupController {
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
     private final TokenService tokenService;
