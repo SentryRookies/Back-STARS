@@ -11,4 +11,6 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
     List<Accommodation> findByGu(String gu);
 
     List<Accommodation> findByType(String type);
+    List<Accommodation> findByNameContainingIgnoreCase(String keyword);
+    List<Accommodation> findByAddressContainingIgnoreCase(String keyword);
 }

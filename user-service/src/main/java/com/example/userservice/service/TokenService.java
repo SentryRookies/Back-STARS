@@ -6,6 +6,7 @@ import com.example.userservice.repository.jpa.MemberRepository;
 import com.example.userservice.repository.redis.RefreshTokenRepository;
 import com.example.userservice.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,11 @@ public class TokenService {
     private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    /**
+     * 리프레시 토큰을 사용하여 새 액세스 토큰 생성
+     * @param refreshToken 리프레시 토큰
+     * @return 새 액세스 토큰
+     */
     public String createNewAccessToken(String refreshToken) {
         // 리프레시 토큰 유효성 검사
         if (!jwtUtil.validateToken(refreshToken)) {
@@ -38,11 +44,24 @@ public class TokenService {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
+        // 사용자 권한 설정
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(member.getRole());
+
         // 새 액세스 토큰 생성
-        UserDetails userDetails = new User(member.getUserId(), member.getPassword(), Collections.emptyList());
+        UserDetails userDetails = new User(
+                member.getUserId(),
+                member.getPassword(),
+                Collections.singletonList(authority)
+        );
+
         return jwtUtil.generateToken(userDetails);
     }
 
+    /**
+     * 리프레시 토큰 저장
+     * @param memberId 회원 ID
+     * @param refreshToken 리프레시 토큰
+     */
     public void saveRefreshToken(Long memberId, String refreshToken) {
         RefreshToken token = RefreshToken.builder()
                 .id(String.valueOf(memberId))   // memberId를 String으로 변환해서 저장
@@ -52,7 +71,12 @@ public class TokenService {
         refreshTokenRepository.save(token);
     }
 
+    /**
+     * 리프레시 토큰 삭제
+     * @param memberId 회원 ID
+     */
     public void deleteRefreshToken(Long memberId) {
-        refreshTokenRepository.deleteById(Long.valueOf(String.valueOf(memberId)));  // 여기서도 String 변환 필요!
+        // memberId를 String으로 변환하여 deleteById 호출
+        refreshTokenRepository.deleteById(String.valueOf(memberId));
     }
 }
