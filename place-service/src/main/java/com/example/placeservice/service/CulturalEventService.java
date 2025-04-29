@@ -3,24 +3,27 @@ package com.example.placeservice.service;
 import com.example.placeservice.dto.culturalevent.CulturalEventItem;
 import com.example.placeservice.entity.Area;
 import com.example.placeservice.entity.CulturalEvent;
-import com.example.placeservice.external.CulturalEventClient;
 import com.example.placeservice.repository.AreaRepository;
 import com.example.placeservice.repository.CulturalEventRepository;
 import com.example.placeservice.util.GeoUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CulturalEventService {
 
-    private final CulturalEventClient culturalEventClient;
     private final EventParserService eventParserService;
     private final CulturalEventRepository culturalEventRepository;
     private final AreaRepository areaRepository; // 🔹 추가
+
+    private final RestTemplate restTemplate;
 
     @Transactional
     public void fetchAndSaveAllEvents() {
@@ -29,11 +32,22 @@ public class CulturalEventService {
             int startIndex = ranges[i];
             int endIndex = startIndex + 999;
 
-            String jsonData = culturalEventClient.fetchEventData(startIndex, endIndex);
+            String jsonData = fetchEventData(startIndex, endIndex);
             List<CulturalEventItem> eventItems = eventParserService.parse(jsonData);
+            
+            // 행사 종료일이 오늘 이후 또는 오늘인 것만 추가
+            List<CulturalEventItem> filteredList = new ArrayList<>();
+            for (CulturalEventItem item : eventItems) {
+                String endDateStr = String.valueOf(item.getEndDate());
+                LocalDate endDate = LocalDate.parse(endDateStr.substring(0, 10));
+
+                if (!endDate.isBefore(LocalDate.now())) {
+                    filteredList.add(item);
+                }
+            }
 
             if (!eventItems.isEmpty()) {
-                saveEvents(eventItems);
+                saveEvents(filteredList);
             }
         }
     }
@@ -69,7 +83,11 @@ public class CulturalEventService {
                 nearestArea = area;
             }
         }
-
         return nearestArea;
+    }
+
+    private String fetchEventData(int startIndex, int endIndex) {
+        String url = String.format("http://openapi.seoul.go.kr:8088/7669764c417069613736734567476c/json/culturalEventInfo/%d/%d/", startIndex, endIndex);
+        return restTemplate.getForObject(url, String.class);
     }
 }

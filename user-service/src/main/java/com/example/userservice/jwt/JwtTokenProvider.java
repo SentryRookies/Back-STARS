@@ -28,24 +28,24 @@ public class JwtTokenProvider {
         this.secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    public String generateAccessToken(String nickname) {
+    public String generateAccessToken(String userId) {  // nickname 대신 userId 사용
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + 1000 * 60 * 30); // 30분
 
         return Jwts.builder()
-                .setSubject(nickname)
+                .setSubject(userId)  // userId로 변경
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
     }
 
-    public String generateRefreshToken(String nickname) {
+    public String generateRefreshToken(String userId) {  // nickname 대신 userId 사용
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + 1000L * 60 * 60 * 24 * 7); // 7일
 
         return Jwts.builder()
-                .setSubject(nickname)
+                .setSubject(userId)  // userId로 변경
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(secretKey, SignatureAlgorithm.HS512)

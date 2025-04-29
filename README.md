@@ -1,6 +1,11 @@
 # Back-STARS
 SK쉴더스 루키즈 최종프로젝트 백엔드 리포지토리 입니다.
 
+Gateway :    port 8080<br>
+congestion : port 8081<br>
+place :      port 8082<br>
+user :       port 8083
+
 <details>
 <summary>로컬에서 postgreSQL 테스트</summary>
 
@@ -34,3 +39,7 @@ SK쉴더스 루키즈 최종프로젝트 백엔드 리포지토리 입니다.
 + select * from area; 로 결과를 본 후, q 를 눌러야 다시 명령창으로 돌아갈 수 있음
 
 </details>
+
+<summary>토큰 redis에 저장</summary>
+- 
+
