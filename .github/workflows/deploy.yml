@@ -54,6 +54,19 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: gateway 빌드
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          cd gateway
+          echo "${{ secrets.BACKEND_ENV}}" > .env
+          gradle bootJar -x test
+          docker build -t $ECR_REGISTRY/gateway:$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/gateway:$IMAGE_TAG $ECR_REGISTRY/gateway:latest
+
+          docker push $ECR_REGISTRY/gateway:$IMAGE_TAG    
+          docker push $ECR_REGISTRY/gateway:latest
+
       - name: place-service 빌드
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -101,11 +114,14 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          kubectl set image deployment/external-info-service external-info-service=$ECR_REGISTRY/external-info-service:$IMAGE_TAG
+          kubectl set image deployment/external-info-service external-info-service=$ECR_REGISTRY/external-info-service:latest
           kubectl rollout status deployment/external-info-service
           
-          kubectl set image deployment/place-service place-service=$ECR_REGISTRY/place-service:$IMAGE_TAG
+          kubectl set image deployment/place-service place-service=$ECR_REGISTRY/place-service:latest
           kubectl rollout status deployment/place-service
           
-          kubectl set image deployment/congestion-service congestion-service=$ECR_REGISTRY/congestion-service:$IMAGE_TAG
+          kubectl set image deployment/congestion-service congestion-service=$ECR_REGISTRY/congestion-service:latest
           kubectl rollout status deployment/congestion-service
+          
+          kubectl set image deployment/gateway gateway=$ECR_REGISTRY/gateway:latest
+          kubectl rollout status deployment/gateway
