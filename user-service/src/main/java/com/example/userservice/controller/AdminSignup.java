@@ -77,6 +77,18 @@ public class AdminSignup {
         }
     }
 
+    //회원탈퇴
+    @DeleteMapping("/signout/{userId}")
+    public ResponseEntity<String> signout(@PathVariable String userId) {
+        try {
+            memberService.deleteMember(userId);
+            return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("회원 탈퇴 실패: " + e.getMessage());
+        }
+    }
+
+
     /**
      * 관리자 회원가입 API
      * @param dto 관리자 회원가입 정보

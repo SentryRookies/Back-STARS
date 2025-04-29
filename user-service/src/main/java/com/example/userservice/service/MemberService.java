@@ -123,4 +123,13 @@ public class MemberService {
                 .created_at(updatedMember.getCreatedAt())
                 .build();
     }
+    @Transactional
+    public void deleteMember(String userId) {
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        memberRepository.delete(member);
+    }
+
+
 }
