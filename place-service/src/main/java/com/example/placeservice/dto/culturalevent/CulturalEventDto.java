@@ -11,7 +11,7 @@ public class CulturalEventDto {
 
     private Long event_id;
     private String category;
-    private String title;
+    private String event_name;
     private String address;
     private BigDecimal lat;
     private BigDecimal lon;
@@ -24,7 +24,7 @@ public class CulturalEventDto {
     public CulturalEventDto(CulturalEvent culturalEvent) {
         this.event_id = culturalEvent.getEventId();
         this.category = culturalEvent.getCategory();
-        this.title = culturalEvent.getTitle();
+        this.event_name = culturalEvent.getTitle();
         this.address = culturalEvent.getAddress();
         this.lat = culturalEvent.getLat();
         this.lon = culturalEvent.getLon();

@@ -55,11 +55,10 @@ public class AreaPlaceController {
 
         for (Cafe cafe : cafes) {
             Map<String, Object> cafeMap = new LinkedHashMap<>();
-            cafeMap.put("id", cafe.getId());
-            cafeMap.put("name", cafe.getName());
+            cafeMap.put("cafe_id", cafe.getId());
+            cafeMap.put("cafe_name", cafe.getName());
             cafeMap.put("address", cafe.getAddress());
             cafeMap.put("phone", cafe.getPhone());
-            cafeMap.put("category_code", cafe.getCategoryCode());
             cafeMap.put("kakaomap_url", cafe.getKakaomapUrl());
             cafeMap.put("lat", cafe.getLat());
             cafeMap.put("lon", cafe.getLon());
@@ -130,7 +129,7 @@ public class AreaPlaceController {
         for (Accommodation accommodation : accommodations) {
             Map<String, Object> accommodationMap = new LinkedHashMap<>();
             accommodationMap.put("id", accommodation.getAccommodationId());
-            accommodationMap.put("name", accommodation.getAccommodationName());
+            accommodationMap.put("name", accommodation.getName());
             accommodationMap.put("address", accommodation.getAddress());
             accommodationMap.put("phone", accommodation.getPhone());
             accommodationMap.put("gu", accommodation.getGu());

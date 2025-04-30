@@ -39,8 +39,8 @@ public class CafeController {
                 .sorted(Comparator.comparing(Cafe::getId))
                 .map(cafe -> {
                     Map<String, Object> cafeMap = new LinkedHashMap<>();
-                    cafeMap.put("id", cafe.getId().toString());
-                    cafeMap.put("name", cafe.getName());
+                    cafeMap.put("cafe_id", cafe.getId().toString());
+                    cafeMap.put("cafe_name", cafe.getName());
                     cafeMap.put("lat", cafe.getLat().toString());
                     cafeMap.put("lon", cafe.getLon().toString());
                     return cafeMap;
@@ -50,30 +50,7 @@ public class CafeController {
         return ResponseEntity.ok(cafeList);
     }
 
-    /**
-     * 지역 ID를 기준으로 카페 목록 조회 (간략 정보만 반환)
-     */
-    @GetMapping("/cafe/list/{areaId}")
-    public ResponseEntity<List<Map<String, Object>>> getCafesByAreaId(@PathVariable Long areaId) {
-        log.info("지역 ID {}의 간략 카페 목록 조회", areaId);
-        List<Cafe> cafes = cafeRepository.findByAreaId(areaId);
-        log.info("지역 ID {}에서 총 {}개의 카페 찾음", areaId, cafes.size());
 
-        // ID 기준으로 정렬 및 간략 정보만 매핑
-        List<Map<String, Object>> simpleCafeList = cafes.stream()
-                .sorted(Comparator.comparing(Cafe::getId))
-                .map(cafe -> {
-                    Map<String, Object> cafeMap = new LinkedHashMap<>();
-                    cafeMap.put("id", cafe.getId().toString());
-                    cafeMap.put("name", cafe.getName());
-                    cafeMap.put("lat", cafe.getLat().toString());
-                    cafeMap.put("lon", cafe.getLon().toString());
-                    return cafeMap;
-                })
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(simpleCafeList);
-    }
 
     @GetMapping("/info/cafe/{cafeId}")
     public ResponseEntity<Map<String, Object>> getCafeInfo(@PathVariable Long cafeId) {
@@ -85,11 +62,10 @@ public class CafeController {
         if (cafeOptional.isPresent()) {
             Cafe cafe = cafeOptional.get();
             Map<String, Object> cafeInfo = new LinkedHashMap<>();
-            cafeInfo.put("id", cafe.getId());
-            cafeInfo.put("name", cafe.getName());
+            cafeInfo.put("cafe_id", cafe.getId());
+            cafeInfo.put("cafe_name", cafe.getName());
             cafeInfo.put("address", cafe.getAddress());
             cafeInfo.put("phone", cafe.getPhone());
-            cafeInfo.put("category_code", cafe.getCategoryCode());
             cafeInfo.put("kakaomap_url", cafe.getKakaomapUrl());
             cafeInfo.put("lat", cafe.getLat());
             cafeInfo.put("lon", cafe.getLon());
