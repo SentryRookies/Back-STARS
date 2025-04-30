@@ -46,7 +46,7 @@ public class AccommodationDto {
                 entity.getAccommodationId(),
                 areaIdValue,
                 areaNameValue,
-                entity.getAccommodationName(),
+                entity.getName(),
                 entity.getAddress(),
                 entity.getLat(),
                 entity.getLon(),

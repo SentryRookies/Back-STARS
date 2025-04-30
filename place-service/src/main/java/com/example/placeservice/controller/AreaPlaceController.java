@@ -130,7 +130,7 @@ public class AreaPlaceController {
         for (Accommodation accommodation : accommodations) {
             Map<String, Object> accommodationMap = new LinkedHashMap<>();
             accommodationMap.put("id", accommodation.getAccommodationId());
-            accommodationMap.put("name", accommodation.getAccommodationName());
+            accommodationMap.put("name", accommodation.getName());
             accommodationMap.put("address", accommodation.getAddress());
             accommodationMap.put("phone", accommodation.getPhone());
             accommodationMap.put("gu", accommodation.getGu());

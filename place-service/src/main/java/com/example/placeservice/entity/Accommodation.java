@@ -18,8 +18,7 @@ public class Accommodation {
     @JoinColumn(name = "area_id", referencedColumnName = "area_id", nullable = false)
     private Area area;
 
-    @Column(name = "name")
-    private String accommodationName;
+    private String name;
     private String address;
     @Column(precision = 10, scale = 6)
     private BigDecimal lat;
