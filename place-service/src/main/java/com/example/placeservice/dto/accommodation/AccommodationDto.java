@@ -12,9 +12,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class AccommodationDto {
 
-    private Long accommodationId;
-    private Long areaId;
-    private String areaName;
+    private Long accommodation_id;
+    private Long area_id;
+    private String area_name;
     private String name;
     private String address;
     private BigDecimal lat;
@@ -22,7 +22,7 @@ public class AccommodationDto {
     private String phone;
     private String gu;
     private String type;
-    private String kakaoUrl;
+    private String kakaomap_url;
 
     /**
      * Accommodation 엔티티를 AccommodationDto로 변환하는 정적 팩토리 메소드
