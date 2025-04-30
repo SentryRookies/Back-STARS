@@ -9,7 +9,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/mypage/favorite")
@@ -27,19 +29,18 @@ public class FavoriteController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<FavoriteDto> addFavorite(@RequestBody FavoriteDto favoriteDto) {
+    public ResponseEntity<Map<String, String>> addFavorite(@RequestBody FavoriteDto favoriteDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = authentication.getName();
 
-        return ResponseEntity.ok(favoriteService.addFavoriteData(userId,favoriteDto));
+        return favoriteService.addFavoriteData(userId,favoriteDto);
     }
 
     @DeleteMapping("/delete/{type}/{id}")
-    public ResponseEntity<FavoriteDto> deleteFavorite(@PathVariable String type, @PathVariable String id, HttpServletRequest request) {
+    public ResponseEntity<Map<String, String>> deleteFavorite(@PathVariable String type, @PathVariable String id, HttpServletRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = authentication.getName();
-        favoriteService.deleteFavorite(userId, type, id);
 
-        return ResponseEntity.ok().build();
+        return favoriteService.deleteFavorite(userId, type, id);
     }
 }
