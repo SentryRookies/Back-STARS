@@ -162,6 +162,11 @@ public class AttractionService {
             Attraction attraction = attractionRepository.findByAttractionId(attractionId)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 관광지 정보를 찾을 수 없습니다."));
 
+            // 연결된 Area 정보 가져오기
+            Area area = attraction.getArea(); // 여기에서 바로 가져올 수 있음
+            String areaName = (area != null) ? area.getName() : null;
+            Long areaId = (area != null) ? area.getAreaId() : null;
+
             return new AttractionInfoDto(
                     attraction.getAttractionId(),
                     attraction.getSeoulAttractionId(),
@@ -173,7 +178,9 @@ public class AttractionService {
                     attraction.getHomepageUrl(),
                     attraction.getCloseDay(),
                     attraction.getUseTime(),
-                    attraction.getKakaomapUrl()
+                    attraction.getKakaomapUrl(),
+                    areaId,
+                    areaName
             );
 
         } catch (RuntimeException e) {
