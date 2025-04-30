@@ -17,8 +17,10 @@ public class AttractionInfoDto {
     private String close_day;
     private String use_time;
     private String kakaomap_url;
+    private Long area_id;
+    private String area_name;
 
-    public AttractionInfoDto(Long attractionId, String seoul_attraction_id, String name, String address, BigDecimal lat, BigDecimal lon, String phone, String homepage_url, String close_day, String use_time, String kakaomapUrl) {
+    public AttractionInfoDto(Long attractionId, String seoul_attraction_id, String name, String address, BigDecimal lat, BigDecimal lon, String phone, String homepage_url, String close_day, String use_time, String kakaomapUrl, Long area_id, String area_name) {
         this.attraction_id = attractionId;
         this.seoul_attraction_id = seoul_attraction_id;
         this.name = name;
@@ -30,6 +32,8 @@ public class AttractionInfoDto {
         this.close_day = close_day;
         this.use_time = use_time;
         this.kakaomap_url = kakaomapUrl;
+        this.area_id = area_id;
+        this.area_name = area_name;
     }
 
 }
