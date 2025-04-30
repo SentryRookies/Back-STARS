@@ -13,18 +13,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/main/accommodation")
 public class AccommodationController {
-    private final AccommodationService accommodationParseService;
     private final AccommodationService accommodationService;
 
     // 생성자 주입
-    public AccommodationController(AccommodationService accommodationParseService, AccommodationService accommodationService) {
-        this.accommodationParseService = accommodationParseService;
+    public AccommodationController(AccommodationService accommodationService) {
         this.accommodationService = accommodationService;
     }
 
     @GetMapping("/list")
     public List<AccommodationDto> getAccommodations() throws IOException {
-        return accommodationParseService.showAccommodations();
+        return accommodationService.showAccommodations();
     }
 
     @GetMapping("/{accommodation_id}")

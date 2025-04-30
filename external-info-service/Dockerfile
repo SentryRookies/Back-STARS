@@ -1,22 +1,3 @@
-## Gradle
-#FROM gradle:8.13.0-jdk17 AS build
-#WORKDIR /app
-#COPY . .
-#RUN gradle build -x test
-#
-#FROM eclipse-temurin:17-jdk
-#WORKDIR /app
-#COPY --from=build /app/build/libs/*.jar app.jar
-#EXPOSE 8080
-#ENTRYPOINT ["java", "-jar", "app.jar"]
-#
-#ARG TOUR_API_KEY
-#
-#COPY .env .env
-
-
-# 테스트용
-
 # 멀티스테이징 도커 파일 구성
 
 # 소스코드를 빌드
@@ -51,13 +32,13 @@ WORKDIR /app
 # jar 복사
 # 스테이지1으로부터 특정위치에 존재하는 산출물을 현재 컨테이너의 작업디렉토리 루트에 복사
 
-COPY --from=builder /app/build/libs/*SNAPSHOT.jar ./place.jar
+COPY --from=builder /app/build/libs/*SNAPSHOT.jar ./external.jar
 # 포트지정
 
 # env 파일 추가
 COPY .env .env
 
-EXPOSE 8080
+EXPOSE 8081
 
 # 서버가동
-CMD ["java", "-jar", "place.jar"]
+CMD ["java", "-jar", "external.jar"]
