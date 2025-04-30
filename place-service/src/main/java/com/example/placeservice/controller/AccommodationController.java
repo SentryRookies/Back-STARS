@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/main/accommodation")
+@RequestMapping("/main")
 public class AccommodationController {
     private final AccommodationService accommodationService;
 
@@ -20,22 +20,22 @@ public class AccommodationController {
         this.accommodationService = accommodationService;
     }
 
-    @GetMapping("/list")
+    @GetMapping("/accommodation/list")
     public List<AccommodationDto> getAccommodations() throws IOException {
         return accommodationService.showAccommodations();
     }
 
-    @GetMapping("/{accommodation_id}")
+    @GetMapping("/info/accommodation/{accommodation_id}")
     public AccommodationDto getAccommodationById(@PathVariable Long accommodation_id) throws IOException {
         return accommodationService.getAccommodationById(accommodation_id);
     }
 
-    @GetMapping("/gu/{gu}")
+    @GetMapping("/accommodation/gu/{gu}")
     public List<AccommodationDto> getAccommodationByGu(@PathVariable String gu) throws IOException {
         return accommodationService.getAccommodationByGu(gu);
     }
 
-    @GetMapping("/type/{type}")
+    @GetMapping("/accommodation/type/{type}")
     public List<AccommodationDto> getAccommodationByType(@PathVariable String type) throws IOException {
         return accommodationService.getAccommodationByType(type);
     }
