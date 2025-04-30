@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/main")
@@ -23,6 +24,11 @@ public class AccommodationController {
     @GetMapping("/accommodation/list")
     public List<AccommodationDto> getAccommodations() throws IOException {
         return accommodationService.showAccommodations();
+    }
+
+    @GetMapping("/accommodation/list/{areaId}")
+    public Map<String, Object> getAccommodationByAreaId(@PathVariable Long areaId) throws IOException {
+        return accommodationService.getAccommodationByAreaId(areaId);
     }
 
     @GetMapping("/info/accommodation/{accommodation_id}")
