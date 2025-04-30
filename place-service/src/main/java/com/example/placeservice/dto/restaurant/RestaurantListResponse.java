@@ -7,15 +7,15 @@ import lombok.Getter;
 @Getter
 @Builder
 public class RestaurantListResponse {
-    private Long id;
-    private String name;
+    private Long restaurant_id;
+    private String restaurant_name;
     private String lat;
     private String lon;
 
     public static RestaurantListResponse fromEntity(Restaurant restaurant) {
         return RestaurantListResponse.builder()
-                .id(restaurant.getRestaurantId())
-                .name(restaurant.getName())
+                .restaurant_id(restaurant.getRestaurantId())
+                .restaurant_name(restaurant.getName())
                 .lat(restaurant.getLat().toString())
                 .lon(restaurant.getLon().toString())
                 .build();

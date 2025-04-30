@@ -7,6 +7,7 @@ import com.example.userservice.service.MemberService;
 import com.example.userservice.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -79,7 +80,15 @@ public class SignupController {
 
     //회원탈퇴
     @DeleteMapping("/signout/{userId}")
-    public ResponseEntity<String> signout(@PathVariable String userId) {
+    public ResponseEntity<String> signout(
+            @PathVariable String userId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        // 본인 확인
+        if (!userDetails.getUsername().equals(userId)) {
+            return ResponseEntity.status(403).body("본인만 탈퇴할 수 있습니다.");
+        }
+
         try {
             memberService.deleteMember(userId);
             return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");

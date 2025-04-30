@@ -124,8 +124,7 @@ public class MemberService {
     @Transactional
     public void deleteMember(String userId) {
         Member member = memberRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
         memberRepository.delete(member);
     }
 
