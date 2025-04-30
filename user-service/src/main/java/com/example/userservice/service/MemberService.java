@@ -24,6 +24,13 @@ public class MemberService {
         return registerMember(dto, "ROLE_USER");
     }
 
+<<<<<<< HEAD
+=======
+    // 관리자 회원가입
+    public Member registerAdmin(MemberSign dto) {
+        return registerMember(dto, "ROLE_ADMIN");
+    }
+>>>>>>> upstream/Feature#54-유저-Gateway
 
     // 공통 회원가입 로직
     private Member registerMember(MemberSign dto, String defaultRole) {
@@ -121,6 +128,7 @@ public class MemberService {
                 .created_at(updatedMember.getCreatedAt())
                 .build();
     }
+<<<<<<< HEAD
     @Transactional
     public void deleteMember(String userId) {
         Member member = memberRepository.findByUserId(userId)
@@ -149,4 +157,6 @@ public class MemberService {
                         .build())
                 .collect(Collectors.toList());
     }
+=======
+>>>>>>> upstream/Feature#54-유저-Gateway
 }

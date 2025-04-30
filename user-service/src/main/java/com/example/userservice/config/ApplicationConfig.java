@@ -15,6 +15,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
+<<<<<<< HEAD
+=======
+import java.util.Collections;
+>>>>>>> upstream/Feature#54-유저-Gateway
 import java.util.List;
 
 @Configuration
