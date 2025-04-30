@@ -15,4 +15,7 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
 
     @Query(value = "SELECT * FROM Accommodation WHERE area_id = ?1", nativeQuery = true)
     List<Accommodation> findByAreaId(Long areaId);
+
+    List<Accommodation> findByNameContainingIgnoreCase(String keyword);
+    List<Accommodation> findByAddressContainingIgnoreCase(String keyword);
 }

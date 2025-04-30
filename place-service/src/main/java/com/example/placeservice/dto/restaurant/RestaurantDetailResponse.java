@@ -15,9 +15,9 @@ public class RestaurantDetailResponse {
     private String category_group_code;
     private String category_group_name;
     private String category_name;
-    private String id;
+    private String restaurant_id;
     private String phone;
-    private String name;
+    private String restaurant_name;
     private String place_url;
     private String road_address_name;
     private String lat;
@@ -34,10 +34,10 @@ public class RestaurantDetailResponse {
                 .category_group_code(restaurant.getCategory_code())
                 .category_group_name(restaurant.getCategoryGroupName()) // 고정X (DB)
                 .category_name(restaurant.getCategoryName()) // 고정X (DB)
-                .id(String.valueOf(restaurant.getRestaurantId()))
+                .restaurant_id(String.valueOf(restaurant.getRestaurantId()))
                 .kakao_id(restaurant.getKakao_id())
                 .phone(restaurant.getPhone())
-                .name(restaurant.getName())
+                .restaurant_name(restaurant.getName())
                 .place_url(restaurant.getKakaomap_url())
                 .categoryGroupName(restaurant.getCategoryGroupName()) //  추가
                 .categoryName(restaurant.getCategoryName()) //  추가
