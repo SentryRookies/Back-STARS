@@ -1,5 +1,6 @@
 package com.example.placeservice.repository;
 
+import com.example.placeservice.entity.Accommodation;
 import com.example.placeservice.entity.Cafe;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,4 +19,6 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
     void deleteByAreaId(Long areaId);
 
     Optional<Cafe> findByKakaomapUrl(String placeCode);
+    List<Cafe> findByNameContainingIgnoreCase(String keyword);
+    List<Cafe> findByAddressContainingIgnoreCase(String keyword);
 }

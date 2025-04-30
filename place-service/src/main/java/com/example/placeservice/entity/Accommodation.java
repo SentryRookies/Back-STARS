@@ -2,11 +2,13 @@ package com.example.placeservice.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 
 @Data
 @Entity
+@Getter
 public class Accommodation {
     @Id
     @Column(name = "accommodation_id")

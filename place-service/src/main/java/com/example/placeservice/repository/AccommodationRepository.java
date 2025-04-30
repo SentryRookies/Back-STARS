@@ -12,7 +12,12 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
     List<Accommodation> findByGu(String gu);
 
     List<Accommodation> findByType(String type);
+<<<<<<< HEAD
 
     @Query(value = "SELECT * FROM Accommodation WHERE area_id = ?1", nativeQuery = true)
     List<Accommodation> findByAreaId(Long areaId);
+=======
+    List<Accommodation> findByNameContainingIgnoreCase(String keyword);
+    List<Accommodation> findByAddressContainingIgnoreCase(String keyword);
+>>>>>>> 2eb5421 (push and 통합검색)
 }
