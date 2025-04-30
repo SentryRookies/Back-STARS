@@ -24,7 +24,9 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AccommodationService {
@@ -203,5 +205,22 @@ public class AccommodationService {
             accommodationDtos.add(accommodationDto);
         }
         return accommodationDtos;
+    }
+
+    public Map<String, Object> getAccommodationByAreaId(Long areaId) {
+        List<Accommodation> accommodations = accommodationRepository.findByAreaId(areaId);
+        List<AccommodationDto> accommodationDtos = new ArrayList<>();
+
+        for (Accommodation accommodation : accommodations) {
+            AccommodationDto accommodationDto = AccommodationDto.fromEntity(accommodation);
+            accommodationDtos.add(accommodationDto);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("type", "accommodation"); // 고정된 타입 문자열
+        response.put("content", accommodationDtos); // 위에서 만든 DTO 리스트
+
+        return response;
     }
 }
