@@ -142,7 +142,7 @@ public class AccommodationService {
             throw new IllegalArgumentException("Invalid accommodation ID format: " + doc.getId(), e);
         }
         accommodation.setArea(area);
-        accommodation.setName(doc.getPlaceName());
+        accommodation.setAccommodationName(doc.getPlaceName());
         accommodation.setAddress(doc.getRoadAddressName());
         try {
             accommodation.setLat(new BigDecimal(doc.getY())); // String 좌표를 BigDecimal로 변환

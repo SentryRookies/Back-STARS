@@ -15,7 +15,7 @@ public class AccommodationDto {
     private Long accommodation_id;
     private Long area_id;
     private String area_name;
-    private String name;
+    private String accommodation_name;
     private String address;
     private BigDecimal lat;
     private BigDecimal lon;
@@ -46,7 +46,7 @@ public class AccommodationDto {
                 entity.getAccommodationId(),
                 areaIdValue,
                 areaNameValue,
-                entity.getName(),
+                entity.getAccommodationName(),
                 entity.getAddress(),
                 entity.getLat(),
                 entity.getLon(),
