@@ -55,11 +55,10 @@ public class AreaPlaceController {
 
         for (Cafe cafe : cafes) {
             Map<String, Object> cafeMap = new LinkedHashMap<>();
-            cafeMap.put("id", cafe.getId());
-            cafeMap.put("name", cafe.getName());
+            cafeMap.put("cafe_id", cafe.getId());
+            cafeMap.put("cafe_name", cafe.getName());
             cafeMap.put("address", cafe.getAddress());
             cafeMap.put("phone", cafe.getPhone());
-            cafeMap.put("category_code", cafe.getCategoryCode());
             cafeMap.put("kakaomap_url", cafe.getKakaomapUrl());
             cafeMap.put("lat", cafe.getLat());
             cafeMap.put("lon", cafe.getLon());

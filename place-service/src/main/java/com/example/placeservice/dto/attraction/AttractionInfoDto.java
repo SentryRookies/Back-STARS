@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 public class AttractionInfoDto {
     private Long attraction_id;
     private String seoul_attraction_id;
-    private String name;
+    private String attraction_name;
     private String address;
     private BigDecimal lat;
     private BigDecimal lon;
@@ -23,7 +23,7 @@ public class AttractionInfoDto {
     public AttractionInfoDto(Long attractionId, String seoul_attraction_id, String name, String address, BigDecimal lat, BigDecimal lon, String phone, String homepage_url, String close_day, String use_time, String kakaomapUrl, Long area_id, String area_name) {
         this.attraction_id = attractionId;
         this.seoul_attraction_id = seoul_attraction_id;
-        this.name = name;
+        this.attraction_name = name;
         this.address = address;
         this.lat = lat;
         this.lon = lon;

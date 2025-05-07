@@ -25,6 +25,12 @@ public class MemberService {
     }
 
 
+    // 관리자 회원가입
+    public Member registerAdmin(MemberSign dto) {
+        return registerMember(dto, "ROLE_ADMIN");
+    }
+
+
     // 공통 회원가입 로직
     private Member registerMember(MemberSign dto, String defaultRole) {
         // userId 중복 체크
@@ -121,11 +127,11 @@ public class MemberService {
                 .created_at(updatedMember.getCreatedAt())
                 .build();
     }
+
     @Transactional
     public void deleteMember(String userId) {
         Member member = memberRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
         memberRepository.delete(member);
     }
 
@@ -150,4 +156,5 @@ public class MemberService {
                         .build())
                 .collect(Collectors.toList());
     }
+
 }

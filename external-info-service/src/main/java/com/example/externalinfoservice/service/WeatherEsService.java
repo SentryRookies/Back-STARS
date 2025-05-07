@@ -5,18 +5,25 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class WeatherEsService {
 
-
     private final RestTemplate restTemplate = new RestTemplate();
 
-    // 특정 지역 날씨
+    // 오늘 날짜 기반 인덱스 이름 생성
+    private String getTodayIndex() {
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        return String.format("http://elasticsearch.seoultravel.life/seoul_citydata_weather_%s/_search", today);
+    }
+
+    // 특정 지역 날씨 조회
     public Map<String, Object> getWeatherFromES(String area) {
-        String url = "http://elasticsearch.seoultravel.life/seoul_citydata_weather_20250424/_search";
+        String url = getTodayIndex();
 
         Map<String, Object> term = Map.of("weather.area_nm", area);
         Map<String, Object> query = Map.of("term", term);
@@ -37,9 +44,9 @@ public class WeatherEsService {
         return (Map<String, Object>) source.get("weather");
     }
 
-    // 전체 지역 날씨
+    // 전체 지역 날씨 조회
     public List<Map<String, Object>> getAllWeatherFromES() {
-        String url = "http://elasticsearch.seoultravel.life/seoul_citydata_weather_20250424/_search";
+        String url = getTodayIndex();
 
         Map<String, Object> body = Map.of(
                 "size", 0,
@@ -82,5 +89,4 @@ public class WeatherEsService {
 
         return results;
     }
-
 }
