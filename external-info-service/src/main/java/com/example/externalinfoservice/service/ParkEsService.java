@@ -6,6 +6,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -15,9 +17,15 @@ public class ParkEsService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    // 오늘 날짜 기반 인덱스 URL 생성
+    private String getTodayIndexUrl() {
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        return String.format("http://elasticsearch.seoultravel.life/seoul_citydata_parking_%s/_search", today);
+    }
+
     // 특정 지역 주차장 정보
     public Map<String, Object> getParkFromES(String areaId) {
-        String url = "http://elasticsearch.seoultravel.life/seoul_citydata_parking_20250424/_search";
+        String url = getTodayIndexUrl();
         log.info("Requesting park info for areaId: {}", areaId);
 
         Map<String, Object> term = Map.of("parking.area_nm", areaId);
@@ -42,17 +50,15 @@ public class ParkEsService {
         }
 
         Map<String, Object> source = (Map<String, Object>) hits.get(0).get("_source");
-        log.info("Source: {}", source);
-
         Map<String, Object> parking = (Map<String, Object>) source.get("parking");
-        log.info("Parking data: {}", parking);
 
+        log.info("Parking data: {}", parking);
         return parking;
     }
 
     // 전체 지역 주차장 정보
     public List<Map<String, Object>> getAllParkFromES() {
-        String url = "http://elasticsearch.seoultravel.life/seoul_citydata_parking_20250424/_search";
+        String url = getTodayIndexUrl();
         log.info("Requesting all park info");
 
         Map<String, Object> body = Map.of(
@@ -76,11 +82,8 @@ public class ParkEsService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-        log.info("Request body for all parks: {}", body);
-
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
-        log.info("Response status for all parks: {}", response.getStatusCode());
-        log.info("Response body keys: {}", response.getBody().keySet());
+        log.info("Response status: {}", response.getStatusCode());
 
         if (!response.getBody().containsKey("aggregations")) {
             log.error("Response does not contain 'aggregations' key");
@@ -88,14 +91,8 @@ public class ParkEsService {
         }
 
         Map<String, Object> aggregations = (Map<String, Object>) response.getBody().get("aggregations");
-        if (!aggregations.containsKey("by_area")) {
-            log.error("Aggregations does not contain 'by_area' key");
-            return Collections.emptyList();
-        }
-
         Map<String, Object> byArea = (Map<String, Object>) aggregations.get("by_area");
         List<Map<String, Object>> buckets = (List<Map<String, Object>>) byArea.get("buckets");
-        log.info("Found {} buckets", buckets.size());
 
         List<Map<String, Object>> results = new ArrayList<>();
         for (Map<String, Object> bucket : buckets) {
