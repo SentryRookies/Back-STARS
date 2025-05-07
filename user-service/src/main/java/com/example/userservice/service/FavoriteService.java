@@ -33,13 +33,14 @@ public class FavoriteService {
 
             return items.stream()
                     .map(item -> {
+
                         ResponseEntity<JsonNode> response = restTemplate.exchange(
                                 "http://api.seoultravel.life/place/main/info/"+item.getType()+"/" + item.getPlaceId(),
                                 HttpMethod.GET,
                                 null,
                                 JsonNode.class
                         );
-                        String name = response.getBody().get("name").asText();
+                        String name = response.getBody().get(item.getType()+"_name").asText();
                         String address = response.getBody().get("address").asText();
                         return new FavoriteDto(
                             item.getFavoriteId(),
@@ -119,7 +120,7 @@ public class FavoriteService {
                                     null,
                                     JsonNode.class
                             );
-                            String name = response.getBody().get("name").asText();
+                            String name = response.getBody().get(item.getType()+"_name").asText();
                             String address = response.getBody().get("address").asText();
 
                             return new FavoriteDto(
