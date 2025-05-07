@@ -34,7 +34,7 @@ public class FavoriteService {
             return items.stream()
                     .map(item -> {
                         ResponseEntity<JsonNode> response = restTemplate.exchange(
-                                "http://localhost:8082/main/info/"+item.getType()+"/" + item.getPlaceId(),
+                                "http://api.seoultravel.life/place/main/info/"+item.getType()+"/" + item.getPlaceId(),
                                 HttpMethod.GET,
                                 null,
                                 JsonNode.class
@@ -114,7 +114,7 @@ public class FavoriteService {
             List<FavoriteDto> favoriteDtoList = items.stream()
                     .map(item ->{
                             ResponseEntity<JsonNode> response = restTemplate.exchange(
-                                    "http://localhost:8082/main/info/"+item.getType()+"/" + item.getPlaceId(),
+                                    "http://api.seoultravel.life/place/main/info/"+item.getType()+"/" + item.getPlaceId(),
                                     HttpMethod.GET,
                                     null,
                                     JsonNode.class
