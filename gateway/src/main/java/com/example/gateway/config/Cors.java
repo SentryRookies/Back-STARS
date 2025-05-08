@@ -14,6 +14,7 @@ public class Cors {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(false); // 인증 정보 포함 X
         config.addAllowedOrigin("*"); // 모든 도메인 허용
+        config.addAllowedOrigin("http://localhost:5173"); // 특정 도메인 허용
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
@@ -22,4 +23,7 @@ public class Cors {
 
         return new CorsWebFilter(source);
     }
+
+
+
 }
