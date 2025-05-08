@@ -12,9 +12,10 @@ public class Cors {
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(false); // 인증 정보 포함 X
-        config.addAllowedOrigin("*"); // 모든 도메인 허용
-        config.addAllowedOrigin("http://localhost:5173"); // 특정 도메인 허용
+        config.setAllowCredentials(true); // 인증 정보 포함 X
+        config.addAllowedOrigin("http://localhost:5173"); // 특정 도메인
+        config.addAllowedOrigin("http://58.127.241.84:5173");
+        config.addAllowedOrigin("http://192.168.0.186:5173");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
