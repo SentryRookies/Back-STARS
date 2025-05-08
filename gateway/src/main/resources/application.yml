@@ -42,7 +42,10 @@ spring:
               - DELETE
               - OPTIONS
             allowedHeaders:
-              - "*"
+              - Origin
+              - Content-Type
+              - Accept
+              - Authorization
             allowCredentials: true
 
 logging:
