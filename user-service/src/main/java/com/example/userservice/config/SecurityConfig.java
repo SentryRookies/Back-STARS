@@ -24,17 +24,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(request -> {
-                    CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowCredentials(true);
-                    config.addAllowedOrigin("http://192.168.0.186:5173");
-                    config.addAllowedOrigin("http://localhost:5173");
-                    config.addAllowedOrigin("http://58.127.241.84:5173");
-                    config.addAllowedHeader("*");
-                    config.addAllowedMethod("*");
-                    return config;
-
-                }))
+                // CORS -> api gateway만 처리(중복 방지)
+//                .cors(cors -> cors.configurationSource(request -> {
+//                    CorsConfiguration config = new CorsConfiguration();
+//                    config.setAllowCredentials(true);
+//                    config.addAllowedOrigin("http://192.168.0.186:5173");
+//                    config.addAllowedOrigin("http://localhost:5173");
+//                    config.addAllowedOrigin("http://58.127.241.84:5173");
+//                    config.addAllowedHeader("*");
+//                    config.addAllowedMethod("*");
+//                    return config;
+//
+//                }))
                 .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
                 .authorizeHttpRequests(auth -> auth
                         // 공개 엔드포인트 - 인증 불필요
