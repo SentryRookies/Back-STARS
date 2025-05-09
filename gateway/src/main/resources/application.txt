@@ -21,3 +21,22 @@ spring.cloud.gateway.routes[3].id=user-service
 spring.cloud.gateway.routes[3].uri=http://localhost:8083
 spring.cloud.gateway.routes[3].predicates[0]=Path=/user/**
 spring.cloud.gateway.routes[3].filters[0]=RewritePath=/user/(?<segment>.*), /$\{segment}
+
+
+# ?? ??
+logging.level.root=DEBUG
+logging.level.org.springframework.cloud.gateway=DEBUG
+logging.level.reactor.netty.http.client=DEBUG
+logging.level.org.springframework.web.server.adapter.HttpWebHandlerAdapter=DEBUG
+
+
+# CORS ??
+#spring.cloud.gateway.default-filters[0].name=CORS
+#spring.cloud.gateway.default-filters[0].args.allowedOrigins=http://localhost:5173,http://192.168.0.186:5173,http://58.127.241.84:5173
+#spring.cloud.gateway.default-filters[0].args.allowedMethods=*
+#spring.cloud.gateway.default-filters[0].args.allowedHeaders=*
+
+spring.cloud.gateway.globalcors.corsConfigurations.[/**].allowedOrigins=http://localhost:5173,http://192.168.0.186:5173,http://58.127.241.84:5173
+spring.cloud.gateway.globalcors.corsConfigurations.[/**].allowedMethods=GET,POST,PUT,DELETE,OPTIONS
+spring.cloud.gateway.globalcors.corsConfigurations.[/**].allowedHeaders=*
+spring.cloud.gateway.globalcors.corsConfigurations.[/**].allowCredentials=true

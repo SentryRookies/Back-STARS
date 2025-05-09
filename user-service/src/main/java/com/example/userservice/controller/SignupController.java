@@ -75,6 +75,8 @@ public class SignupController {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", "회원가입 실패: " + e.getMessage());
             return ResponseEntity.badRequest().body(errorResponse);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -2,23 +2,16 @@ package com.example.userservice.config;
 
 import com.example.userservice.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.filters.CorsFilter;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -31,7 +24,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults()) // cors 활성화
+                // CORS -> api gateway만 처리(중복 방지)
+//                .cors(cors -> cors.configurationSource(request -> {
+//                    CorsConfiguration config = new CorsConfiguration();
+//                    config.setAllowCredentials(true);
+//                    config.addAllowedOrigin("http://192.168.0.186:5173");
+//                    config.addAllowedOrigin("http://localhost:5173");
+//                    config.addAllowedOrigin("http://58.127.241.84:5173");
+//                    config.addAllowedHeader("*");
+//                    config.addAllowedMethod("*");
+//                    return config;
+//
+//                }))
                 .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
                 .authorizeHttpRequests(auth -> auth
                         // 공개 엔드포인트 - 인증 불필요
@@ -55,19 +59,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-    // CORS 설정 추가
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(false);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
-
 }
