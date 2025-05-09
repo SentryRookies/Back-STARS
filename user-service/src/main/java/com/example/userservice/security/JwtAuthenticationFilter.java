@@ -39,7 +39,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-
         // 인증이 필요없는 경로는 필터를 적용하지 않음
         if (shouldNotFilter(request)) {
             filterChain.doFilter(request, response);
@@ -48,11 +47,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Authorization 헤더에서 토큰 추출 시도
         final String authHeader = request.getHeader("Authorization");
+        final String refreshTokenHeader = request.getHeader("refreshToken"); // 추가: refreshToken 헤더 확인
         String jwt = null;
 
         // Authorization 헤더가 있으면 해당 토큰 사용
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7); // "Bearer " 이후의 문자열 추출
+        }
+        // refreshToken 헤더가 있으면 해당 토큰 사용 (추가)
+        else if (refreshTokenHeader != null) {
+            jwt = refreshTokenHeader;
         }
         // 아니면 쿠키에서 토큰 찾기
         else {
@@ -66,6 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         }
+
 
         // 토큰이 없으면 다음 필터로 이동
         if (jwt == null) {
