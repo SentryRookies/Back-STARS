@@ -93,6 +93,7 @@ public class SignupController {
 
         try {
             memberService.deleteMember(userId);
+            System.out.println("회원탈퇴 완료: memberId=" + userId);
             return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("회원 탈퇴 실패: " + e.getMessage());

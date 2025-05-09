@@ -39,7 +39,8 @@ public class PushScheduler {
             currentLevels.put(areaName, currentLevel);
 
             String previousLevel = previousLevels.get(areaName);
-            System.out.println(areaName+"의"+previousLevel+":ㅣㅣ"+currentLevel);
+            // 혼잡도 변화 알림 로그 확인
+//            System.out.println(areaName+"의"+previousLevel+":ㅣㅣ"+currentLevel);
 
             // 혼잡도 알림 전송(조건 : 1,2단계 -> 3,4 단계 or 3단계 -> 4단계)
             if (previousLevel == null && (currentLevel.equals("약간 붐빔") || currentLevel.equals("붐빔"))) {
