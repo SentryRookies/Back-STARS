@@ -59,29 +59,20 @@ public class MemberController {
     private String extractUserIdFromRequest(HttpServletRequest request) {
 
         String authHeader = request.getHeader("Authorization");
-        String refreshTokenHeader = request.getHeader("refreshToken"); // 추가: refreshToken 헤더 확인
+        String acessTokenHeader = request.getHeader("accessToken"); // 추가: refreshToken 헤더 확인
         String jwt = null;
 
         // Authorization 헤더가 있으면 해당 토큰 사용
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
-            System.out.println("Authorization 헤더에서 토큰 추출: " + jwt);
         }
         // refreshToken 헤더가 있으면 해당 토큰 사용 (추가)
-        else if (refreshTokenHeader != null) {
-            jwt = refreshTokenHeader;
-            System.out.println("refreshToken 헤더에서 토큰 추출: " + jwt);
+        else if (acessTokenHeader != null) {
+            jwt = acessTokenHeader;
         }
 
         if (jwt != null) {
-            try {
-                String userId = jwtUtil.extractUsername(jwt);
-                System.out.println("토큰에서 추출한 userId: " + userId);
-                return userId;
-            } catch (Exception e) {
-                System.out.println("토큰 처리 중 오류 발생: " + e.getMessage());
-                e.printStackTrace();
-            }
+            return jwtUtil.extractUsername(jwt);
         }
 
         throw new RuntimeException("인증 토큰이 유효하지 않습니다.");

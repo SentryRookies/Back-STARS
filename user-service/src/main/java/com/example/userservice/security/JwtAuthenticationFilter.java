@@ -47,16 +47,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Authorization 헤더에서 토큰 추출 시도
         final String authHeader = request.getHeader("Authorization");
-        final String refreshTokenHeader = request.getHeader("refreshToken"); // 추가: refreshToken 헤더 확인
+        final String accessTokenHeader = request.getHeader("accessToken"); // refreshToken 대신 accessToken 사용
         String jwt = null;
 
         // Authorization 헤더가 있으면 해당 토큰 사용
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7); // "Bearer " 이후의 문자열 추출
         }
-        // refreshToken 헤더가 있으면 해당 토큰 사용 (추가)
-        else if (refreshTokenHeader != null) {
-            jwt = refreshTokenHeader;
+        // accessToken 헤더가 있으면 해당 토큰 사용
+        else if (accessTokenHeader != null) {
+            jwt = accessTokenHeader;
         }
         // 아니면 쿠키에서 토큰 찾기
         else {
