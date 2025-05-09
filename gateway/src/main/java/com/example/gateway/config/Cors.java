@@ -23,6 +23,9 @@ public class Cors {
         config.setAllowedHeaders(List.of("Origin", "Content-Type", "Accept", "Authorization"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
+        // expose Content-Type so it can be sent with the response
+        config.setExposedHeaders(List.of("Content-Type", "Cache-Control"));
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config); // 모든 경로에 적용
 
