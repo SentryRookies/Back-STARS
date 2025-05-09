@@ -4,13 +4,18 @@ import com.example.userservice.dto.AuthDto;
 import com.example.userservice.entity.Member;
 import com.example.userservice.repository.jpa.MemberRepository;
 import com.example.userservice.security.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +55,7 @@ public class AuthService {
                     )
             );
             System.out.println("인증 성공");
-        } catch (Exception e) {
+        }catch (Exception e) {
             System.out.println("인증 실패: " + e.getMessage());
             throw e;
         }
@@ -88,6 +93,8 @@ public class AuthService {
         // 1. 사용자의 Redis Refresh Token 삭제
         Long memberId = Long.parseLong(request.getMemberId());
         tokenService.deleteRefreshToken(memberId);
+
+        System.out.println("로그아웃 완료" + memberId);
 
         // 2. 성공 리턴
         return AuthDto.LogoutResponse.builder()
