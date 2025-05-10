@@ -57,24 +57,38 @@ public class MemberController {
      * @return 추출된 사용자 ID
      */
     private String extractUserIdFromRequest(HttpServletRequest request) {
+        // 요청 디버깅 로그
+        System.out.println("요청 URI: " + request.getRequestURI());
+        System.out.println("Authorization 헤더: " + request.getHeader("Authorization"));
+        System.out.println("accessToken 헤더: " + request.getHeader("accessToken"));
 
         String authHeader = request.getHeader("Authorization");
-        String acessTokenHeader = request.getHeader("accessToken"); // 추가: refreshToken 헤더 확인
+        String accessTokenHeader = request.getHeader("accessToken");
         String jwt = null;
 
-        // Authorization 헤더가 있으면 해당 토큰 사용
+        // Authorization 헤더 확인
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
+            System.out.println("Authorization 헤더에서 토큰 추출: " + jwt);
         }
-        // refreshToken 헤더가 있으면 해당 토큰 사용 (추가)
-        else if (acessTokenHeader != null) {
-            jwt = acessTokenHeader;
+        // accessToken 헤더 확인
+        else if (accessTokenHeader != null) {
+            jwt = accessTokenHeader;
+            System.out.println("accessToken 헤더에서 토큰 추출: " + jwt);
         }
 
+        // 토큰 유효성 검사 및 사용자 ID 추출
         if (jwt != null) {
-            return jwtUtil.extractUsername(jwt);
+            try {
+                String userId = jwtUtil.extractUsername(jwt);
+                System.out.println("추출된 사용자 ID: " + userId);
+                return userId;
+            } catch (Exception e) {
+                System.out.println("토큰 처리 중 오류 발생: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
 
-        throw new RuntimeException("인증 토큰이 유효하지 않습니다.");
+        throw new RuntimeException("인증 토큰이 유효하지 않습니다. 'Authorization: Bearer [token]' 또는 'accessToken' 헤더가 필요합니다.");
     }
 }

@@ -30,7 +30,7 @@ public class JwtTokenProvider {
 
     public String generateAccessToken(String userId) {  // nickname 대신 userId 사용
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + 1000 * 60 * 30); // 30분
+        Date expiryDate = new Date(now.getTime() + 1000 * 60 * 45 ); // 30분
 
         return Jwts.builder()
                 .setSubject(userId)  // userId로 변경
