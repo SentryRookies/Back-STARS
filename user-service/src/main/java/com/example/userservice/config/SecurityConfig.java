@@ -8,11 +8,8 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-
 
 @Configuration
 @EnableWebSecurity
@@ -25,20 +22,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // CORS -> api gateway만 처리(중복 방지)
-//                .cors(cors -> cors.configurationSource(request -> {
-//                    CorsConfiguration config = new CorsConfiguration();
-//                    config.setAllowCredentials(true);
-//                    config.addAllowedOrigin("http://192.168.0.186:5173");
-//                    config.addAllowedOrigin("http://localhost:5173");
-//                    config.addAllowedOrigin("http://58.127.241.84:5173");
-//                    config.addAllowedHeader("*");
-//                    config.addAllowedMethod("*");
-//                    return config;
-//
-//                }))
-                .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        // Swagger 접근 허용
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
+
                         // 공개 엔드포인트 - 인증 불필요
                         .requestMatchers("/auth/**").permitAll()
 
@@ -52,7 +44,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
-                        // 세션 상태 없음 (JWT 사용하므로)
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authenticationProvider(authenticationProvider)
