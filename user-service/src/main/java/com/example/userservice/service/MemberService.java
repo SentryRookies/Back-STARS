@@ -70,6 +70,7 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         return MemberDto.ProfileResponse.builder()
+                .member_id(String.valueOf(member.getMemberId()))
                 .user_id(member.getUserId())
                 .nickname(member.getNickname())
                 .birth_year(member.getBirthYear())
@@ -119,6 +120,7 @@ public class MemberService {
 
         // 응답 DTO로 변환
         return MemberDto.MemberResponse.builder()
+                .memberId(updatedMember.getUserId())
                 .user_id(updatedMember.getUserId())
                 .nickname(updatedMember.getNickname())
                 .birth_year(updatedMember.getBirthYear())

@@ -15,6 +15,7 @@ public class MemberDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class MemberResponse {
+        private String memberId;
         private String user_id;       // 로그인 ID
         private String nickname;      // 닉네임
         private Short birth_year;     // 출생연도
@@ -30,6 +31,7 @@ public class MemberDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ProfileResponse {
+        private String member_id;
         private String user_id;
         private String nickname;      // 닉네임
         private Short birth_year;     // 출생연도
