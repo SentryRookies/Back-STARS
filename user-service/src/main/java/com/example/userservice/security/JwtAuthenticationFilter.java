@@ -31,12 +31,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final MemberRepository memberRepository;
     private final TokenService tokenService;
 
-    // 필터링하지 않을 URL 패턴 목록
-    private final List<String> excludedPaths = Arrays.asList(
+    // 완전 일치 제외 경로 목록 (Swagger 포함)
+    private final List<String> excludedExactPaths = Arrays.asList(
             "/auth/signup",
             "/auth/admin/signup",
             "/auth/login",
-            "/auth/logout"
+            "/auth/logout",
+            "/swagger-ui.html",
+            "/v3/api-docs"
     );
 
     @Override
@@ -45,19 +47,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        // 인증이 필요없는 경로는 필터를 적용하지 않음
+
         if (shouldNotFilter(request)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 디버깅 로그 추가
         logger.info("요청 URI: " + request.getRequestURI());
 
-        // 토큰 추출
         String jwt = extractTokenFromRequest(request);
 
-        // 토큰이 없으면 다음 필터로 이동
         if (jwt == null) {
             logger.info("토큰이 없음, 인증 스킵");
             filterChain.doFilter(request, response);
@@ -65,37 +64,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-            // 토큰에서 사용자 이름(userId) 추출
-            final String username = jwtUtil.extractUsername(jwt);
+            String username = jwtUtil.extractUsername(jwt);
             logger.info("토큰에서 사용자 ID 추출: " + username);
 
-            // 토큰에서 토큰 ID 추출
-            final String tokenId = jwtUtil.extractTokenId(jwt);
+            String tokenId = jwtUtil.extractTokenId(jwt);
 
-            // 보안 컨텍스트에 인증 정보가 없으면 새로 설정
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-                // 토큰이 유효한지 확인
                 if (jwtUtil.validateToken(jwt, userDetails)) {
-                    // 사용자 ID 가져오기 (MemberRepository 사용)
                     Member member = memberRepository.findByUserId(username)
                             .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다"));
                     Long userId = member.getMemberId();
 
-                    // 토큰이 최신 버전인지 확인
                     if (tokenService.isLatestToken(userId, tokenId)) {
                         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                                 userDetails,
                                 null,
                                 userDetails.getAuthorities()
                         );
-                        authToken.setDetails(
-                                new WebAuthenticationDetailsSource().buildDetails(request)
-                        );
+                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authToken);
-
-                        logger.info("사용자 인증 성공: " + username + " (권한: " + userDetails.getAuthorities() + ")");
+                        logger.info("사용자 인증 성공: " + username);
                     } else {
                         logger.warn("토큰 검증 실패: 이전 버전의 토큰");
                     }
@@ -110,23 +100,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    // 요청에서 토큰 추출 헬퍼 메서드
+    // Swagger 및 인증 제외 경로 처리
+    public boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return excludedExactPaths.contains(path)
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs");
+    }
+
+    // 토큰 추출 메서드
     private String extractTokenFromRequest(HttpServletRequest request) {
-        // Authorization 헤더에서 토큰 추출
         final String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             logger.info("Authorization 헤더에서 토큰 추출됨");
             return authHeader.substring(7);
         }
 
-        // accessToken 헤더에서 토큰 추출
         final String accessTokenHeader = request.getHeader("accessToken");
         if (accessTokenHeader != null) {
             logger.info("accessToken 헤더에서 토큰 추출됨");
             return accessTokenHeader;
         }
 
-        // 쿠키에서 토큰 추출
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
