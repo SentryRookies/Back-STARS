@@ -28,40 +28,24 @@ public class SignupController {
 
     /**
      * 일반 사용자 회원가입 API
-     * @param dto 회원가입 정보 (user_id, password, nickname, birth_year, mbti, gender)
-     * @return 토큰 및 사용자 정보가 포함된 응답
      */
     @PostMapping("/signup")
     public ResponseEntity<Map<String, String>> signup(@RequestBody MemberSign dto) {
         try {
-            // 디버깅 로그 출력
-            System.out.println("회원가입 요청: userId=" + dto.getUserId() + ", nickname=" + dto.getNickname()
-                    + ", birth_year=" + dto.getBirthYear()
-                    + ", mbti=" + dto.getMbti()
-                    + ", gender=" + dto.getGender());
+            System.out.println("회원가입 요청: userId=" + dto.getUserId());
 
-            // 일반 사용자로 등록
             Member member = memberService.registerUser(dto);
 
-            System.out.println("회원가입 성공: memberId=" + member.getMemberId()
-                    + ", userId=" + member.getUserId()
-                    + ", nickname=" + member.getNickname()
-                    + ", role=" + member.getRole());
-
-            // 사용자 권한 설정
             List<SimpleGrantedAuthority> authorities = Collections.singletonList(
                     new SimpleGrantedAuthority(member.getRole())
             );
 
-            // 회원가입 성공하면 토큰 발급
             UserDetails userDetails = new User(member.getUserId(), member.getPassword(), authorities);
             String accessToken = jwtUtil.generateToken(userDetails);
             String refreshToken = jwtUtil.generateRefreshToken(userDetails);
 
-            // 리프레시 토큰 저장
             tokenService.saveRefreshToken(member.getMemberId(), refreshToken);
 
-            // 응답 생성
             Map<String, String> response = new HashMap<>();
             response.put("accessToken", accessToken);
             response.put("refreshToken", refreshToken);
@@ -80,24 +64,29 @@ public class SignupController {
         }
     }
 
-    //회원탈퇴
-    @DeleteMapping("/signout/{userId}")
+    /**
+     * 회원 탈퇴 (본인 인증 포함)
+     */
+    @DeleteMapping("/signout/{memberId}")
     public ResponseEntity<String> signout(
-            @PathVariable String userId,
+            @PathVariable Long memberId,
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        // 본인 확인
-        if (!userDetails.getUsername().equals(userId)) {
+        // 현재 로그인한 사용자 정보 조회
+        String userId = userDetails.getUsername();
+        Member loginMember = memberService.findByUserId(userId);
+
+        // 본인인지 확인
+        if (!loginMember.getMemberId().equals(memberId)) {
             return ResponseEntity.status(403).body("본인만 탈퇴할 수 있습니다.");
         }
 
         try {
-            memberService.deleteMember(userId);
-            System.out.println("회원탈퇴 완료: memberId=" + userId);
+            memberService.deleteMemberById(memberId);
+            System.out.println("회원탈퇴 완료: memberId=" + memberId);
             return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("회원 탈퇴 실패: " + e.getMessage());
         }
     }
-
 }

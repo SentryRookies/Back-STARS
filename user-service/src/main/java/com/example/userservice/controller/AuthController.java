@@ -6,6 +6,7 @@ import com.example.userservice.repository.jpa.MemberRepository;
 import com.example.userservice.security.JwtUtil;
 import com.example.userservice.service.AuthService;
 import com.example.userservice.service.CookieUtil;
+import com.example.userservice.service.TokenService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -25,6 +29,7 @@ public class AuthController {
     private final CookieUtil cookieUtil;
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
+    private final TokenService tokenService;
 
     /**
      * 로그인 API
@@ -47,6 +52,21 @@ public class AuthController {
         cookieUtil.addCookie(response, "refresh_token", loginResponse.getRefreshToken(), cookieUtil.getDaysInSeconds(30));
 
         return ResponseEntity.ok(loginResponse);
+    }
+
+
+    /*
+    * 토큰 재발급 api 추가
+    * */
+
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, String>> refreshAccessToken(@RequestBody AuthDto.RefreshTokenRequest request) {
+        String newAccessToken = tokenService.createNewAccessToken(request.getRefreshToken());
+
+        Map<String, String> response = new HashMap<>();
+        response.put("accessToken", newAccessToken);
+
+        return ResponseEntity.ok(response);
     }
 
     /**

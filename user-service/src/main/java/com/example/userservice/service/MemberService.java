@@ -128,12 +128,21 @@ public class MemberService {
                 .build();
     }
 
+
+    // 로그인된 userId로 Member 엔티티 조회
+    public Member findByUserId(String userId) {
+        return memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+    }
+
+    // memberId로 회원 삭제
     @Transactional
-    public void deleteMember(String userId) {
-        Member member = memberRepository.findByUserId(userId)
+    public void deleteMemberById(Long memberId) {
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
         memberRepository.delete(member);
     }
+
 
 
 
