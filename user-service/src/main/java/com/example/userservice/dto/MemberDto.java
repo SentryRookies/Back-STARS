@@ -30,6 +30,7 @@ public class MemberDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ProfileResponse {
+        private String user_id;
         private String nickname;      // 닉네임
         private Short birth_year;     // 출생연도
         private String mbti;          // MBTI 유형

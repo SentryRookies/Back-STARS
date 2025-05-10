@@ -70,6 +70,7 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         return MemberDto.ProfileResponse.builder()
+                .user_id(member.getUserId())
                 .nickname(member.getNickname())
                 .birth_year(member.getBirthYear())
                 .mbti(member.getMbti())

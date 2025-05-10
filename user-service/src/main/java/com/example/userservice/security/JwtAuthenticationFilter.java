@@ -1,5 +1,8 @@
 package com.example.userservice.security;
 
+import com.example.userservice.entity.Member;
+import com.example.userservice.repository.jpa.MemberRepository;
+import com.example.userservice.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -10,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,6 +28,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
+    private final MemberRepository memberRepository;
+    private final TokenService tokenService;
 
     // 필터링하지 않을 URL 패턴 목록
     private final List<String> excludedPaths = Arrays.asList(
@@ -45,35 +51,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Authorization 헤더에서 토큰 추출 시도
-        final String authHeader = request.getHeader("Authorization");
-        final String accessTokenHeader = request.getHeader("accessToken"); // refreshToken 대신 accessToken 사용
-        String jwt = null;
+        // 디버깅 로그 추가
+        logger.info("요청 URI: " + request.getRequestURI());
 
-        // Authorization 헤더가 있으면 해당 토큰 사용
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            jwt = authHeader.substring(7); // "Bearer " 이후의 문자열 추출
-        }
-        // accessToken 헤더가 있으면 해당 토큰 사용
-        else if (accessTokenHeader != null) {
-            jwt = accessTokenHeader;
-        }
-        // 아니면 쿠키에서 토큰 찾기
-        else {
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if ("access_token".equals(cookie.getName())) {
-                        jwt = cookie.getValue();
-                        break;
-                    }
-                }
-            }
-        }
-
+        // 토큰 추출
+        String jwt = extractTokenFromRequest(request);
 
         // 토큰이 없으면 다음 필터로 이동
         if (jwt == null) {
+            logger.info("토큰이 없음, 인증 스킵");
             filterChain.doFilter(request, response);
             return;
         }
@@ -81,6 +67,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             // 토큰에서 사용자 이름(userId) 추출
             final String username = jwtUtil.extractUsername(jwt);
+            logger.info("토큰에서 사용자 ID 추출: " + username);
+
+            // 토큰에서 토큰 ID 추출
+            final String tokenId = jwtUtil.extractTokenId(jwt);
 
             // 보안 컨텍스트에 인증 정보가 없으면 새로 설정
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -88,30 +78,65 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // 토큰이 유효한지 확인
                 if (jwtUtil.validateToken(jwt, userDetails)) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities() // 사용자 권한 포함
-                    );
-                    authToken.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request)
-                    );
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    // 사용자 ID 가져오기 (MemberRepository 사용)
+                    Member member = memberRepository.findByUserId(username)
+                            .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다"));
+                    Long userId = member.getMemberId();
 
-                    logger.info("사용자 인증 성공: " + username + " (권한: " + userDetails.getAuthorities() + ")");
+                    // 토큰이 최신 버전인지 확인
+                    if (tokenService.isLatestToken(userId, tokenId)) {
+                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
+                        authToken.setDetails(
+                                new WebAuthenticationDetailsSource().buildDetails(request)
+                        );
+                        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                        logger.info("사용자 인증 성공: " + username + " (권한: " + userDetails.getAuthorities() + ")");
+                    } else {
+                        logger.warn("토큰 검증 실패: 이전 버전의 토큰");
+                    }
+                } else {
+                    logger.warn("토큰 검증 실패: 유효하지 않은 토큰");
                 }
             }
         } catch (Exception e) {
-            // 토큰 검증 과정에서 오류가 발생하면 로그만 남기고 계속 진행
             logger.error("JWT 토큰 검증 실패: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);
     }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getServletPath();
-        return excludedPaths.stream().anyMatch(path::startsWith);
+    // 요청에서 토큰 추출 헬퍼 메서드
+    private String extractTokenFromRequest(HttpServletRequest request) {
+        // Authorization 헤더에서 토큰 추출
+        final String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            logger.info("Authorization 헤더에서 토큰 추출됨");
+            return authHeader.substring(7);
+        }
+
+        // accessToken 헤더에서 토큰 추출
+        final String accessTokenHeader = request.getHeader("accessToken");
+        if (accessTokenHeader != null) {
+            logger.info("accessToken 헤더에서 토큰 추출됨");
+            return accessTokenHeader;
+        }
+
+        // 쿠키에서 토큰 추출
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("access_token".equals(cookie.getName())) {
+                    logger.info("쿠키에서 토큰 추출됨");
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        return null;
     }
 }

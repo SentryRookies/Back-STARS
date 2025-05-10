@@ -9,18 +9,18 @@ import org.springframework.data.redis.core.index.Indexed;
 
 @Getter
 @NoArgsConstructor
-@RedisHash(value = "refreshToken", timeToLive = 2700) // 45분(2700초) 후 자동 삭제
-public class RefreshToken {
+@RedisHash(value = "accessToken", timeToLive = 2700) // 45분(2700초) 후 자동 삭제
+public class AccessToken {
 
     @Id
     private String id; // 사용자 ID를 저장
 
     @Indexed // 인덱싱하여 검색 가능하도록
-    private String refreshToken;
+    private String accessToken;
 
     @Builder
-    public RefreshToken(String id, String refreshToken) {
+    public AccessToken(String id, String accessToken) {
         this.id = id;
-        this.refreshToken = refreshToken;
+        this.accessToken = accessToken;
     }
 }
