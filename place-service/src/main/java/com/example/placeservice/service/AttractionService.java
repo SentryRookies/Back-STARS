@@ -106,7 +106,7 @@ public class AttractionService {
         }
     }
 
-    // 관광지 2km이내 area 계산
+    // 관광지 2km이내 area 계산(1km로 수정중)
     private Area findAreaByCondition(AttractionDto.AttractionTable table, List<Area> areaList) {
         double lat = Double.parseDouble(table.getMapY());
         double lon = Double.parseDouble(table.getMapX());
@@ -115,12 +115,12 @@ public class AttractionService {
                     lat, lon,
                     area.getLat().doubleValue(), area.getLon().doubleValue()
             );
-            if (distance <= 2.0) { // 2km 이내
+            if (distance <= 1.0) { // 2km 이내(1km 이내로 수정중)
                 return area;
             }
         }
-        // 2km 이내에 없는 관광지 체크
-        // System.out.println(table.getTitle()+"경도:"+table.getMapX()+"위도 :"+table.getMapY() );
+        // 2km 이내에 없는 관광지 체크(1km 이내로 수정중)
+         System.out.println(table.getTitle()+"경도:"+table.getMapX()+"위도 :"+table.getMapY() );
         return null;
     }
 
