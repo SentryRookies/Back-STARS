@@ -30,14 +30,18 @@ public class CongestionController {
         emitter.onTimeout(() -> emitters.remove(emitter));
         emitter.onError((e) -> emitters.remove(emitter));
 
-        try{
-            System.out.println("혼잡도 푸시 중...");
+        try {
+            System.out.println("혼잡도 초기 데이터 푸시 중...");
             var congestionList = congestionService.getCongestion();
 
-            sendToClients(congestionList); // 모든 지역 혼잡도 전송
-            System.out.println(".. 혼잡도 푸시 완료");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            emitter.send(SseEmitter.event()
+                    .name("congestion-update")
+                    .data(congestionList));
+
+            System.out.println(".. 혼잡도 초기 데이터 푸시 완료");
+        } catch (IOException | IllegalStateException e) {
+            emitter.completeWithError(e);
+            emitters.remove(emitter);
         }
 
         return emitter;
