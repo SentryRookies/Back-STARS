@@ -27,8 +27,6 @@ public class PlaceDocumentService {
     private final CulturalEventRepository culturalEventRepository;
     private final CafeRepository cafeRepository;
 
-
-    private final PlaceDocumentRepository placeDocumentRepository;
     private final PlaceDocumentMapper placeDocumentMapper;
 
     public List<PlaceDocument> searchPlacesByName(String keyword) {

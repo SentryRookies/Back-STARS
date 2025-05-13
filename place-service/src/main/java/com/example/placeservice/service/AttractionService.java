@@ -57,7 +57,7 @@ public class AttractionService {
 
                     // seoul_attraction_id 중복 체크
                     if (attractionRepository.existsBySeoulAttractionId(table.getId())) return null;
-
+                    if (Integer.valueOf(table.getId()) >= 31345 && Integer.valueOf(table.getId()) <= 53595) return null;
                     // 👇: 조건에 따라 Area 객체를 지정
                     Area area = findAreaByCondition(table, areaList);  // 예: 주소나 지역코드 등으로 판단
                     if (area == null) return null;

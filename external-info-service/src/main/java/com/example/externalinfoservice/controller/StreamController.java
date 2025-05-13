@@ -1,5 +1,8 @@
 package com.example.externalinfoservice.controller;
 
+import com.example.externalinfoservice.service.ESRoadService;
+import com.example.externalinfoservice.service.ParkEsService;
+import com.example.externalinfoservice.service.WeatherEsService;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +21,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class StreamController {
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
+    private final WeatherEsService weatherEsService;
+    private final ESRoadService roadService;
+    private final ParkEsService parkEsService;
+
     @GetMapping("/stream")
     public SseEmitter streamWeather() {
         SseEmitter emitter = new SseEmitter(0L); // 타임아웃 없음
@@ -26,6 +33,17 @@ public class StreamController {
         emitter.onCompletion(() -> emitters.remove(emitter));
         emitter.onTimeout(() -> emitters.remove(emitter));
         emitter.onError((e) -> emitters.remove(emitter));
+
+
+        // 구독시, 초기 데이터 주입
+        try {
+            var weatherList = weatherEsService.getAllWeatherFromES();
+            var trafficList = roadService.getTrafficData();
+            var parkList = parkEsService.getAllParkFromES();
+            sendToClients(weatherList, trafficList, parkList);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return emitter;
     }

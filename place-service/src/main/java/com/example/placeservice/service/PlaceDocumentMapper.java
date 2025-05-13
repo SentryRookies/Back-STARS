@@ -12,7 +12,8 @@ public class PlaceDocumentMapper {
         return PlaceDocument.builder()
                 .name(item.getName())
                 .address(item.getAddress())
-                .category("accommodation")
+                .type("accommodation")
+                .place_id(String.valueOf(item.getAccommodationId()))
                 .build();
     }
 
@@ -20,7 +21,8 @@ public class PlaceDocumentMapper {
         return PlaceDocument.builder()
                 .name(item.getName())
                 .address(item.getAddress())
-                .category("cafe")
+                .type("cafe")
+                .place_id(String.valueOf(item.getId()))
                 .build();
     }
 
@@ -28,7 +30,8 @@ public class PlaceDocumentMapper {
         return PlaceDocument.builder()
                 .name(item.getTitle())
                 .address(item.getAddress())
-                .category("culturalevent")
+                .type("culturalevent")
+                .place_id(String.valueOf(item.getEventId()))
                 .build();
     }
 
@@ -36,7 +39,8 @@ public class PlaceDocumentMapper {
         return PlaceDocument.builder()
                 .name(item.getName())
                 .address(item.getAddress())
-                .category("restaurant")
+                .type("restaurant")
+                .place_id(String.valueOf(item.getRestaurantId()))
                 .build();
     }
 
@@ -44,7 +48,8 @@ public class PlaceDocumentMapper {
         return PlaceDocument.builder()
                 .name(item.getName())
                 .address(item.getAddress())
-                .category("attraction")
+                .type("attraction")
+                .place_id(String.valueOf(item.getAttractionId()))
                 .build();
     }
 }
