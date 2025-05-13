@@ -58,6 +58,7 @@ public class AttractionService {
                     // seoul_attraction_id 중복 체크
                     if (attractionRepository.existsBySeoulAttractionId(table.getId())) return null;
                     if (Integer.valueOf(table.getId()) >= 31345 && Integer.valueOf(table.getId()) <= 53595) return null;
+
                     // 👇: 조건에 따라 Area 객체를 지정
                     Area area = findAreaByCondition(table, areaList);  // 예: 주소나 지역코드 등으로 판단
                     if (area == null) return null;
@@ -106,24 +107,31 @@ public class AttractionService {
         }
     }
 
-    // 관광지 2km이내 area 계산(1km로 수정중)
+    // 1. 관광지 기준 가장 가까운 area를 찾는다
     private Area findAreaByCondition(AttractionDto.AttractionTable table, List<Area> areaList) {
         double lat = Double.parseDouble(table.getMapY());
         double lon = Double.parseDouble(table.getMapX());
+
+        Area closestArea = null;
+        double minDistance = Double.MAX_VALUE;
+
         for (Area area : areaList) {
             double distance = calculateDistanceKm(
                     lat, lon,
                     area.getLat().doubleValue(), area.getLon().doubleValue()
             );
-            if (distance <= 1.0) { // 2km 이내(1km 이내로 수정중)
-                return area;
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestArea = area;
             }
         }
-        // 2km 이내에 없는 관광지 체크(1km 이내로 수정중)
-         System.out.println(table.getTitle()+"경도:"+table.getMapX()+"위도 :"+table.getMapY() );
-        return null;
+        if (minDistance > 2.0) { // 2. 거리가 2km를 넘어가면 제외한다.
+            System.out.println(table.getTitle() + " - 가까운 지역 없음 (거리: " + minDistance + "km)");
+            return null;
+        }
+        return closestArea;
     }
-
 
 
 
