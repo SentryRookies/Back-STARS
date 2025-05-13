@@ -13,7 +13,7 @@ public class PlaceDocumentMapper {
                 .name(item.getName())
                 .address(item.getAddress())
                 .type("accommodation")
-                .place_id(String.valueOf(item.getArea().getAreaId()))
+                .place_id(String.valueOf(item.getAccommodationId()))
                 .build();
     }
 
@@ -22,7 +22,7 @@ public class PlaceDocumentMapper {
                 .name(item.getName())
                 .address(item.getAddress())
                 .type("cafe")
-                .place_id(String.valueOf(item.getArea().getAreaId()))
+                .place_id(String.valueOf(item.getId()))
                 .build();
     }
 
@@ -31,7 +31,7 @@ public class PlaceDocumentMapper {
                 .name(item.getTitle())
                 .address(item.getAddress())
                 .type("culturalevent")
-                .place_id(String.valueOf(item.getArea().getAreaId()))
+                .place_id(String.valueOf(item.getEventId()))
                 .build();
     }
 
@@ -40,7 +40,7 @@ public class PlaceDocumentMapper {
                 .name(item.getName())
                 .address(item.getAddress())
                 .type("restaurant")
-                .place_id(String.valueOf(item.getArea().getAreaId()))
+                .place_id(String.valueOf(item.getRestaurantId()))
                 .build();
     }
 
@@ -49,7 +49,7 @@ public class PlaceDocumentMapper {
                 .name(item.getName())
                 .address(item.getAddress())
                 .type("attraction")
-                .place_id(String.valueOf(item.getArea().getAreaId()))
+                .place_id(String.valueOf(item.getAttractionId()))
                 .build();
     }
 }
