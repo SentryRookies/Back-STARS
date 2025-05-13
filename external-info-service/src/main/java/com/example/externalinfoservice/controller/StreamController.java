@@ -36,10 +36,23 @@ public class StreamController {
         emitter.onError((e) -> emitters.remove(emitter));
 
         // 구독시, 초기 데이터 주입
-        var weatherList = weatherEsService.getAllWeatherFromES();
-        var trafficList = roadService.getTrafficData();
-        var parkList = parkEsService.getAllParkFromES();
-        sendToClients(weatherList, trafficList, parkList);
+        try {
+            var weatherList = weatherEsService.getAllWeatherFromES();
+            var trafficList = roadService.getTrafficData();
+            var parkList = parkEsService.getAllParkFromES();
+            emitter.send(SseEmitter.event()
+                    .name("weather-update")
+                    .data(weatherList));
+            emitter.send(SseEmitter.event()
+                    .name("traffic-update")
+                    .data(trafficList));
+            emitter.send(SseEmitter.event()
+                    .name("park-update")
+                    .data(parkList));
+        }catch (IOException | IllegalStateException e) {
+            emitter.completeWithError(e);
+            emitters.remove(emitter);
+        }
 
         return emitter;
     }
@@ -58,7 +71,7 @@ public class StreamController {
                         .name("park-update")
                         .data(parkList));
 
-            } catch (IOException e) {
+            } catch (IOException | IllegalStateException e) {
                 emitter.completeWithError(e);
                 emitters.remove(emitter);
             }
