@@ -9,26 +9,35 @@ spring:
           predicates:
             - Path=/control/congestion/**
           filters:
-            - RewritePath=/control/congestion/(?<segment>.*), /$\{segment}
+            - RewritePath=/control/congestion/(?<segment>.*), /${segment}
+
         - id: external-service
           uri: http://localhost:8081
           predicates:
             - Path=/control/external/**
           filters:
-            - RewritePath=/control/external/(?<segment>.*), /$\{segment}
+            - RewritePath=/control/external/(?<segment>.*), /${segment}
+
         - id: place-service
           uri: http://localhost:8082
           predicates:
             - Path=/place/**
           filters:
-            - RewritePath=/place/(?<segment>.*), /$\{segment}
+            - RewritePath=/place/(?<segment>.*), /${segment}
+
         - id: user-service
           uri: http://localhost:8083
           predicates:
-            - Path=/user/**,Path=/auth/**, /v3/api-docs/**, /swagger-ui/**
+            - Path=/user/**
+            - Path=/auth/**
+            - Path=/v3/api-docs/**
+            - Path=/swagger-ui/**
           filters:
-            - RewritePath=/user/(?<segment>.*), /$\{segment}
+            - RewritePath=/user/(?<segment>.*), /${segment}
+            - RewritePath=/auth/(?<segment>.*), /${segment}
             - RewritePath=/swagger-ui/(?<segment>.*), /swagger-ui/${segment}
+            - RewritePath=/v3/api-docs/(?<segment>.*), /v3/api-docs/${segment}
+
       globalcors:
         corsConfigurations:
           '[/**]':
