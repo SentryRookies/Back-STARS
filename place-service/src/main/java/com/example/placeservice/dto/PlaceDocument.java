@@ -9,6 +9,7 @@ public class PlaceDocument {
 
     // 공통
     private String name;
-    private String category;
+    private String type;
     private String address;
+    private String place_id;
 }
