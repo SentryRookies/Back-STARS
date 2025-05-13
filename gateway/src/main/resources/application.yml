@@ -34,14 +34,6 @@ spring:
             - RewritePath=/user/(?<segment>.*), /${segment}
             - RewritePath=/auth/(?<segment>.*), /${segment}
 
-        - id: user-service-swagger
-          uri: http://localhost:8083
-          predicates:
-            - Path=/swagger-ui/**
-            - Path=/v3/api-docs/**
-          filters:
-            - StripPrefix=0   #
-
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -49,6 +41,7 @@ spring:
               - "http://localhost:5173"
               - "http://192.168.0.186:5173"
               - "http://58.127.241.84:5173"
+              - "http://api.seoultravel.life"
             allowedMethods:
               - GET
               - POST
