@@ -1,5 +1,6 @@
 package com.example.congestionservice.controller;
 
+import com.example.congestionservice.service.CongestionService;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class CongestionController {
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
+    private final CongestionService congestionService;
+
+
     @GetMapping("/congestion")
     public SseEmitter streamCongestion() {
         SseEmitter emitter = new SseEmitter(0L); // 타임아웃 없음
@@ -25,6 +29,16 @@ public class CongestionController {
         emitter.onCompletion(() -> emitters.remove(emitter));
         emitter.onTimeout(() -> emitters.remove(emitter));
         emitter.onError((e) -> emitters.remove(emitter));
+
+        try{
+            System.out.println("혼잡도 푸시 중...");
+            var congestionList = congestionService.getCongestion();
+
+            sendToClients(congestionList); // 모든 지역 혼잡도 전송
+            System.out.println(".. 혼잡도 푸시 완료");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return emitter;
 
