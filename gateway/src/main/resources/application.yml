@@ -30,13 +30,17 @@ spring:
           predicates:
             - Path=/user/**
             - Path=/auth/**
-            - Path=/v3/api-docs/**
-            - Path=/swagger-ui/**
           filters:
             - RewritePath=/user/(?<segment>.*), /${segment}
             - RewritePath=/auth/(?<segment>.*), /${segment}
-            - RewritePath=/swagger-ui/(?<segment>.*), /swagger-ui/${segment}
-            - RewritePath=/v3/api-docs/(?<segment>.*), /v3/api-docs/${segment}
+
+        - id: user-service-swagger
+          uri: http://localhost:8083
+          predicates:
+            - Path=/swagger-ui/**
+            - Path=/v3/api-docs/**
+          filters:
+            - StripPrefix=0   #
 
       globalcors:
         corsConfigurations:
