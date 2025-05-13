@@ -5,6 +5,7 @@ import com.example.externalinfoservice.service.ParkEsService;
 import com.example.externalinfoservice.service.WeatherEsService;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +26,7 @@ public class StreamController {
     private final ESRoadService roadService;
     private final ParkEsService parkEsService;
 
-    @GetMapping("/stream")
+    @GetMapping(value="/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter streamWeather() {
         SseEmitter emitter = new SseEmitter(0L); // 타임아웃 없음
         emitters.add(emitter);
@@ -34,16 +35,11 @@ public class StreamController {
         emitter.onTimeout(() -> emitters.remove(emitter));
         emitter.onError((e) -> emitters.remove(emitter));
 
-
         // 구독시, 초기 데이터 주입
-        try {
-            var weatherList = weatherEsService.getAllWeatherFromES();
-            var trafficList = roadService.getTrafficData();
-            var parkList = parkEsService.getAllParkFromES();
-            sendToClients(weatherList, trafficList, parkList);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        var weatherList = weatherEsService.getAllWeatherFromES();
+        var trafficList = roadService.getTrafficData();
+        var parkList = parkEsService.getAllParkFromES();
+        sendToClients(weatherList, trafficList, parkList);
 
         return emitter;
     }
