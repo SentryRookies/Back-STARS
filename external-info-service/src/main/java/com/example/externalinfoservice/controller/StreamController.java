@@ -1,11 +1,11 @@
 package com.example.externalinfoservice.controller;
 
+import com.example.externalinfoservice.service.AccidentEsService;
 import com.example.externalinfoservice.service.ESRoadService;
 import com.example.externalinfoservice.service.ParkEsService;
 import com.example.externalinfoservice.service.WeatherEsService;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,8 +25,9 @@ public class StreamController {
     private final WeatherEsService weatherEsService;
     private final ESRoadService roadService;
     private final ParkEsService parkEsService;
+    private final AccidentEsService accidentEsService;
 
-    @GetMapping(value="/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping("/stream")
     public SseEmitter streamWeather() {
         SseEmitter emitter = new SseEmitter(0L); // 타임아웃 없음
         emitters.add(emitter);
@@ -40,25 +41,17 @@ public class StreamController {
             var weatherList = weatherEsService.getAllWeatherFromES();
             var trafficList = roadService.getTrafficData();
             var parkList = parkEsService.getAllParkFromES();
-            emitter.send(SseEmitter.event()
-                    .name("weather-update")
-                    .data(weatherList));
-            emitter.send(SseEmitter.event()
-                    .name("traffic-update")
-                    .data(trafficList));
-            emitter.send(SseEmitter.event()
-                    .name("park-update")
-                    .data(parkList));
-        }catch (IOException | IllegalStateException e) {
-            emitter.completeWithError(e);
-            emitters.remove(emitter);
+            var accidentList = accidentEsService.getAllAccidentsFromES();
+            sendToClients(weatherList, trafficList, parkList, accidentList);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         return emitter;
     }
 
     // 주기적으로 클라이언트에게 push
-    public void sendToClients(List<Map<String, Object>> weatherList, JsonNode trafficList, List<Map<String, Object>> parkList) {
+    public void sendToClients(List<Map<String, Object>> weatherList, JsonNode trafficList, List<Map<String, Object>> parkList, List<Map<String, Object>> accidentList) {
         for (SseEmitter emitter : emitters) {
             try {
                 emitter.send(SseEmitter.event()
@@ -70,8 +63,10 @@ public class StreamController {
                 emitter.send(SseEmitter.event()
                         .name("park-update")
                         .data(parkList));
-
-            } catch (IOException | IllegalStateException e) {
+                emitter.send(SseEmitter.event()
+                        .name("accident-alert")
+                        .data(accidentList));
+            } catch (IOException e) {
                 emitter.completeWithError(e);
                 emitters.remove(emitter);
             }
