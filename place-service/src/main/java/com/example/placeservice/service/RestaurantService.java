@@ -30,7 +30,7 @@ public class RestaurantService {
         int savedCount = 0; // 저장한 음식점 수
 
         while (!isEnd) {
-            // ✅ Kakao API 호출 시 경도(lon), 위도(lat) 순서로 전달
+            // Kakao API 호출 시 경도(lon), 위도(lat) 순서로 전달
             JsonNode response = kakaoMapClient.searchRestaurantsByCategory(area.getLon(), area.getLat(), page);
 
             if (response.has("documents")) {
