@@ -1,5 +1,6 @@
 package com.example.congestionservice.scheduler;
 
+import com.example.congestionservice.config.CongestionPreviousCache;
 import com.example.congestionservice.controller.CongestionController;
 import com.example.congestionservice.service.CongestionService;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,14 +18,17 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PushScheduler {
     private final CongestionController congestionController;
+    private final CongestionPreviousCache congestionPreviousCache;
 
 
     // 이전 혼잡도 상태를 저장하는 필드 추가(혼잡도 알림용)
-    private Map<String, String> previousLevels = new HashMap<>();
-
+//    private Map<String, String> previousLevels = new HashMap<>();
 
     @Scheduled(fixedRate = 300_000)
     public void push() {
+        Map<String, String> previousLevels = congestionPreviousCache.getPreviousLevels();
+
+
         System.out.println("혼잡도 푸시 중...");
         var congestionList = CongestionService.getCongestion();
 
@@ -43,7 +47,7 @@ public class PushScheduler {
 
             String previousLevel = previousLevels.get(areaName);
             // 혼잡도 변화 알림 로그 확인
-//            System.out.println(areaName+"의"+previousLevel+":ㅣㅣ"+currentLevel);
+            System.out.println(areaName+"의"+previousLevel+":ㅣㅣ"+currentLevel);
 
             // 혼잡도 알림 전송(조건 : 1,2단계 -> 3단계 // 4단계)
             if (previousLevel == null && (currentLevel.equals("약간 붐빔") || currentLevel.equals("붐빔"))) {
@@ -84,7 +88,9 @@ public class PushScheduler {
             System.out.println("혼잡도 변화 있음 → alert-update로 SSE 전송");
             congestionController.sendAlertToClients(changedList); // ✨ 바뀐 것만 보냄
         }
-        previousLevels = currentLevels;
+
+        previousLevels.clear();
+        previousLevels.putAll(currentLevels);
 
     }
 }

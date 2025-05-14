@@ -1,5 +1,6 @@
 package com.example.congestionservice.controller;
 
+import com.example.congestionservice.config.CongestionPreviousCache;
 import com.example.congestionservice.service.CongestionService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @RequestMapping("/main")
 public class CongestionController {
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
+    private final CongestionPreviousCache congestionPreviousCache;
 
     @GetMapping("/congestion")
     public SseEmitter streamCongestion() {
@@ -31,6 +33,8 @@ public class CongestionController {
         emitter.onCompletion(() -> emitters.remove(emitter));
         emitter.onTimeout(() -> emitters.remove(emitter));
         emitter.onError((e) -> emitters.remove(emitter));
+
+        Map<String, String> previousLevels = congestionPreviousCache.getPreviousLevels();
 
         // 초기데이터 투입
         try {
@@ -44,9 +48,13 @@ public class CongestionController {
             // 혼잡도 알림 전송 위한 로직
             ObjectMapper mapper = new ObjectMapper();
             ArrayNode changedList = mapper.createArrayNode();  // ArrayNode 생성
+            // previousdata 저장을 위한 데이터
+            Map<String, String> currentLevels = new HashMap<>();
 
             for (JsonNode area : congestionList) {
+                String areaName = area.get("area_nm").asText();
                 String currentLevel = area.get("area_congest_lvl").asText();
+                currentLevels.put(areaName, currentLevel);
 
                 if(currentLevel.equals("약간 붐빔") || currentLevel.equals("붐빔")){
                     ObjectNode copy = mapper.createObjectNode();
@@ -59,6 +67,8 @@ public class CongestionController {
 
                 }
             }
+
+            previousLevels.putAll(currentLevels);
 
             emitter.send(SseEmitter.event()
                     .name("congestion-alert")
