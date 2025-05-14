@@ -1,5 +1,6 @@
 package com.example.externalinfoservice.controller;
 
+import com.example.externalinfoservice.service.AccidentEsService;
 import com.example.externalinfoservice.service.ESRoadService;
 import com.example.externalinfoservice.service.ParkEsService;
 import com.example.externalinfoservice.service.WeatherEsService;
@@ -24,6 +25,7 @@ public class StreamController {
     private final WeatherEsService weatherEsService;
     private final ESRoadService roadService;
     private final ParkEsService parkEsService;
+    private final AccidentEsService accidentEsService;
 
     @GetMapping("/stream")
     public SseEmitter streamWeather() {
@@ -34,13 +36,13 @@ public class StreamController {
         emitter.onTimeout(() -> emitters.remove(emitter));
         emitter.onError((e) -> emitters.remove(emitter));
 
-
         // 구독시, 초기 데이터 주입
         try {
             var weatherList = weatherEsService.getAllWeatherFromES();
             var trafficList = roadService.getTrafficData();
             var parkList = parkEsService.getAllParkFromES();
-            sendToClients(weatherList, trafficList, parkList);
+            var accidentList = accidentEsService.getAllAccidentsFromES();
+            sendToClients(weatherList, trafficList, parkList, accidentList);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -49,7 +51,7 @@ public class StreamController {
     }
 
     // 주기적으로 클라이언트에게 push
-    public void sendToClients(List<Map<String, Object>> weatherList, JsonNode trafficList, List<Map<String, Object>> parkList) {
+    public void sendToClients(List<Map<String, Object>> weatherList, JsonNode trafficList, List<Map<String, Object>> parkList, List<Map<String, Object>> accidentList) {
         for (SseEmitter emitter : emitters) {
             try {
                 emitter.send(SseEmitter.event()
@@ -61,7 +63,9 @@ public class StreamController {
                 emitter.send(SseEmitter.event()
                         .name("park-update")
                         .data(parkList));
-
+                emitter.send(SseEmitter.event()
+                        .name("accident-alert")
+                        .data(accidentList));
             } catch (IOException e) {
                 emitter.completeWithError(e);
                 emitters.remove(emitter);
