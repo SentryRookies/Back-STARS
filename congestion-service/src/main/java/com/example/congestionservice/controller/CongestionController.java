@@ -4,6 +4,7 @@ import com.example.congestionservice.service.CongestionService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,9 +23,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class CongestionController {
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
-    private final CongestionService congestionService;
-
-
     @GetMapping("/congestion")
     public SseEmitter streamCongestion() {
         SseEmitter emitter = new SseEmitter(0L); // 타임아웃 없음
@@ -37,21 +35,28 @@ public class CongestionController {
         // 초기데이터 투입
         try {
             System.out.println("혼잡도 초기 데이터 푸시 중...");
-            var congestionList = congestionService.getCongestion();
+            var congestionList = CongestionService.getCongestion();
 
             emitter.send(SseEmitter.event()
                     .name("congestion-update")
                     .data(congestionList));
 
             // 혼잡도 알림 전송 위한 로직
-            Map<String, String> currentLevels = new HashMap<>();
-            ArrayNode changedList = new ObjectMapper().createArrayNode();
+            ObjectMapper mapper = new ObjectMapper();
+            ArrayNode changedList = mapper.createArrayNode();  // ArrayNode 생성
+
             for (JsonNode area : congestionList) {
-                String areaName = area.get("area_nm").asText();
                 String currentLevel = area.get("area_congest_lvl").asText();
-                currentLevels.put(areaName, currentLevel);
+
                 if(currentLevel.equals("약간 붐빔") || currentLevel.equals("붐빔")){
-                    changedList.add(area);
+                    ObjectNode copy = mapper.createObjectNode();
+                    area.fieldNames().forEachRemaining(field -> {
+                        if (!"fcst_ppltn".equals(field)) {
+                            copy.set(field, area.get(field));
+                        }
+                    });
+                    changedList.add(copy);
+
                 }
             }
 
@@ -65,7 +70,6 @@ public class CongestionController {
             emitter.completeWithError(e);
             emitters.remove(emitter);
         }
-
 
         return emitter;
 
