@@ -28,7 +28,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/user/swagger-ui/index.html"
                         ).permitAll()
 
                         // 공개 엔드포인트 - 인증 불필요
