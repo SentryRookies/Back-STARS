@@ -21,62 +21,52 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AccidentEsService {
 
-    private static final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate(); // 주입 방식으로 대체해도 OK
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static JsonNode getAccidentData() {
+    public JsonNode getAccidentData() {
         try {
             String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             String apiUrl = String.format("http://elasticsearch.seoultravel.life/seoul_citydata_accident_%s/_search", today);
 
-            String jsonBody = "{\n" +
-                    "  \"size\": 0,\n" +
-                    "  \"aggs\": {\n" +
-                    "    \"by_area\": {\n" +
-                    "      \"terms\": {\n" +
-                    "        \"field\": \"accident.area_nm\",\n" +
-                    "        \"size\": 1000\n" +
-                    "      },\n" +
-                    "      \"aggs\": {\n" +
-                    "        \"latest_hit\": {\n" +
-                    "          \"top_hits\": {\n" +
-                    "            \"size\": 1,\n" +
-                    "            \"sort\": [\n" +
-                    "              {\n" +
-                    "                \"accident.get_time\": {\n" +
-                    "                  \"order\": \"desc\"\n" +
-                    "                }\n" +
-                    "              }\n" +
-                    "            ]\n" +
-                    "          }\n" +
-                    "        }\n" +
-                    "      }\n" +
-                    "    }\n" +
-                    "  }\n" +
-                    "}";
+            String jsonBody = """
+                {
+                  "query": {
+                    "bool": {
+                      "must": [
+                        {
+                          "range": {
+                            "accident.exp_clr_dt": {
+                              "gt": "now"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "collapse": {
+                    "field": "accident.search"
+                  },
+                  "size": 100
+                }
+                """;
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> requestEntity = new HttpEntity<>(jsonBody, headers);
 
             ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
-
             String body = response.getBody();
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(body);
 
-            JsonNode buckets = root
-                    .path("aggregations")
-                    .path("by_area")
-                    .path("buckets");
+            JsonNode root = objectMapper.readTree(body);
+            JsonNode hits = root.path("hits").path("hits");
 
             List<JsonNode> accidentList = new ArrayList<>();
-            for (JsonNode bucket : buckets) {
-                JsonNode latestHit = bucket.path("latest_hit").path("hits").path("hits").get(0);
-                JsonNode accident = latestHit.path("_source").path("accident");
+            for (JsonNode hit : hits) {
+                JsonNode accident = hit.path("_source").path("accident");
                 accidentList.add(accident);
             }
 
-            ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.valueToTree(accidentList);
 
         } catch (InvalidRequestException e) {
@@ -91,12 +81,12 @@ public class AccidentEsService {
         try {
             JsonNode accidentArray = getAccidentData();
             List<Map<String, Object>> list = new ArrayList<>();
-            ObjectMapper mapper = new ObjectMapper();
 
             for (JsonNode node : accidentArray) {
-                Map<String, Object> map = mapper.convertValue(node, Map.class);
+                Map<String, Object> map = objectMapper.convertValue(node, Map.class);
                 list.add(map);
             }
+
             return list;
         } catch (Exception e) {
             throw new RuntimeException("사고 데이터 변환 실패", e);
