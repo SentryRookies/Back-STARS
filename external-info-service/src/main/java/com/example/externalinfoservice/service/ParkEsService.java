@@ -23,43 +23,43 @@ public class ParkEsService {
         return String.format("http://elasticsearch.seoultravel.life/seoul_citydata_parking_%s/_search", today);
     }
 
-    // 특정 지역 주차장 정보
-    public Map<String, Object> getParkFromES(String areaId) {
-        String url = getTodayIndexUrl();
-        log.info("Requesting park info for areaId: {}", areaId);
-
-        Map<String, Object> term = Map.of("parking.area_nm", areaId);
-        Map<String, Object> query = Map.of("term", term);
-        Map<String, Object> body = Map.of("size", 100, "query", query);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-        log.info("Request body: {}", body);
-
-        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
-        log.info("Response status: {}", response.getStatusCode());
-
-        List<Map<String, Object>> hits = (List<Map<String, Object>>)
-                ((Map<String, Object>) response.getBody().get("hits")).get("hits");
-
-        if (hits.isEmpty()) {
-            log.warn("No results found for areaId: {}", areaId);
-            return null;
-        }
-
-        Map<String, Object> source = (Map<String, Object>) hits.get(0).get("_source");
-        Map<String, Object> parking = (Map<String, Object>) source.get("parking");
-
-        log.info("Parking data: {}", parking);
-        return parking;
-    }
+//    // 특정 지역 주차장 정보
+//    public Map<String, Object> getParkFromES(String areaId) {
+//        String url = getTodayIndexUrl();
+//        log.info("Requesting park info for areaId: {}", areaId);
+//
+//        Map<String, Object> term = Map.of("parking.area_nm", areaId);
+//        Map<String, Object> query = Map.of("term", term);
+//        Map<String, Object> body = Map.of("size", 100, "query", query);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//
+//        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+//        log.info("Request body: {}", body);
+//
+//        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+//        log.info("Response status: {}", response.getStatusCode());
+//
+//        List<Map<String, Object>> hits = (List<Map<String, Object>>)
+//                ((Map<String, Object>) response.getBody().get("hits")).get("hits");
+//
+//        if (hits.isEmpty()) {
+//            log.warn("No results found for areaId: {}", areaId);
+//            return null;
+//        }
+//
+//        Map<String, Object> source = (Map<String, Object>) hits.get(0).get("_source");
+//        Map<String, Object> parking = (Map<String, Object>) source.get("parking");
+//
+//        log.info("Parking data: {}", parking);
+//        return parking;
+//    }
 
     // 전체 지역 주차장 정보
     public List<Map<String, Object>> getAllParkFromES() {
         String url = getTodayIndexUrl();
-        log.info("Requesting all park info");
+    //  log.info("Requesting all park info");
 
         Map<String, Object> body = Map.of(
                 "size", 0,
@@ -107,13 +107,13 @@ public class ParkEsService {
 
             if (parkData != null) {
                 results.add(parkData);
-                log.info("Added park data for area: {}", parkData.get("area_nm"));
+//                log.info("Added park data for area: {}", parkData.get("area_nm"));
             } else {
                 log.warn("Parking data is null for a hit");
             }
         }
 
-        log.info("Returning {} park results", results.size());
+        log.info("주차 데이터 : {} park results", results.size());
         return results;
     }
 }

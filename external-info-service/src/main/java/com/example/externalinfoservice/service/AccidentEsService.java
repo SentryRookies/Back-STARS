@@ -73,7 +73,7 @@ public class AccidentEsService {
             throw new InvalidRequestException(e.getMessage(), e);
         } catch (Exception e) {
             System.out.println(e);
-            throw new RuntimeException("예상치 못한 오류", e);
+            throw new RuntimeException("사고 현황 : 예상치 못한 오류", e);
         }
     }
 
