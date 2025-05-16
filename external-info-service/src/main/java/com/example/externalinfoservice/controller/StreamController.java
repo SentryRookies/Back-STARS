@@ -29,7 +29,7 @@ public class StreamController {
     private final AccidentEsService accidentEsService;
 
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter streamWeather() {
+    public SseEmitter stream() {
         SseEmitter emitter = new SseEmitter(0L); // 타임아웃 없음
         emitters.add(emitter);
 
@@ -39,13 +39,31 @@ public class StreamController {
 
         // 구독시, 초기 데이터 주입
         try {
+            System.out.println("초기 데이터 푸시 중...");
             var weatherList = weatherEsService.getAllWeatherFromES();
             var trafficList = roadService.getTrafficData();
             var parkList = parkEsService.getAllParkFromES();
             var accidentList = accidentEsService.getAllAccidentsFromES();
-            sendToClients(weatherList, trafficList, parkList, accidentList);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+
+            emitter.send(SseEmitter.event()
+                    .name("weather-update")
+                    .data(weatherList));
+            emitter.send(SseEmitter.event()
+                    .name("traffic-update")
+                    .data(trafficList));
+            emitter.send(SseEmitter.event()
+                    .name("park-update")
+                    .data(parkList));
+            emitter.send(SseEmitter.event()
+                    .name("accident-alert")
+                    .data(accidentList));
+
+            System.out.println(".. 초기 데이터 푸시 완료");
+
+        } catch (IOException | IllegalStateException e) {
+            System.out.println("SSE 오류 발생");
+            emitter.completeWithError(e);
+            emitters.remove(emitter);
         }
 
         return emitter;
@@ -55,19 +73,30 @@ public class StreamController {
     public void sendToClients(List<Map<String, Object>> weatherList, JsonNode trafficList, List<Map<String, Object>> parkList, List<Map<String, Object>> accidentList) {
         for (SseEmitter emitter : emitters) {
             try {
+                System.out.println("external 데이터 푸시 중...");
+
                 emitter.send(SseEmitter.event()
                         .name("weather-update")
                         .data(weatherList));
+                System.out.println(".. 날씨 데이터 푸시 완료");
+
                 emitter.send(SseEmitter.event()
                         .name("traffic-update")
                         .data(trafficList));
+                System.out.println(".. 도로현황 데이터 푸시 완료");
+
                 emitter.send(SseEmitter.event()
                         .name("park-update")
                         .data(parkList));
+                System.out.println(".. 주차 데이터 푸시 완료");
+
                 emitter.send(SseEmitter.event()
                         .name("accident-alert")
                         .data(accidentList));
-            } catch (IOException e) {
+                System.out.println(".. 사고 데이터 푸시 완료");
+
+            } catch (IOException | IllegalStateException e) {
+                System.out.println("SSE 오류 발생");
                 emitter.completeWithError(e);
                 emitters.remove(emitter);
             }
