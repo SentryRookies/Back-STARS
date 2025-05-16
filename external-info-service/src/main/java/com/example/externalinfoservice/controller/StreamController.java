@@ -29,7 +29,7 @@ public class StreamController {
     private final AccidentEsService accidentEsService;
 
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter streamWeather() {
+    public SseEmitter stream() {
         SseEmitter emitter = new SseEmitter(0L); // 타임아웃 없음
         emitters.add(emitter);
 

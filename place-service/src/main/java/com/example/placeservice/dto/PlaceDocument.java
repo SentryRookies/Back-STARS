@@ -3,6 +3,8 @@ package com.example.placeservice.dto;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.math.BigDecimal;
+
 @Builder
 @Getter
 public class PlaceDocument {
@@ -12,4 +14,6 @@ public class PlaceDocument {
     private String type;
     private String address;
     private String place_id;
+    private BigDecimal lat;
+    private BigDecimal lon;
 }
