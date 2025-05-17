@@ -28,7 +28,7 @@ public class KakaoApiService {
     @Value("${kakao.api.key}")
     private String kakaoApiKey;
 
-    private static final String KAKAO_API_BASE_URL = "https://dapi.kakao.com/v2/local";
+    private static final String KAKAO_API_BASE_URL = "https://api.kakao.com/v2/local";
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
