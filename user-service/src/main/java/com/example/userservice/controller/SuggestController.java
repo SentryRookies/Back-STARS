@@ -5,6 +5,7 @@ import com.example.userservice.dto.SuggestRequestDto;
 import com.example.userservice.dto.SuggestFastRequestDto;
 import com.example.userservice.entity.Member;
 import com.example.userservice.service.MemberService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,9 +20,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/suggest")
 public class SuggestController {
+    @Value("${fastapi-svc}")
+    private String fastApiUrl;
+
     private final MemberService memberService;
     private final RestTemplate restTemplate;
-    private final String fastApiUrl = "http://localhost:8000/suggest/";
 
     public SuggestController(MemberService memberService) {
         this.memberService = memberService;
@@ -65,7 +68,7 @@ public class SuggestController {
         HttpEntity<SuggestFastRequestDto> entity = new HttpEntity<>(suggestFastRequestDto, headers);
 
         try {
-            ResponseEntity<SuggestFastResponseDto> response = restTemplate.postForEntity(fastApiUrl + user_id, entity, SuggestFastResponseDto.class);
+            ResponseEntity<SuggestFastResponseDto> response = restTemplate.postForEntity(fastApiUrl + "/suggest/" + user_id, entity, SuggestFastResponseDto.class);
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 SuggestFastResponseDto suggestFastResponseDto = response.getBody();
@@ -108,7 +111,7 @@ public class SuggestController {
         }
 
         try {
-            ResponseEntity<SuggestFastResponseDto[]> responseEntity = restTemplate.getForEntity(fastApiUrl + user_id, SuggestFastResponseDto[].class);
+            ResponseEntity<SuggestFastResponseDto[]> responseEntity = restTemplate.getForEntity(fastApiUrl + "/suggest/" + user_id, SuggestFastResponseDto[].class);
             SuggestFastResponseDto[] responseArray = responseEntity.getBody();
 
             if (responseArray == null) {
