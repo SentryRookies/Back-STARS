@@ -65,7 +65,7 @@ public class SuggestController {
         HttpEntity<SuggestFastRequestDto> entity = new HttpEntity<>(suggestFastRequestDto, headers);
 
         try {
-            ResponseEntity<SuggestFastResponseDto> response = restTemplate.postForEntity(fastApiUrl + "${user_id}", entity, SuggestFastResponseDto.class);
+            ResponseEntity<SuggestFastResponseDto> response = restTemplate.postForEntity(fastApiUrl + user_id, entity, SuggestFastResponseDto.class);
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 SuggestFastResponseDto suggestFastResponseDto = response.getBody();
@@ -108,7 +108,7 @@ public class SuggestController {
         }
 
         try {
-            ResponseEntity<SuggestFastResponseDto[]> responseEntity = restTemplate.getForEntity(fastApiUrl + "${user_id}", SuggestFastResponseDto[].class);
+            ResponseEntity<SuggestFastResponseDto[]> responseEntity = restTemplate.getForEntity(fastApiUrl + user_id, SuggestFastResponseDto[].class);
             SuggestFastResponseDto[] responseArray = responseEntity.getBody();
 
             if (responseArray == null) {
