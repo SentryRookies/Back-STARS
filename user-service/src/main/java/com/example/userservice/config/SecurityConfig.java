@@ -1,5 +1,7 @@
 package com.example.userservice.config;
 
+import com.example.userservice.exception.CustomAccessDeniedHandler;
+import com.example.userservice.exception.CustomAuthenticationEntryPoint;
 import com.example.userservice.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

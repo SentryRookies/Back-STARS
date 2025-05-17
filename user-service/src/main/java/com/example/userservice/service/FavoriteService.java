@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -52,7 +53,8 @@ public class FavoriteService {
                 }).toList();
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+//            throw new RuntimeException(e);
+            throw new BadCredentialsException("즐겨찾기 장소 조회 실패",e);
         }
     }
 
@@ -112,6 +114,7 @@ public class FavoriteService {
     public List<Map<String, Object>> getAllFavoriteData() {
         try{
             List<Favorite> items = favoriteRepository.findAll();
+
             List<FavoriteDto> favoriteDtoList = items.stream()
                     .map(item ->{
                             ResponseEntity<JsonNode> response = restTemplate.exchange(
@@ -148,7 +151,9 @@ public class FavoriteService {
             return result;
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+//            throw new RuntimeException(e);
+            throw new BadCredentialsException("즐겨찾기 장소 조회 실패",e);
         }
+
     }
 }
