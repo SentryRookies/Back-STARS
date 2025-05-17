@@ -12,7 +12,6 @@ import java.util.List;
 @Data
 public class Area {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "area_id")
     private Long areaId;
 

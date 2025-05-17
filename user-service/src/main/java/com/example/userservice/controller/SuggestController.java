@@ -88,7 +88,7 @@ public class SuggestController {
         }
     }
 
-    @GetMapping("/{user_id")
+    @GetMapping("/{user_id}")
     public ResponseEntity<?> getPrevChatsForPlan(@PathVariable String user_id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getName())) {
