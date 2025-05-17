@@ -1,13 +1,13 @@
 package com.example.placeservice.service;
 
 import com.example.placeservice.dto.cafe.CafeDto;
+import com.example.placeservice.dto.cafe.CafeListDto;
 import com.example.placeservice.entity.Area;
 import com.example.placeservice.entity.Cafe;
 import com.example.placeservice.repository.AreaRepository;
 import com.example.placeservice.repository.CafeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,35 +29,27 @@ public class CafeService {
     private boolean processingCompleted = false;
 
     /**
-     * 캐싱된 카페 목록 조회
+     * 레스토랑 스타일로 단순화된 카페 목록 조회 (캐싱 없음)
      */
-    @Cacheable(value = "cafeList")
     @Transactional(readOnly = true)
-    public List<Map<String, Object>> getCachedCafeList() {
-        log.info("캐싱된 카페 목록 조회");
-        List<Cafe> cafes = cafeRepository.findAll();
-
-        // ID를 기준으로 정렬
-        return cafes.stream()
-                .sorted(Comparator.comparing(Cafe::getId))
-                .map(cafe -> {
-                    Map<String, Object> cafeMap = new LinkedHashMap<>();
-                    cafeMap.put("cafe_id", cafe.getId().toString());
-                    cafeMap.put("cafe_name", cafe.getName());
-                    cafeMap.put("lat", cafe.getLat().toString());
-                    cafeMap.put("lon", cafe.getLon().toString());
-                    return cafeMap;
-                })
+    public List<CafeListDto> getSimpleCafeList() {
+        log.info("심플한 카페 목록 조회 - 레스토랑 스타일 (캐싱 없음)");
+        return cafeRepository.findAll().stream()
+                .map(cafe -> new CafeListDto(
+                        cafe.getId(),
+                        cafe.getName(),
+                        cafe.getLat(),
+                        cafe.getLon()
+                ))
                 .collect(Collectors.toList());
     }
 
     /**
-     * 캐싱된 카페 상세 정보 조회
+     * 카페 상세 정보 조회 (캐싱 없음)
      */
-    @Cacheable(value = "cafeInfo", key = "#cafeId")
     @Transactional(readOnly = true)
-    public Map<String, Object> getCachedCafeInfo(Long cafeId) {
-        log.info("캐싱된 카페 상세 정보 조회: {}", cafeId);
+    public Map<String, Object> getCafeInfo(Long cafeId) {
+        log.info("카페 상세 정보 조회 (캐싱 없음): {}", cafeId);
         Optional<Cafe> cafeOptional = cafeRepository.findById(cafeId);
 
         if (cafeOptional.isPresent()) {
@@ -253,7 +245,6 @@ public class CafeService {
     /**
      * 특정 지역의 카페 목록 조회
      */
-    @Cacheable(value = "cafesByArea", key = "#areaId")
     @Transactional(readOnly = true)
     public List<CafeDto> getCafesByAreaId(Long areaId) {
         log.info("지역 ID {}의 카페 목록 조회", areaId);
@@ -268,7 +259,6 @@ public class CafeService {
     /**
      * 모든 카페 목록 조회
      */
-    @Cacheable(value = "allCafes")
     @Transactional(readOnly = true)
     public List<CafeDto> getAllCafes() {
         log.info("모든 카페 목록 조회");
@@ -277,28 +267,6 @@ public class CafeService {
 
         return cafes.stream()
                 .map(this::convertToDto)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * ID, 이름, 위도, 경도만 포함한 모든 카페 목록 조회
-     */
-    @Cacheable(value = "simpleCafes")
-    @Transactional(readOnly = true)
-    public List<Map<String, Object>> getAllCafesWithLimitedInfo() {
-        log.info("제한된 정보로 모든 카페 목록 조회");
-        List<Cafe> cafes = cafeRepository.findAll();
-        log.info("총 {}개의 카페 조회됨", cafes.size());
-
-        return cafes.stream()
-                .map(cafe -> {
-                    Map<String, Object> cafeMap = new HashMap<>();
-                    cafeMap.put("id", cafe.getId());
-                    cafeMap.put("name", cafe.getName());
-                    cafeMap.put("lat", cafe.getLat());
-                    cafeMap.put("lon", cafe.getLon());
-                    return cafeMap;
-                })
                 .collect(Collectors.toList());
     }
 
@@ -321,7 +289,6 @@ public class CafeService {
     /**
      * 카카오맵 URL로 카페 상세 정보 조회
      */
-    @Cacheable(value = "cafeByPlaceCode", key = "#placeCode")
     @Transactional(readOnly = true)
     public Map<String, Object> getCafeDetailByPlaceCode(String placeCode) {
         log.info("장소 코드로 카페 상세 정보 조회: {}", placeCode);
@@ -350,7 +317,6 @@ public class CafeService {
     /**
      * 지역 ID로 카페 목록 조회 (응답 형식 맞춤)
      */
-    @Cacheable(value = "cafesByAreaFormatted", key = "#areaId")
     @Transactional(readOnly = true)
     public Map<String, Object> getCafesByAreaIdFormatted(Long areaId) {
         log.info("지역 ID {}의 카페 목록 조회 (응답 형식 맞춤)", areaId);
