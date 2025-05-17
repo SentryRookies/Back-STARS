@@ -42,7 +42,7 @@ public class JwtTokenProvider {
 
     public String generateRefreshToken(String userId) {  // nickname 대신 userId 사용
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + 1000L * 60 * 60 * 24 * 7); // 7일
+        Date expiryDate = new Date(now.getTime() + 1000 * 60 * 45); // 45분
 
         return Jwts.builder()
                 .setSubject(userId)  // userId로 변경
