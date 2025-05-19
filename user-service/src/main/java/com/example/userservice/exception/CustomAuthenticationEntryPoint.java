@@ -1,4 +1,4 @@
-package com.example.userservice.config;
+package com.example.userservice.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,9 +16,20 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
-            throws IOException {
-        sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "사용자가 없습니다.", request.getRequestURI());
+        throws IOException {
+
+        // 원인 예외 메시지 얻기
+        Throwable cause = authException.getCause();
+        String detailedMessage = authException.getMessage();
+        if (cause != null) {
+            detailedMessage += " | 원인: " + cause.getMessage();
+        }
+        // 로그에 예외 내용 남기기
+        System.out.println("인증 실패 발생:"+detailedMessage+", 요청 URI: " + request.getRequestURI() + authException.getMessage()+ request.getRequestURI()+ authException);
+
+        sendErrorResponse(response, HttpStatus.UNAUTHORIZED, detailedMessage, request.getRequestURI());
     }
+
 
     private void sendErrorResponse(HttpServletResponse response, HttpStatus status, String message, String path)
             throws IOException {

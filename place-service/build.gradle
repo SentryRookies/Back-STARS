@@ -24,6 +24,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+
     // redis 추가
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
@@ -33,9 +35,11 @@ dependencies {
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
     // JAXB Runtime (XML 파싱을 위해 필요)
     implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.3'
-
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
+    // 캐싱
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
 
     // JWT 처리
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'

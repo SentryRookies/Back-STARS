@@ -1,11 +1,9 @@
 package com.example.placeservice.init;
 
+import com.example.placeservice.repository.AccommodationRepository;
 import com.example.placeservice.repository.CafeRepository;
 import com.example.placeservice.repository.RestaurantRepository;
-import com.example.placeservice.service.AttractionService;
-import com.example.placeservice.service.CafeService;
-import com.example.placeservice.service.CulturalEventService;
-import com.example.placeservice.service.RestaurantService;
+import com.example.placeservice.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
@@ -21,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class DataInit implements CommandLineRunner {
 
+    private final AccommodationService accommodationService;
     private final AttractionService attractionService;
     private final CulturalEventService culturalEventService;
     private final RestaurantRepository restaurantRepository;
@@ -49,6 +48,7 @@ public class DataInit implements CommandLineRunner {
         }
 
         // 2. 장소 데이터 삽입
+        accommodationService.saveAccommodations();
         attractionService.fetchDataFromVisitSeoul();
         culturalEventService.fetchAndSaveAllEvents();
 

@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.index.Indexed;
 
 @Getter
 @AllArgsConstructor
-@RedisHash(value = "token", timeToLive = 60 * 60 * 24 * 7) // 리프레시토큰과 expiretime 일치
+@RedisHash(value = "token", timeToLive = 21600) // 리프레시토큰 유효기간 6시간
 public class TokenRedis {
 
     @Id

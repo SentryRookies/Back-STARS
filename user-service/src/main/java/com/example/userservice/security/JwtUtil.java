@@ -19,8 +19,8 @@ import java.util.function.Function;
 public class JwtUtil {
 
     private SecretKey secretKey;
-    private Long accessTokenExpiration; // 액세스 토큰 만료 시간 (ms)
-    private Long refreshTokenExpiration; // 리프레시 토큰 만료 시간 (ms)
+    private Long accessTokenExpiration;     // 액세스 토큰 유효 시간
+    private Long refreshTokenExpiration;    // 리프레시 토큰 유효 시간
 
     @PostConstruct
     public void init() {
@@ -35,11 +35,10 @@ public class JwtUtil {
         }
 
         this.secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
-        // 액세스 토큰 유효 시간을 45분(2,700,000 밀리초)으로 설정
-        this.accessTokenExpiration = 2700000L; // 45분
-        this.refreshTokenExpiration = Long.parseLong(dotenv.get("JWT_REFRESH_EXPIRATION", "604800000")); // 기본값 7일
+        this.accessTokenExpiration = 1000L * 60 * 45;         // 45분
+        this.refreshTokenExpiration = 1000L * 60 * 60 * 6;    // 6시간
 
-        System.out.println("JWT 설정 완료: 액세스 토큰 만료 시간 = " + (accessTokenExpiration / 60000) + "분");
+        System.out.println("JWT 설정 완료: 액세스 토큰 = " + (accessTokenExpiration / 60000) + "분, 리프레시 토큰 = " + (refreshTokenExpiration / 60000) + "분");
     }
 
     // 사용자 이름 추출
@@ -52,7 +51,7 @@ public class JwtUtil {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    // 토큰 ID 추출 (토큰 버전 관리용)
+    // 토큰 ID 추출
     public String extractTokenId(String token) {
         return extractClaim(token, claims -> claims.get("tokenId", String.class));
     }
@@ -65,73 +64,59 @@ public class JwtUtil {
 
     // 모든 클레임 추출
     private Claims extractAllClaims(String token) {
-        return Jwts
-                .parser()
+        return Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
     }
 
-    // 토큰 만료 확인
+    // 토큰 만료 여부
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    // 액세스 토큰 생성
+    // 액세스 토큰 생성 (UserDetails 기반)
     public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        String token = createToken(claims, userDetails.getUsername(), accessTokenExpiration);
-        System.out.println("액세스 토큰 발급: 사용자 = " + userDetails.getUsername() + ", 만료 시간 = " + new Date(System.currentTimeMillis() + accessTokenExpiration));
-        return token;
+        return createToken(new HashMap<>(), userDetails.getUsername(), accessTokenExpiration);
     }
 
-    // 액세스 토큰 생성 (nickname 직접 전달)
+    // 액세스 토큰 생성 (닉네임 기반)
     public String generateAccessToken(String nickname) {
-        Map<String, Object> claims = new HashMap<>();
-        String token = createToken(claims, nickname, accessTokenExpiration);
-        System.out.println("액세스 토큰 발급: 사용자 = " + nickname + ", 만료 시간 = " + new Date(System.currentTimeMillis() + accessTokenExpiration));
-        return token;
+        return createToken(new HashMap<>(), nickname, accessTokenExpiration);
     }
 
-    // 리프레시 토큰 생성
+    // 리프레시 토큰 생성 (UserDetails 기반)
     public String generateRefreshToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        String token = createToken(claims, userDetails.getUsername(), refreshTokenExpiration);
-        System.out.println("리프레시 토큰 발급: 사용자 = " + userDetails.getUsername() + ", 만료 시간 = " + new Date(System.currentTimeMillis() + refreshTokenExpiration));
-        return token;
+        return createToken(new HashMap<>(), userDetails.getUsername(), refreshTokenExpiration);
     }
 
-    // 리프레시 토큰 생성 (nickname 직접 전달)
+    // 리프레시 토큰 생성 (닉네임 기반)
     public String generateRefreshToken(String nickname) {
-        Map<String, Object> claims = new HashMap<>();
-        String token = createToken(claims, nickname, refreshTokenExpiration);
-        System.out.println("리프레시 토큰 발급: 사용자 = " + nickname + ", 만료 시간 = " + new Date(System.currentTimeMillis() + refreshTokenExpiration));
-        return token;
+        return createToken(new HashMap<>(), nickname, refreshTokenExpiration);
     }
 
-    // 토큰 생성 메소드
+    // JWT 생성 로직
     private String createToken(Map<String, Object> claims, String subject, Long expirationTime) {
-        // 토큰 ID 생성 (토큰 버전 관리를 위한 고유 식별자)
         String tokenId = String.valueOf(System.currentTimeMillis());
 
         return Jwts.builder()
                 .claims(claims)
                 .subject(subject)
-                .claim("tokenId", tokenId)  // 토큰 ID 추가 (버전 관리용)
+                .claim("tokenId", tokenId)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
     }
 
-    // 토큰 유효성 검증 (UserDetails와 비교)
+    // 토큰 유효성 검사 (UserDetails와 비교)
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    // 토큰 유효성만 검사 (사용자 정보 없이)
+    // 토큰 유효성 검사 (단순 검증)
     public Boolean validateToken(String token) {
         try {
             Jwts.parser()

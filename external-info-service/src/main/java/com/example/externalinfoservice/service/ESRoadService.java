@@ -88,7 +88,7 @@ public class ESRoadService {
             throw new InvalidRequestException(e.getMessage(), e);
         }catch (Exception e){
             System.out.println(e);
-            throw new RuntimeException("예상치 못한 오류",e);
+            throw new RuntimeException("도로 현황 데이터 : 예상치 못한 오류",e);
         }
     }
 }

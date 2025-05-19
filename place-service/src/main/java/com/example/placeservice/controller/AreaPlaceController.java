@@ -55,8 +55,8 @@ public class AreaPlaceController {
 
         for (Cafe cafe : cafes) {
             Map<String, Object> cafeMap = new LinkedHashMap<>();
-            cafeMap.put("cafe_id", cafe.getId());
-            cafeMap.put("cafe_name", cafe.getName());
+            cafeMap.put("id", cafe.getId());
+            cafeMap.put("name", cafe.getName());
             cafeMap.put("address", cafe.getAddress());
             cafeMap.put("phone", cafe.getPhone());
             cafeMap.put("kakaomap_url", cafe.getKakaomapUrl());
@@ -153,9 +153,9 @@ public class AreaPlaceController {
         for (CulturalEvent event : events) {
             Map<String, Object> eventMap = new LinkedHashMap<>();
             eventMap.put("id", event.getEventId());
-            eventMap.put("category", event.getCategory());
-            eventMap.put("title", event.getTitle());
+            eventMap.put("name", event.getTitle());
             eventMap.put("address", event.getAddress());
+            eventMap.put("category", event.getCategory());
             eventMap.put("target", event.getTarget());
             eventMap.put("event_fee", event.getEventFee());
             eventMap.put("event_img", event.getEventImg());

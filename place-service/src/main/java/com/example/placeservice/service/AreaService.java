@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,16 +20,10 @@ public class AreaService {
     public List<AreaDto> getAreaData() {
         try{
             List<Area> areas = areaRepository.findAll();
+
             return areas.stream()
-                    .map(area -> new AreaDto(
-                            area.getAreaId(),
-                            area.getSeoulId(),
-                            area.getName(),
-                            area.getNameEng(),
-                            area.getCategory(),
-                            area.getLat(),
-                            area.getLon()
-                    )).toList();
+                    .map(AreaDto::new)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("예상치 못한 오류",e);
         }

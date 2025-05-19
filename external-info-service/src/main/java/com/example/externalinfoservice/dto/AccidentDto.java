@@ -1,4 +1,4 @@
-package com.example.externalinfoservice.dto;
-
-public class AccidentDto {
-}
+//package com.example.externalinfoservice.dto;
+//
+//public class AccidentDto {
+//}

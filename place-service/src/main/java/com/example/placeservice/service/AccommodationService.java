@@ -128,7 +128,7 @@ public class AccommodationService {
         // 5. 수집된 숙소 정보 일괄 저장
         if (!accommodationsToSave.isEmpty()) {
             accommodationRepository.saveAll(accommodationsToSave); // saveAll로 성능 향상
-            System.out.println("저장 성공");
+            System.out.println("숙박업소 저장 성공");
         } else {
             System.out.println("신규 저장 숙박업소가 없습니다.");
         }

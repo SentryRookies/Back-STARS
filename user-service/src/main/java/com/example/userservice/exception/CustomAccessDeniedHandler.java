@@ -1,4 +1,4 @@
-package com.example.userservice.config;
+package com.example.userservice.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final MemberRepository memberRepository;
     private final TokenService tokenService;
 
-    // 완전 일치 제외 경로 목록 (Swagger 포함)
+    // 완전 일치 제외 경로 목록
     private final List<String> excludedExactPaths = Arrays.asList(
             "/auth/signup",
             "/auth/admin/signup",

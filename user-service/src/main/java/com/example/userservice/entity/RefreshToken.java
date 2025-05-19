@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.index.Indexed;
 
 @Getter
 @NoArgsConstructor
-@RedisHash(value = "refreshToken", timeToLive = 2700) // 45분(2700초) 후 자동 삭제
+@RedisHash(value = "refreshToken", timeToLive = 21600) // 6시간 후 자동 삭제
 public class RefreshToken {
 
     @Id
