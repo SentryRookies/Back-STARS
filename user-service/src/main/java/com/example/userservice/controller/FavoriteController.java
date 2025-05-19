@@ -20,6 +20,7 @@ public class FavoriteController {
 
     private final FavoriteService favoriteService;
 
+    //즐겨찾기 리스트 조회
     @GetMapping("/list")
     public List<FavoriteDto> getList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -28,6 +29,7 @@ public class FavoriteController {
         return favoriteService.getListData(userId);
     }
 
+    //즐겨찾기 추가
     @PostMapping("/add")
     public ResponseEntity<Map<String, String>> addFavorite(@RequestBody FavoriteDto favoriteDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -36,6 +38,7 @@ public class FavoriteController {
         return favoriteService.addFavoriteData(userId,favoriteDto);
     }
 
+    //즐겨찾기 삭제
     @DeleteMapping("/delete/{type}/{id}")
     public ResponseEntity<Map<String, String>> deleteFavorite(@PathVariable String type, @PathVariable String id, HttpServletRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
