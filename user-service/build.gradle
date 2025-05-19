@@ -32,6 +32,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+
     // JWT 처리
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
@@ -71,7 +73,6 @@ dependencies {
 
     //implementation 'org.springframework.cloud:spring-cloud-starter-sleuth:2.2.4.RELEASE'
 
-    implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
 }
 
 tasks.named('bootBuildImage') {
