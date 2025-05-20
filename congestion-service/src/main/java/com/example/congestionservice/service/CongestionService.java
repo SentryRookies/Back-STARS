@@ -2,6 +2,7 @@ package com.example.congestionservice.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.errors.InvalidRequestException;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,13 +24,14 @@ public class CongestionService {
     private static final RestTemplate restTemplate = new RestTemplate();
 
     @Value("${elastic_url}")
-    private static String elastic_url;
+    private String elastic_url;
 
-    public static JsonNode getCongestion() {
+    public JsonNode getCongestion() {
         try{
             // 오늘 날짜 구하기
             String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             String apiUrl = String.format(elastic_url + "/seoul_citydata_congestion_%s/_search", today);
+            System.out.println(apiUrl);
 
             // JSON Body 생성
             String jsonBody = String.format("{\n" +

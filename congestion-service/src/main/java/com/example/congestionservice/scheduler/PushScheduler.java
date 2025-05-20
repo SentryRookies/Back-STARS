@@ -19,7 +19,7 @@ import java.util.Map;
 public class PushScheduler {
     private final CongestionController congestionController;
     private final CongestionPreviousCache congestionPreviousCache;
-
+    private final CongestionService congestionService;
 
     // 이전 혼잡도 상태를 저장하는 필드 추가(혼잡도 알림용)
 //    private Map<String, String> previousLevels = new HashMap<>();
@@ -30,7 +30,7 @@ public class PushScheduler {
 
 
         System.out.println("혼잡도 푸시 중...");
-        var congestionList = CongestionService.getCongestion();
+        var congestionList = congestionService.getCongestion();
 
         congestionController.sendToClients(congestionList); // 모든 지역 혼잡도 전송
 

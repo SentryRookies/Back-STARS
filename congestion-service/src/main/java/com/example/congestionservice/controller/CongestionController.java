@@ -24,6 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class CongestionController {
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
     private final CongestionPreviousCache congestionPreviousCache;
+    private final CongestionService congestionService;
 
     @GetMapping("/congestion")
     public SseEmitter streamCongestion() {
@@ -39,7 +40,7 @@ public class CongestionController {
         // 초기데이터 투입
         try {
             System.out.println("혼잡도 초기 데이터 푸시 중...");
-            var congestionList = CongestionService.getCongestion();
+            var congestionList = congestionService.getCongestion();
 
             emitter.send(SseEmitter.event()
                     .name("congestion-update")

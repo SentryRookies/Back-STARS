@@ -24,9 +24,9 @@ public class ESRoadService {
     private static final RestTemplate restTemplate = new RestTemplate();
 
     @Value("${elastic_url}")
-    private static String elastic_url;
+    private String elastic_url;
 
-    public static JsonNode getTrafficData() {
+    public JsonNode getTrafficData() {
         try {
             // 오늘 날짜 구하기
             String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));

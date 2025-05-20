@@ -26,7 +26,7 @@ public class AccidentEsService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${elastic_url}")
-    private static String elastic_url;
+    private String elastic_url;
 
     public JsonNode getAccidentData() {
         try {

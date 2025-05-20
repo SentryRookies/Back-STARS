@@ -17,7 +17,7 @@ public class WeatherEsService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Value("${elastic_url}")
-    private static String elastic_url;
+    private String elastic_url;
 
     // 오늘 날짜 기반 인덱스 이름 생성
     private String getTodayIndex() {
