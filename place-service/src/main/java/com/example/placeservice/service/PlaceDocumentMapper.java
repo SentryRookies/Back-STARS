@@ -16,6 +16,8 @@ public class PlaceDocumentMapper {
                 .place_id(String.valueOf(item.getAccommodationId()))
                 .lat(item.getLat())
                 .lon(item.getLon())
+                .phone(item.getPhone())
+                .kakaomap_url(item.getKakaomapUrl())
                 .build();
     }
 
@@ -27,6 +29,8 @@ public class PlaceDocumentMapper {
                 .place_id(String.valueOf(item.getId()))
                 .lat(item.getLat())
                 .lon(item.getLon())
+                .phone(item.getPhone())
+                .kakaomap_url(item.getKakaomapUrl())
                 .build();
     }
 
@@ -49,6 +53,8 @@ public class PlaceDocumentMapper {
                 .place_id(String.valueOf(item.getRestaurantId()))
                 .lat(item.getLat())
                 .lon(item.getLon())
+                .phone(item.getPhone())
+                .kakaomap_url(item.getKakaomap_url())
                 .build();
     }
 
@@ -60,6 +66,8 @@ public class PlaceDocumentMapper {
                 .place_id(String.valueOf(item.getAttractionId()))
                 .lat(item.getLat())
                 .lon(item.getLon())
+                .phone(item.getPhone())
+                .kakaomap_url(item.getKakaomapUrl())
                 .build();
     }
 }

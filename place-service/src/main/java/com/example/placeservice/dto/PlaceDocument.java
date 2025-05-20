@@ -16,4 +16,7 @@ public class PlaceDocument {
     private String place_id;
     private BigDecimal lat;
     private BigDecimal lon;
+    private String phone;
+    private String kakaomap_url;
+
 }
