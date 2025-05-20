@@ -2,6 +2,7 @@ package com.example.externalinfoservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -17,10 +18,13 @@ public class ParkEsService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @Value("elastic_url")
+    private static String elastic_url;
+
     // 오늘 날짜 기반 인덱스 URL 생성
     private String getTodayIndexUrl() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        return String.format("http://elasticsearch.seoultravel.life/seoul_citydata_parking_%s/_search", today);
+        return String.format(elastic_url + "/seoul_citydata_parking_%s/_search", today);
     }
 
 //    // 특정 지역 주차장 정보

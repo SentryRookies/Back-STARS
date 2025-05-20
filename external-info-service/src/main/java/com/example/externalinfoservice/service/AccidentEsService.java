@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.errors.InvalidRequestException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,10 +25,13 @@ public class AccidentEsService {
     private final RestTemplate restTemplate = new RestTemplate(); // 주입 방식으로 대체해도 OK
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    @Value("elastic_url")
+    private static String elastic_url;
+
     public JsonNode getAccidentData() {
         try {
             String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            String apiUrl = String.format("http://elasticsearch.seoultravel.life/seoul_citydata_accident_%s/_search", today);
+            String apiUrl = String.format(elastic_url + "/seoul_citydata_accident_%s/_search", today);
 
             String jsonBody = """
                 {
