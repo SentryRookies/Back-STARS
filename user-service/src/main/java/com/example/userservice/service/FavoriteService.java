@@ -8,6 +8,7 @@ import com.example.userservice.repository.jpa.MemberRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,6 +21,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
+
 @Service
 @RequiredArgsConstructor
 public class FavoriteService {
@@ -27,6 +30,9 @@ public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
     private final MemberRepository memberRepository;
     private static final RestTemplate restTemplate = new RestTemplate();
+
+    @Value("${gateway-url}")
+    private String gatewayUrl;
 
     public List<FavoriteDto> getListData(String userId) {
         try{
@@ -36,7 +42,7 @@ public class FavoriteService {
                     .map(item -> {
 
                         ResponseEntity<JsonNode> response = restTemplate.exchange(
-                                "http://api.seoultravel.life/place/main/info/"+item.getType()+"/" + item.getPlaceId(),
+                                gatewayUrl+"/place/main/info/"+item.getType()+"/" + item.getPlaceId(),
                                 HttpMethod.GET,
                                 null,
                                 JsonNode.class
@@ -118,7 +124,7 @@ public class FavoriteService {
             List<FavoriteDto> favoriteDtoList = items.stream()
                     .map(item ->{
                             ResponseEntity<JsonNode> response = restTemplate.exchange(
-                                    "http://api.seoultravel.life/place/main/info/"+item.getType()+"/" + item.getPlaceId(),
+                                    gatewayUrl+"/place/main/info/"+item.getType()+"/" + item.getPlaceId(),
                                     HttpMethod.GET,
                                     null,
                                     JsonNode.class
