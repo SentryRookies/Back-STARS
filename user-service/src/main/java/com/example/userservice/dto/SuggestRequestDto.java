@@ -18,5 +18,5 @@ public class SuggestRequestDto {
     private String startPlace;
 
     @JsonProperty("optional_request")
-    private String optionalRequest;
+    private String optionalRequest = "";
 }
