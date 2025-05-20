@@ -18,7 +18,7 @@ public class ParkEsService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("elastic_url")
+    @Value("${elastic_url}")
     private static String elastic_url;
 
     // 오늘 날짜 기반 인덱스 URL 생성

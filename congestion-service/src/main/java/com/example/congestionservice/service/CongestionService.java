@@ -22,7 +22,7 @@ import java.util.List;
 public class CongestionService {
     private static final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("elastic_url")
+    @Value("${elastic_url}")
     private static String elastic_url;
 
     public static JsonNode getCongestion() {

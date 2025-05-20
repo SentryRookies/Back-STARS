@@ -25,7 +25,7 @@ public class AccidentEsService {
     private final RestTemplate restTemplate = new RestTemplate(); // 주입 방식으로 대체해도 OK
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Value("elastic_url")
+    @Value("${elastic_url}")
     private static String elastic_url;
 
     public JsonNode getAccidentData() {
