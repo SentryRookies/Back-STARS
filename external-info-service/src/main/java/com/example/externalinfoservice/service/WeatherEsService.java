@@ -1,6 +1,7 @@
 package com.example.externalinfoservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,10 +16,13 @@ public class WeatherEsService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @Value("elastic_url")
+    private static String elastic_url;
+
     // 오늘 날짜 기반 인덱스 이름 생성
     private String getTodayIndex() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        return String.format("http://elasticsearch.seoultravel.life/seoul_citydata_weather_%s/_search", today);
+        return String.format(elastic_url + "/seoul_citydata_weather_%s/_search", today);
     }
 
     // 특정 지역 날씨 조회

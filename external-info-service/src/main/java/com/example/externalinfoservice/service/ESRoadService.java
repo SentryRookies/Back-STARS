@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.errors.InvalidRequestException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,11 +23,14 @@ public class ESRoadService {
 
     private static final RestTemplate restTemplate = new RestTemplate();
 
+    @Value("elastic_url")
+    private static String elastic_url;
+
     public static JsonNode getTrafficData() {
         try {
             // 오늘 날짜 구하기
             String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            String apiUrl = String.format("http://elasticsearch.seoultravel.life/seoul_citydata_road_%s/_search", today);
+            String apiUrl = String.format(elastic_url + "/seoul_citydata_road_%s/_search", today);
 
             // JSON Body 생성
             String jsonBody = String.format("{\n" +
