@@ -15,7 +15,7 @@ public class MemberDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class MemberResponse {
-        private String memberId;
+        private Long member_id;         // 회원 고유 ID (시스템 내부용)
         private String user_id;       // 로그인 ID
         private String nickname;      // 닉네임
         private Short birth_year;     // 출생연도

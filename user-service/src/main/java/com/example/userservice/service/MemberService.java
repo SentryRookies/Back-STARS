@@ -120,7 +120,7 @@ public class MemberService {
 
         // 응답 DTO로 변환
         return MemberDto.MemberResponse.builder()
-                .memberId(updatedMember.getUserId())
+                .member_id(updatedMember.getMemberId())
                 .user_id(updatedMember.getUserId())
                 .nickname(updatedMember.getNickname())
                 .birth_year(updatedMember.getBirthYear())
@@ -158,6 +158,7 @@ public class MemberService {
 
         return members.stream()
                 .map(member -> MemberDto.MemberResponse.builder()
+                        .member_id(member.getMemberId())
                         .user_id(member.getUserId())
                         .nickname(member.getNickname())
                         .birth_year(member.getBirthYear())
