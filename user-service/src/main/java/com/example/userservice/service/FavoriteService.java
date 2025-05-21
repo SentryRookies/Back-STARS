@@ -82,13 +82,26 @@ public class FavoriteService {
             return ResponseEntity.status(400).body(response);
         }
 
-        // 2. Favorite 엔티티 생성
+        // 3. 존재하는 장소인지 type/id 확인
+        try {
+            ResponseEntity<JsonNode> checkPlace = restTemplate.exchange(
+                    gatewayUrl + "/place/main/info/" + favoriteDto.getType() + "/" + favoriteDto.getPlace_id(),
+                    HttpMethod.GET,
+                    null,
+                    JsonNode.class
+            );
+        } catch (Exception e) {
+            response.put("message", "잘못된 장소 type/id 입니다");
+            return ResponseEntity.status(400).body(response);
+        }
+
+        // 4. Favorite 엔티티 생성
         Favorite favorite = new Favorite();
         favorite.setType(favoriteDto.getType());
         favorite.setPlaceId(favoriteDto.getPlace_id()); // id는 placeId 역할
         favorite.setMember(member);
 
-        // 3. 저장
+        // 5. 저장
         Favorite saved = favoriteRepository.save(favorite);
 
         response.put("message", "즐겨찾기에 추가되었습니다.");
