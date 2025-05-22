@@ -60,11 +60,20 @@ public class CulturalEventService {
             if (!culturalEventRepository.existsByTitleAndAddressAndStartDate(
                     event.getTitle(), event.getAddress(), event.getStartDate())) {
 
-                // 🔹 행사 위치 기준 가장 가까운 지역 찾기
+                // 행사 위치 기준 가장 가까운 지역 찾기
                 Area nearestArea = findNearestArea(event.getLat().doubleValue(), event.getLon().doubleValue(), areas);
                 event.setArea(nearestArea); // 🔹 지역 설정
 
                 culturalEventRepository.save(event);
+            }else{
+                // 이미 있는 데이터인데 종료일이 지났으면 삭제
+                CulturalEvent existing = culturalEventRepository.findByTitleAndAddressAndStartDate(
+                        event.getTitle(), event.getAddress(), event.getStartDate());
+
+                if (existing != null && existing.getEndDate() != null &&
+                        existing.getEndDate().isBefore(LocalDate.now().atStartOfDay())) {
+                    culturalEventRepository.delete(existing);
+                }
             }
         }
     }
