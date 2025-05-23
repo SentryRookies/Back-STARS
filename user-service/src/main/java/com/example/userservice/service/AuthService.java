@@ -7,6 +7,7 @@ import com.example.userservice.repository.jpa.MemberRepository;
 import com.example.userservice.security.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -43,7 +45,7 @@ public class AuthService {
      * @return 토큰과 사용자 정보가 포함된 응답
      */
     public AuthDto.LoginResponse login(AuthDto.LoginRequest request) {
-        System.out.println("로그인 시도: " + request.getUser_id());
+        log.info("로그인 시도: ", request.getUser_id());
 
         // 1. 사용자 조회 (userId로 조회)
         Member member = memberRepository.findByUserId(request.getUser_id())
