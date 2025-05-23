@@ -23,5 +23,5 @@ public interface CulturalEventRepository extends JpaRepository<CulturalEvent, Lo
     @Query("SELECT e FROM CulturalEvent e WHERE e.area.areaId = :areaId")
     List<CulturalEvent> findByAreaAreaId(@Param("areaId") Long areaId);
 
-    CulturalEvent findByTitleAndAddressAndStartDate(String title, String address, LocalDateTime startDate);
+    List<CulturalEvent> findByTitleAndAddressAndStartDate(String title, String address, LocalDateTime startDate);
 }

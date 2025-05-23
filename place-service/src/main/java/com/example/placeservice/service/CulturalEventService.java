@@ -67,12 +67,15 @@ public class CulturalEventService {
                 culturalEventRepository.save(event);
             }else{
                 // 이미 있는 데이터인데 종료일이 지났으면 삭제
-                CulturalEvent existing = culturalEventRepository.findByTitleAndAddressAndStartDate(
+                List<CulturalEvent> existing = culturalEventRepository.findByTitleAndAddressAndStartDate(
                         event.getTitle(), event.getAddress(), event.getStartDate());
 
-                if (existing != null && existing.getEndDate() != null &&
-                        existing.getEndDate().isBefore(LocalDate.now().atStartOfDay())) {
-                    culturalEventRepository.delete(existing);
+                if (existing != null){
+                    for (CulturalEvent existingEvent : existing) {
+                        if(existingEvent.getEndDate() != null && existingEvent.getEndDate().isBefore(LocalDate.now().atStartOfDay())){
+                            culturalEventRepository.delete(existingEvent);
+                        }
+                    }
                 }
             }
         }

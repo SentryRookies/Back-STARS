@@ -55,8 +55,8 @@ jobs:
           docker push $ECR_REGISTRY/external-info-service:$IMAGE_TAG    
           docker push $ECR_REGISTRY/external-info-service:latest 
           
-          kubectl set image deployment/external-info-service external-info-service=$ECR_REGISTRY/external-info-service:$IMAGE_TAG
-          kubectl rollout status deployment/external-info-service
+          kubectl set image deployment/external-info-service external-info-service=$ECR_REGISTRY/external-info-service:$IMAGE_TAG -n backend
+          kubectl rollout status deployment/external-info-service -n backend
 
   place-service-build:
     runs-on: ubuntu-latest
@@ -105,8 +105,8 @@ jobs:
           
           echo "태그 확인: place-service=$ECR_REGISTRY/place-service:$IMAGE_TAG"
           
-          kubectl set image deployment/place-service place-service=$ECR_REGISTRY/place-service:$IMAGE_TAG
-          kubectl rollout status deployment/place-service
+          kubectl set image deployment/place-service place-service=$ECR_REGISTRY/place-service:$IMAGE_TAG -n backend
+          kubectl rollout status deployment/place-service -n backend
 
   congestion-service-build:
     runs-on: ubuntu-latest
@@ -152,8 +152,8 @@ jobs:
           docker push $ECR_REGISTRY/congestion-service:$IMAGE_TAG    
           docker push $ECR_REGISTRY/congestion-service:latest
           
-          kubectl set image deployment/congestion-service congestion-service=$ECR_REGISTRY/congestion-service:$IMAGE_TAG
-          kubectl rollout status deployment/congestion-service
+          kubectl set image deployment/congestion-service congestion-service=$ECR_REGISTRY/congestion-service:$IMAGE_TAG -n backend
+          kubectl rollout status deployment/congestion-service -n backend
 
   user-service-build:
     runs-on: ubuntu-latest
@@ -201,8 +201,8 @@ jobs:
           docker push $ECR_REGISTRY/user-service:$IMAGE_TAG    
           docker push $ECR_REGISTRY/user-service:latest
 
-          kubectl set image deployment/user-service user-service=$ECR_REGISTRY/user-service:$IMAGE_TAG
-          kubectl rollout status deployment/user-service
+          kubectl set image deployment/user-service user-service=$ECR_REGISTRY/user-service:$IMAGE_TAG -n backend
+          kubectl rollout status deployment/user-service -n backend
          
 
   gateway-build:
@@ -251,6 +251,6 @@ jobs:
 
           echo "태그 확인: gateway=$ECR_REGISTRY/gateway:$IMAGE_TAG"
 
-          kubectl set image deployment/gateway gateway=$ECR_REGISTRY/gateway:$IMAGE_TAG
-          kubectl rollout status deployment/gateway
+          kubectl set image deployment/gateway gateway=$ECR_REGISTRY/gateway:$IMAGE_TAG -n backend
+          kubectl rollout status deployment/gateway -n backend
 
