@@ -91,7 +91,7 @@ public class FavoriteService {
                     JsonNode.class
             );
         } catch (Exception e) {
-            response.put("message", "잘못된 장소 type/id 입니다");
+            response.put("message", "잘못된 장소 type/id 입니다 "+e.getMessage());
             return ResponseEntity.status(400).body(response);
         }
 
