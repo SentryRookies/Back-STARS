@@ -7,6 +7,7 @@ import com.example.placeservice.repository.AreaRepository;
 import com.example.placeservice.repository.CulturalEventRepository;
 import com.example.placeservice.util.GeoUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -15,26 +16,28 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CulturalEventService {
 
     private final EventParserService eventParserService;
     private final CulturalEventRepository culturalEventRepository;
-    private final AreaRepository areaRepository; // 🔹 추가
+    private final AreaRepository areaRepository;
 
     private final RestTemplate restTemplate;
 
     @Transactional
     public void fetchAndSaveAllEvents() {
+        log.info("행사 데이터 저장 시작");
+
         int[] ranges = {1, 1001, 2001, 3001, 4001, 5001};
-        for (int i = 0; i < ranges.length; i++) {
-            int startIndex = ranges[i];
+        for (int startIndex : ranges) {
             int endIndex = startIndex + 999;
 
             String jsonData = fetchEventData(startIndex, endIndex);
             List<CulturalEventItem> eventItems = eventParserService.parse(jsonData);
-            
+
             // 행사 종료일이 오늘 이후 또는 오늘인 것만 추가
             List<CulturalEventItem> filteredList = new ArrayList<>();
             for (CulturalEventItem item : eventItems) {
@@ -50,6 +53,7 @@ public class CulturalEventService {
                 saveEvents(filteredList);
             }
         }
+        log.info("행사 데이터 저장 완료");
     }
 
     private void saveEvents(List<CulturalEventItem> eventItems) {
@@ -99,7 +103,12 @@ public class CulturalEventService {
     }
 
     private String fetchEventData(int startIndex, int endIndex) {
-        String url = String.format("http://openapi.seoul.go.kr:8088/7669764c417069613736734567476c/json/culturalEventInfo/%d/%d/", startIndex, endIndex);
-        return restTemplate.getForObject(url, String.class);
+        try {
+            String url = String.format("http://openapi.seoul.go.kr:8088/7669764c417069613736734567476c/json/culturalEventInfo/%d/%d/", startIndex, endIndex);
+            return restTemplate.getForObject(url, String.class);
+        }catch (Exception e){
+            log.error("행사데이터 API 조회 중 오류 발생 :{}",e.getMessage());
+        }
+        return null;
     }
 }

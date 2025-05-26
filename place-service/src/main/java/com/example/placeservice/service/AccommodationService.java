@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class AccommodationService {
     private final AreaRepository areaRepository;
@@ -75,12 +77,12 @@ public class AccommodationService {
                 return response.getBody(); // 성공 시 응답 본문(JSON 문자열) 반환 [1]
             } else {
                 // API 호출은 성공했으나, 응답 코드가 200 OK가 아닌 경우
-                System.out.println("Error calling Kakao API. Status code: " + response.getStatusCode() + " Response: " + response.getBody());
+                log.error("Error calling Kakao API. Status code: {} Response: {}", response.getStatusCode(), response.getBody());
                 return null; // 실패 시 null 반환 [1]
             }
         } catch (RestClientException e) {
             // RestTemplate 사용 중 네트워크 오류 등 예외 발생 시
-            System.out.println("Exception during Kakao Api call to " + uri + ": " + e.getMessage() + e);
+            log.error("Exception during Kakao Api call to {} : {}", uri, e.getMessage());
             return null; // 예외 발생 시 null 반환
         }
     }
@@ -109,18 +111,19 @@ public class AccommodationService {
                                 Accommodation accommodation = mapDocumentToAccommodation(doc, area); // 매핑 함수 사용
                                 accommodationsToSave.add(accommodation);
 
-                            } else {
-                                System.out.println("새롭게 저장할 숙박업소가 없습니다.");
                             }
+//                            else {
+//                                log.info("새롭게 저장할 숙박업소가 없습니다.");
+//                            }
                         }
                     }
                 } catch (JsonProcessingException e) {
-                    System.out.println("Json 파싱 실패");
+                    log.error("Json 파싱 실패 : {}", e.getMessage());
                 } catch (NumberFormatException e) {
-                    System.out.println("숙박업소 Id 오류");
+                    log.error("숙박업소 Id 오류 : {}", e.getMessage());
                 }
             } else {
-                System.out.println("유효한 응답이 없습니다.");
+                log.error("유효한 응답이 없습니다.");
             }
             // try { Thread.sleep(100); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
         }
@@ -128,9 +131,9 @@ public class AccommodationService {
         // 5. 수집된 숙소 정보 일괄 저장
         if (!accommodationsToSave.isEmpty()) {
             accommodationRepository.saveAll(accommodationsToSave); // saveAll로 성능 향상
-            System.out.println("숙박업소 저장 성공");
+            log.info("숙박업소 저장 성공");
         } else {
-            System.out.println("신규 저장 숙박업소가 없습니다.");
+            log.info("신규 저장 숙박업소가 없습니다.");
         }
     }
 
@@ -148,7 +151,7 @@ public class AccommodationService {
             accommodation.setLat(new BigDecimal(doc.getY())); // String 좌표를 BigDecimal로 변환
             accommodation.setLon(new BigDecimal(doc.getX())); // String 좌표를 BigDecimal로 변환
         } catch (NumberFormatException e) {
-            System.out.println("좌표 설정 실패");
+            log.warn("좌표 설정 실패 : {}", e.getMessage());
             accommodation.setLat(null);
             accommodation.setLon(null);
         }

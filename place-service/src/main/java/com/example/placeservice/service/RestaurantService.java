@@ -6,6 +6,7 @@ import com.example.placeservice.repository.AreaRepository;
 import com.example.placeservice.repository.RestaurantRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RestaurantService {
@@ -22,7 +24,7 @@ public class RestaurantService {
     private final KakaoMapClient kakaoMapClient;
 
     // 특정 Area 기준으로 주변 음식점 저장
-    public List<Restaurant> saveRestaurantsNearbyArea(Area area) {
+    public void saveRestaurantsNearbyArea(Area area) {
         List<Restaurant> savedRestaurants = new ArrayList<>();
         int page = 1;
         boolean isEnd = false;
@@ -76,10 +78,10 @@ public class RestaurantService {
                     page++;
                 }
             } else {
+                log.info("레스토랑 카카오 데이터 조회 실패");
                 isEnd = true;
             }
         }
-        return savedRestaurants;
     }
 
     // 전체 Area 대상 음식점 저장

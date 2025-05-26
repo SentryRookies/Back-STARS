@@ -8,6 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +33,7 @@ public class AiSummaryService {
                 .bodyToMono(AiSummaryResponse.class)
                 .block();
 
-        return parseSummaryContent(raw);
+        return parseSummaryContent(Objects.requireNonNull(raw));
     }
 
     private AiSummaryParsedResponse parseSummaryContent(AiSummaryResponse raw) {

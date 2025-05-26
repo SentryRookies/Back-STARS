@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import java.util.Objects;
 
 import static com.example.placeservice.util.GeoUtils.calculateDistanceKm;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AttractionService {
@@ -35,14 +37,16 @@ public class AttractionService {
     private final AttractionKakaoMapClient attractionKakaoMapClient;
 
     // visitSeoul 관광지 데이터 로드 후 attraction 테이블 저장
-    public List<Attraction> fetchDataFromVisitSeoul() {
+    public void fetchDataFromVisitSeoul() {
         String url="https://www.visitseoul.net/file_save/OPENAPI/OPEN_API_kr.xml";
-        List<Area> areaList = areaRepository.findAll(); // 여기서 불러와
+        List<Area> areaList = areaRepository.findAll();
+
+        log.info("관광지 데이터 저장 시작");
 
         try {
             // 1. XML 받아오기
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            String xml = new String(response.getBody().getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+            String xml = new String(Objects.requireNonNull(response.getBody()).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             xml = xml.trim().replace("\uFEFF", "");
 
             // 2. JAXB로 XML → DTO 변환
@@ -89,20 +93,20 @@ public class AttractionService {
                                     break;
                                 }
                             }
-                        }else{System.out.println("카카오 관광지 검색 결과가 없습니다");}
-                    }else{System.out.println(table.getTitle());}
-
-
+                        }else{
+                            log.debug("카카오 관광지 검색 결과가 없습니다 : {}", title);}
+                    }
                 return attraction;
             })
             .filter(Objects::nonNull) // null 필터링
             .toList();
 
+            log.info("관광지 데이터 저장 완료 : {}",entities.size());
             // 4. DB에 저장
-            return attractionRepository.saveAll(entities);
+            attractionRepository.saveAll(entities);
 
         } catch (Exception e) {
-            e.printStackTrace(); // 로깅 처리 추천
+            log.error("관광지 데이터 저장 중 오류 발생 : {}",e.getMessage());
             throw new RuntimeException("외부 XML 데이터 파싱 실패", e);
         }
     }
@@ -127,7 +131,7 @@ public class AttractionService {
             }
         }
         if (minDistance > 2.0) { // 2. 거리가 2km를 넘어가면 제외한다.
-            System.out.println(table.getTitle() + " - 가까운 지역 없음 (거리: " + minDistance + "km)");
+            log.debug("{} - 가까운 지역 없음 (거리: {}km)", table.getTitle(), minDistance);
             return null;
         }
         return closestArea;
@@ -161,6 +165,7 @@ public class AttractionService {
                         .toList();
 
         } catch (RuntimeException e) {
+            log.error("관광지 목록 조회 오류 발생 : {}", e.getMessage());
             throw new RuntimeException("예상치 못한 오류",e);
         }
     }
@@ -192,6 +197,7 @@ public class AttractionService {
             );
 
         } catch (RuntimeException e) {
+            log.error("관광지 정보 조회 오류 발생 : {}", e.getMessage());
             throw new RuntimeException("예상치 못한 오류",e);
         }
     }

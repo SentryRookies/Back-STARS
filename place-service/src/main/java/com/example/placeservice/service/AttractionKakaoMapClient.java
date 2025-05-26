@@ -2,6 +2,7 @@ package com.example.placeservice.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AttractionKakaoMapClient {
@@ -22,31 +23,36 @@ public class AttractionKakaoMapClient {
 
 
     public JsonNode searchAttractionByKeyword(String keyword) {
-        RestTemplate restTemplate = new RestTemplate();
+        try {
+            RestTemplate restTemplate = new RestTemplate();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "KakaoAK " + kakaoApiKey);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "KakaoAK " + kakaoApiKey);
 
-        // Kakao API 호출 URL 세팅
-        String builder = UriComponentsBuilder
-                .fromHttpUrl("https://dapi.kakao.com/v2/local/search/keyword.json")
-                .queryParam("query",keyword)
-                .queryParam("sort", "accuracy") // 정확도순 정렬
-                .queryParam("page",1) // 요청 페이지
-                .queryParam("size", 15)
-                .build(false).toString(); // 한 페이지에 최대 15개 결과
+            // Kakao API 호출 URL 세팅
+            String builder = UriComponentsBuilder
+                    .fromHttpUrl("https://dapi.kakao.com/v2/local/search/keyword.json")
+                    .queryParam("query", keyword)
+                    .queryParam("sort", "accuracy") // 정확도순 정렬
+                    .queryParam("page", 1) // 요청 페이지
+                    .queryParam("size", 15)
+                    .build(false).toString(); // 한 페이지에 최대 15개 결과
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        // REST API 호출
-        ResponseEntity<JsonNode> response = restTemplate.exchange(
-                builder.toString(),
-                HttpMethod.GET,
-                entity,
-                JsonNode.class
-        );
+            // REST API 호출
+            ResponseEntity<JsonNode> response = restTemplate.exchange(
+                    builder.toString(),
+                    HttpMethod.GET,
+                    entity,
+                    JsonNode.class
+            );
 
-        return response.getBody(); // JSON 응답 반환
+            return response.getBody(); // JSON 응답 반환
+        } catch (Exception e) {
+            log.error("관광지 카카오맵 url 조회 중 오류 발생 : {}",e.getMessage());
+            return null;
+        }
     }
 
 }

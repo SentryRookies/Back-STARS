@@ -1,6 +1,5 @@
 package com.example.placeservice.service;
 
-import com.example.placeservice.dto.cafe.CafeDto;
 import com.example.placeservice.dto.cafe.CafeListDto;
 import com.example.placeservice.entity.Area;
 import com.example.placeservice.entity.Cafe;
@@ -100,7 +99,6 @@ public class CafeService {
 
         try {
             List<Area> areas = areaRepository.findAll();
-            log.info("총 {}개 장소에 대한 카페 정보를 처리합니다.", areas.size());
 
             // 다른 처리 중 중복 실행 방지
             processingCompleted = true;
@@ -122,14 +120,12 @@ public class CafeService {
                 }
             }
 
-            log.info("모든 장소 처리 완료. 총 처리된 지역: {}", areas.size());
-
             // 최종 카페 수 확인
             log.info("최종 저장된 카페 수: {}", cafeRepository.count());
 
         } catch (Exception e) {
             processingCompleted = false; // 오류 발생 시 플래그 재설정
-            log.error("카페 데이터 처리 중 오류 발생: {}", e.getMessage(), e);
+            log.error("카페 데이터 처리 중 오류 발생: {}", e.getMessage());
             throw e;
         }
     }
@@ -139,7 +135,7 @@ public class CafeService {
      */
     @Transactional
     public void processSingleArea(Area area) {
-        log.info("processSingleArea() 시작 - 지역: '{}' (ID: {})", area.getName(), area.getAreaId());
+//        log.info("processSingleArea() 시작 - 지역: '{}' (ID: {})", area.getName(), area.getAreaId());
 
         try {
             // 해당 지역의 기존 카페 데이터 삭제
@@ -157,7 +153,7 @@ public class CafeService {
                 return;
             }
 
-            log.info("카카오 API 호출 - 위도: {}, 경도: {}, 반경: 1000m", latitude, longitude);
+//            log.info("카카오 API 호출 - 위도: {}, 경도: {}, 반경: 1000m", latitude, longitude);
             List<KakaoApiService.CafeResponse.Document> cafes =
                     kakaoApiService.findCafesNearby(latitude, longitude, 1000);
             log.info("카카오 API 응답 - 총 {}개의 장소 정보 수신", cafes.size());
@@ -165,23 +161,21 @@ public class CafeService {
             // "음식점 > 카페"가 포함된 카페만 필터링하고 "(휴업중)" 카페는 제외
             List<KakaoApiService.CafeResponse.Document> filteredCafes = cafes.stream()
                     .filter(cafe -> {
-                        boolean categoryMatch = cafe.getCategoryName() != null &&
+//                        if (!categoryMatch) {
+//                            log.debug("카테고리 불일치로 제외: {}, 카테고리: {}",
+//                                    cafe.getPlaceName(), cafe.getCategoryName());;
+//                        }
+                        return cafe.getCategoryName() != null &&
                                 cafe.getCategoryName().contains("음식점 > 카페");
-                        if (!categoryMatch) {
-                            log.debug("카테고리 불일치로 제외: {}, 카테고리: {}",
-                                    cafe.getPlaceName(), cafe.getCategoryName());
-                        }
-                        return categoryMatch;
                     })
                     .filter(cafe -> {
-                        boolean notClosed = cafe.getPlaceName() == null ||
+//                        if (!notClosed) {
+//                            log.debug("휴업중으로 제외: {}", cafe.getPlaceName());
+//                        }
+                        return cafe.getPlaceName() == null ||
                                 !cafe.getPlaceName().contains("(휴업중)");
-                        if (!notClosed) {
-                            log.debug("휴업중으로 제외: {}", cafe.getPlaceName());
-                        }
-                        return notClosed;
                     })
-                    .collect(Collectors.toList());
+                    .toList();
 
             log.info("'{}' 주변 총 {}개의 카페 중 {}개의 '음식점 > 카페' 카테고리(휴업중 제외)를 찾았습니다.",
                     area.getName(), cafes.size(), filteredCafes.size());
@@ -222,7 +216,7 @@ public class CafeService {
                             .area(area)
                             .build();
 
-                    log.info("카페 객체 생성 완료: {}", cafe.getName());
+//                    log.info("카페 객체 생성 완료: {}", cafe.getName());
                     cafesToSave.add(cafe); // 리스트에 추가
                 } catch (Exception e) {
                     log.error("카페 저장 중 오류 발생: {}, 오류: {}", cafeDoc.getPlaceName(), e.getMessage(), e);
@@ -245,91 +239,91 @@ public class CafeService {
     /**
      * 특정 지역의 카페 목록 조회
      */
-    @Transactional(readOnly = true)
-    public List<CafeDto> getCafesByAreaId(Long areaId) {
-        log.info("지역 ID {}의 카페 목록 조회", areaId);
-        List<Cafe> cafes = cafeRepository.findByAreaId(areaId);
-        log.info("지역 ID {}에서 총 {}개의 카페 찾음", areaId, cafes.size());
-
-        return cafes.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-    }
+//    @Transactional(readOnly = true)
+//    public List<CafeDto> getCafesByAreaId(Long areaId) {
+//        log.info("지역 ID {}의 카페 목록 조회", areaId);
+//        List<Cafe> cafes = cafeRepository.findByAreaId(areaId);
+//        log.info("지역 ID {}에서 총 {}개의 카페 찾음", areaId, cafes.size());
+//
+//        return cafes.stream()
+//                .map(this::convertToDto)
+//                .collect(Collectors.toList());
+//    }
 
     /**
      * 모든 카페 목록 조회
      */
-    @Transactional(readOnly = true)
-    public List<CafeDto> getAllCafes() {
-        log.info("모든 카페 목록 조회");
-        List<Cafe> cafes = cafeRepository.findAll();
-        log.info("총 {}개의 카페 조회됨", cafes.size());
-
-        return cafes.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-    }
+//    @Transactional(readOnly = true)
+//    public List<CafeDto> getAllCafes() {
+//        log.info("모든 카페 목록 조회");
+//        List<Cafe> cafes = cafeRepository.findAll();
+//        log.info("총 {}개의 카페 조회됨", cafes.size());
+//
+//        return cafes.stream()
+//                .map(this::convertToDto)
+//                .collect(Collectors.toList());
+//    }
 
     /**
      * Cafe 엔티티를 DTO로 변환
      */
-    private CafeDto convertToDto(Cafe cafe) {
-        return CafeDto.builder()
-                .id(cafe.getId())
-                .name(cafe.getName())
-                .address(cafe.getAddress())
-                .lat(cafe.getLat())
-                .lon(cafe.getLon())
-                .phone(cafe.getPhone())
-                .kakaomapUrl(cafe.getKakaomapUrl())
-                .categoryCode(cafe.getCategoryCode())
-                .build();
-    }
+//    private CafeDto convertToDto(Cafe cafe) {
+//        return CafeDto.builder()
+//                .id(cafe.getId())
+//                .name(cafe.getName())
+//                .address(cafe.getAddress())
+//                .lat(cafe.getLat())
+//                .lon(cafe.getLon())
+//                .phone(cafe.getPhone())
+//                .kakaomapUrl(cafe.getKakaomapUrl())
+//                .categoryCode(cafe.getCategoryCode())
+//                .build();
+//    }
 
     /**
      * 카카오맵 URL로 카페 상세 정보 조회
      */
-    @Transactional(readOnly = true)
-    public Map<String, Object> getCafeDetailByPlaceCode(String placeCode) {
-        log.info("장소 코드로 카페 상세 정보 조회: {}", placeCode);
-        Optional<Cafe> cafeOptional = cafeRepository.findByKakaomapUrl(placeCode);
-
-        if (cafeOptional.isPresent()) {
-            Cafe cafe = cafeOptional.get();
-            log.info("카페 찾음: {}, ID: {}", cafe.getName(), cafe.getId());
-
-            Map<String, Object> cafeInfo = new HashMap<>();
-            cafeInfo.put("name", cafe.getName());
-            cafeInfo.put("address", cafe.getAddress());
-            cafeInfo.put("phone", cafe.getPhone());
-            cafeInfo.put("kakaomap_url", cafe.getKakaomapUrl());
-            cafeInfo.put("lat", cafe.getLat());
-            cafeInfo.put("lon", cafe.getLon());
-            cafeInfo.put("category_code", cafe.getCategoryCode());
-
-            return cafeInfo;
-        }
-
-        log.info("장소 코드 {}에 해당하는 카페를 찾을 수 없음", placeCode);
-        return null;
-    }
+//    @Transactional(readOnly = true)
+//    public Map<String, Object> getCafeDetailByPlaceCode(String placeCode) {
+//        log.info("장소 코드로 카페 상세 정보 조회: {}", placeCode);
+//        Optional<Cafe> cafeOptional = cafeRepository.findByKakaomapUrl(placeCode);
+//
+//        if (cafeOptional.isPresent()) {
+//            Cafe cafe = cafeOptional.get();
+//            log.info("카페 찾음: {}, ID: {}", cafe.getName(), cafe.getId());
+//
+//            Map<String, Object> cafeInfo = new HashMap<>();
+//            cafeInfo.put("name", cafe.getName());
+//            cafeInfo.put("address", cafe.getAddress());
+//            cafeInfo.put("phone", cafe.getPhone());
+//            cafeInfo.put("kakaomap_url", cafe.getKakaomapUrl());
+//            cafeInfo.put("lat", cafe.getLat());
+//            cafeInfo.put("lon", cafe.getLon());
+//            cafeInfo.put("category_code", cafe.getCategoryCode());
+//
+//            return cafeInfo;
+//        }
+//
+//        log.info("장소 코드 {}에 해당하는 카페를 찾을 수 없음", placeCode);
+//        return null;
+//    }
 
     /**
      * 지역 ID로 카페 목록 조회 (응답 형식 맞춤)
      */
-    @Transactional(readOnly = true)
-    public Map<String, Object> getCafesByAreaIdFormatted(Long areaId) {
-        log.info("지역 ID {}의 카페 목록 조회 (응답 형식 맞춤)", areaId);
-
-        List<Cafe> cafes = cafeRepository.findByAreaId(areaId);
-        List<CafeDto> cafeDtos = cafes.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("type", "cafe");
-        response.put("content", cafeDtos);
-
-        return response;
-    }
+//    @Transactional(readOnly = true)
+//    public Map<String, Object> getCafesByAreaIdFormatted(Long areaId) {
+//        log.info("지역 ID {}의 카페 목록 조회 (응답 형식 맞춤)", areaId);
+//
+//        List<Cafe> cafes = cafeRepository.findByAreaId(areaId);
+//        List<CafeDto> cafeDtos = cafes.stream()
+//                .map(this::convertToDto)
+//                .collect(Collectors.toList());
+//
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("type", "cafe");
+//        response.put("content", cafeDtos);
+//
+//        return response;
+//    }
 }

@@ -1,10 +1,10 @@
 package com.example.placeservice.init;
 
-import com.example.placeservice.repository.AccommodationRepository;
 import com.example.placeservice.repository.CafeRepository;
 import com.example.placeservice.repository.RestaurantRepository;
 import com.example.placeservice.service.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 // SB 실행 시, attraction data 저장(area 데이터가 먼저 저장되어 있어야 함)
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DataInit implements CommandLineRunner {
@@ -41,10 +42,10 @@ public class DataInit implements CommandLineRunner {
 
             // SQL 실행
             jdbcTemplate.execute(sql);
-            System.out.println("data.sql 실행 완료");
+            log.info("data.sql 실행 완료");
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("area 데이터 초기화 시 오류 발생 : {}",e.getMessage());
         }
 
         // 2. 장소 데이터 삽입
@@ -53,20 +54,20 @@ public class DataInit implements CommandLineRunner {
         culturalEventService.fetchAndSaveAllEvents();
 
         if (restaurantRepository.count() == 0) {
-            System.out.println("음식점 데이터 저장 시작");
+            log.info("음식점 데이터 저장 시작");
             restaurantService.fetchAndSaveRestaurants();
-            System.out.println("음식점 데이터 저장 완료");
+            log.info("음식점 데이터 저장 완료");
         } else {
-            System.out.println("음식점 데이터가 이미 존재합니다. 건너뜁니다.");
+            log.info("음식점 데이터가 이미 존재합니다. 건너뜁니다.");
         }
 
         // 카페 데이터 초기화
         if (cafeRepository.count() == 0) {
-            System.out.println("카페 데이터 저장 시작");
+            log.info("카페 데이터 저장 시작");
             cafeService.processAllAreas();
-            System.out.println("카페 데이터 저장 완료");
+            log.info("카페 데이터 저장 완료");
         } else {
-            System.out.println("카페 데이터가 이미 존재합니다. 건너뜁니다.");
+            log.info("카페 데이터가 이미 존재합니다. 건너뜁니다.");
         }
 
     }
