@@ -141,7 +141,12 @@ public class SuggestController {
             try{
                 SuggestError errorResponse = objectMapper.readValue(response.getBody(), SuggestError.class);
                 log.warn("응답 메시지: {}", errorResponse.getMessage());
-                return ResponseEntity.ok(errorResponse.getMessage());
+                if(errorResponse.getMessage().contains("No chat history found for this user")){
+                    return ResponseEntity.ok("[]");
+                }else{
+                    return ResponseEntity.ok(errorResponse.getMessage());
+                }
+
             } catch (JsonProcessingException ex) {
 //                throw new RuntimeException(ex);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("내부 서버 오류가 발생했습니다: " + e.getMessage());
