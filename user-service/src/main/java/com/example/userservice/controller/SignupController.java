@@ -6,6 +6,7 @@ import com.example.userservice.security.JwtUtil;
 import com.example.userservice.service.MemberService;
 import com.example.userservice.service.TokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,6 +22,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
+@Slf4j
 public class SignupController {
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
@@ -32,7 +34,7 @@ public class SignupController {
     @PostMapping("/signup")
     public ResponseEntity<Map<String, String>> signup(@RequestBody MemberSign dto) {
         try {
-            System.out.println("회원가입 요청: userId=" + dto.getUserId());
+            log.debug("회원가입 요청: userId={}", dto.getUserId());
 
             Member member = memberService.registerUser(dto);
 
@@ -83,7 +85,7 @@ public class SignupController {
 
         try {
             memberService.deleteMemberById(memberId);
-            System.out.println("회원탈퇴 완료: memberId=" + memberId);
+            log.debug("회원탈퇴 완료: memberId={}", memberId);
             return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("회원 탈퇴 실패: " + e.getMessage());

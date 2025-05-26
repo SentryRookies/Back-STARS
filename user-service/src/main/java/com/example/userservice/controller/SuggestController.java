@@ -5,6 +5,7 @@ import com.example.userservice.dto.SuggestRequestDto;
 import com.example.userservice.dto.SuggestFastRequestDto;
 import com.example.userservice.entity.Member;
 import com.example.userservice.service.MemberService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/suggest")
+@Slf4j
 public class SuggestController {
     @Value("${fastapi-svc}")
     private String fastApiUrl;
@@ -72,21 +74,21 @@ public class SuggestController {
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 SuggestFastResponseDto suggestFastResponseDto = response.getBody();
-                System.out.println("FastAPI 응답: " + suggestFastResponseDto);
+                log.debug("FastAPI 응답: {}", suggestFastResponseDto);
                 return ResponseEntity.ok(suggestFastResponseDto);
             }
             else {
-                System.err.println("FastAPI 요청 실패: " + response.getStatusCode());
+                log.error("FastAPI 요청 실패: {}", response.getStatusCode());
                 return ResponseEntity.status(response.getStatusCode()).body("FastAPI 서버로부터 오류 응답: " + response.getStatusCode());
             }
         } catch (HttpClientErrorException e) {
-            System.err.println("클라이언트 오류: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+            log.error("클라이언트 오류: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
             return ResponseEntity.status(e.getStatusCode()).body("FastAPI 호출 중 클라이언트 오류: " + e.getResponseBodyAsString());
         } catch (HttpServerErrorException e) {
-            System.err.println("서버 오류: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+            log.error("서버 오류: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
             return ResponseEntity.status(e.getStatusCode()).body("FastAPI 호출 중 서버 오류: " + e.getResponseBodyAsString());
         } catch (RestClientException e) {
-            System.err.println("RestClientException: " + e.getMessage());
+            log.error("RestClientException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("FastAPI 서비스 통신 오류: " + e.getMessage());
         }
     }

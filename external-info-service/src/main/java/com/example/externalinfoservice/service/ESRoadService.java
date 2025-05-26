@@ -3,6 +3,7 @@ package com.example.externalinfoservice.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.errors.InvalidRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ESRoadService {
 
     private static final RestTemplate restTemplate = new RestTemplate();
@@ -91,7 +93,7 @@ public class ESRoadService {
         }catch (InvalidRequestException e) {
             throw new InvalidRequestException(e.getMessage(), e);
         }catch (Exception e){
-            System.out.println(e);
+            log.error(String.valueOf(e));
             throw new RuntimeException("도로 현황 데이터 : 예상치 못한 오류",e);
         }
     }

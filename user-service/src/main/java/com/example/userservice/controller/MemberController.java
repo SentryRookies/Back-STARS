@@ -5,11 +5,13 @@ import com.example.userservice.security.JwtUtil;
 import com.example.userservice.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
 
     private final MemberService memberService;
@@ -58,9 +60,9 @@ public class MemberController {
      */
     private String extractUserIdFromRequest(HttpServletRequest request) {
         // 요청 디버깅 로그
-        System.out.println("요청 URI: " + request.getRequestURI());
-        System.out.println("Authorization 헤더: " + request.getHeader("Authorization"));
-        System.out.println("accessToken 헤더: " + request.getHeader("accessToken"));
+        log.debug("요청 URI: {}", request.getRequestURI());
+        log.debug("Authorization 헤더: {}", request.getHeader("Authorization"));
+        log.debug("accessToken 헤더: {}", request.getHeader("accessToken"));
 
         String authHeader = request.getHeader("Authorization");
         String accessTokenHeader = request.getHeader("accessToken");
@@ -69,22 +71,22 @@ public class MemberController {
         // Authorization 헤더 확인
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
-            System.out.println("Authorization 헤더에서 토큰 추출: " + jwt);
+            log.debug("Authorization 헤더에서 토큰 추출: {}", jwt);
         }
         // accessToken 헤더 확인
         else if (accessTokenHeader != null) {
             jwt = accessTokenHeader;
-            System.out.println("accessToken 헤더에서 토큰 추출: " + jwt);
+            log.debug("accessToken 헤더에서 토큰 추출: {}", jwt);
         }
 
         // 토큰 유효성 검사 및 사용자 ID 추출
         if (jwt != null) {
             try {
                 String userId = jwtUtil.extractUsername(jwt);
-                System.out.println("추출된 사용자 ID: " + userId);
+                log.debug("추출된 사용자 ID: {}", userId);
                 return userId;
             } catch (Exception e) {
-                System.out.println("토큰 처리 중 오류 발생: " + e.getMessage());
+                log.error("토큰 처리 중 오류 발생: {}", e.getMessage());
                 e.printStackTrace();
             }
         }

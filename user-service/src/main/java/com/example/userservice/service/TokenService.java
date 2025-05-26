@@ -6,6 +6,7 @@ import com.example.userservice.repository.jpa.MemberRepository;
 import com.example.userservice.repository.redis.RefreshTokenRepository;
 import com.example.userservice.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TokenService {
 
     private final JwtUtil jwtUtil;
@@ -54,7 +56,7 @@ public class TokenService {
         String key = TOKEN_VERSION_PREFIX + userId;
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
             redisTemplate.delete(key);
-            System.out.println("기존 토큰 버전 삭제: 사용자 ID = " + userId);
+            log.debug("기존 토큰 버전 삭제: 사용자 ID = {}", userId);
         }
 
         // 사용자 권한 설정
@@ -73,7 +75,7 @@ public class TokenService {
         String tokenId = jwtUtil.extractTokenId(accessToken);
         saveTokenVersion(userId, tokenId);
 
-        System.out.println("새 액세스 토큰 생성 완료: 사용자 ID = " + userId + ", 토큰 ID = " + tokenId);
+        log.debug("새 액세스 토큰 생성 완료: 사용자 ID = {}, 토큰 ID = {}", userId, tokenId);
 
         return accessToken;
     }
@@ -84,7 +86,7 @@ public class TokenService {
     public void saveTokenVersion(Long userId, String tokenId) {
         String key = TOKEN_VERSION_PREFIX + userId;
         redisTemplate.opsForValue().set(key, tokenId, TOKEN_VERSION_TTL, TimeUnit.SECONDS);
-        System.out.println("토큰 버전 업데이트: 사용자 ID = " + userId + ", 토큰 ID = " + tokenId);
+        log.debug("토큰 버전 업데이트: 사용자 ID = {}, 토큰 ID = {}", userId, tokenId);
     }
 
     /**
@@ -95,15 +97,13 @@ public class TokenService {
         String latestTokenId = redisTemplate.opsForValue().get(key);
 
         if (latestTokenId == null) {
-            System.out.println("저장된 토큰 버전 없음: 사용자 ID = " + userId);
+            log.debug("저장된 토큰 버전 없음: 사용자 ID = {}", userId);
             return false; // 저장된 토큰이 없으면 로그아웃된 상태로 간주하고 인증 실패
         }
 
         boolean isLatest = latestTokenId.equals(tokenId);
         if (!isLatest) {
-            System.out.println("토큰 버전 불일치: 사용자 ID = " + userId +
-                    ", 요청 토큰 ID = " + tokenId +
-                    ", 최신 토큰 ID = " + latestTokenId);
+            log.debug("토큰 버전 불일치: 사용자 ID = {}, 요청 토큰 ID = {}, 최신 토큰 ID = {}", userId, tokenId, latestTokenId);
         }
 
         return isLatest;
@@ -115,7 +115,7 @@ public class TokenService {
     public void invalidateToken(Long userId) {
         String key = TOKEN_VERSION_PREFIX + userId;
         redisTemplate.delete(key);
-        System.out.println("토큰 무효화 완료: 사용자 ID = " + userId);
+        log.debug("토큰 무효화 완료: 사용자 ID = {}", userId);
     }
 
     /**
@@ -128,7 +128,7 @@ public class TokenService {
         Optional<RefreshToken> existingToken = refreshTokenRepository.findById(String.valueOf(memberId));
         if (existingToken.isPresent()) {
             refreshTokenRepository.deleteById(String.valueOf(memberId));
-            System.out.println("기존 리프레시 토큰 삭제: 사용자 ID = " + memberId);
+            log.debug("기존 리프레시 토큰 삭제: 사용자 ID = {}", memberId);
         }
 
         // 새 토큰 저장
@@ -138,7 +138,7 @@ public class TokenService {
                 .build();
 
         refreshTokenRepository.save(token);
-        System.out.println("새 리프레시 토큰 저장: 사용자 ID = " + memberId);
+        log.debug("새 리프레시 토큰 저장: 사용자 ID = {}", memberId);
     }
 
     /**
@@ -146,7 +146,7 @@ public class TokenService {
      */
     public void deleteRefreshToken(Long memberId) {
         refreshTokenRepository.deleteById(String.valueOf(memberId));
-        System.out.println("리프레시 토큰 삭제 완료: 사용자 ID = " + memberId);
+        log.debug("리프레시 토큰 삭제 완료: 사용자 ID = {}", memberId);
     }
 
     /**

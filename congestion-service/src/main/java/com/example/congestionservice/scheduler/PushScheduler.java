@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class PushScheduler {
     private final CongestionController congestionController;
     private final CongestionPreviousCache congestionPreviousCache;
@@ -28,8 +30,7 @@ public class PushScheduler {
     public void push() {
         Map<String, String> previousLevels = congestionPreviousCache.getPreviousLevels();
 
-
-        System.out.println("혼잡도 푸시 중...");
+        log.info("혼잡도 푸시 중...");
         var congestionList = congestionService.getCongestion();
 
         congestionController.sendToClients(congestionList); // 모든 지역 혼잡도 전송
@@ -47,7 +48,7 @@ public class PushScheduler {
 
             String previousLevel = previousLevels.get(areaName);
             // 혼잡도 변화 알림 로그 확인
-            System.out.println(areaName+"의"+previousLevel+":ㅣㅣ"+currentLevel);
+            // System.out.println(areaName+"의"+previousLevel+":ㅣㅣ"+currentLevel);
 
             // 혼잡도 알림 전송(조건 : 1,2단계 -> 3단계 // 4단계)
             if (previousLevel == null && (currentLevel.equals("약간 붐빔") || currentLevel.equals("붐빔"))) {
@@ -83,9 +84,9 @@ public class PushScheduler {
 
         // 변화 없으면 return
         if (changedList.isEmpty()) {
-            System.out.println("혼잡도 변화 없음");
+            log.info("혼잡도 변화 없음");
         }else{
-            System.out.println("혼잡도 변화 있음 → alert-update로 SSE 전송");
+            log.info("혼잡도 변화 있음 → alert-update로 SSE 전송");
             congestionController.sendAlertToClients(changedList); // ✨ 바뀐 것만 보냄
         }
 

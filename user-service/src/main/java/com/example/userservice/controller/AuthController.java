@@ -11,6 +11,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final AuthService authService;
@@ -43,7 +45,7 @@ public class AuthController {
             HttpServletResponse response) {
 
         // 디버깅 로그 출력
-        System.out.println("로그인 컨트롤러 호출: " + request.getUser_id());
+        log.debug("로그인 컨트롤러 호출: {}", request.getUser_id());
 
         AuthDto.LoginResponse loginResponse = authService.login(request);
 

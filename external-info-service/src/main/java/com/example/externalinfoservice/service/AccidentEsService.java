@@ -3,6 +3,7 @@ package com.example.externalinfoservice.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.errors.InvalidRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AccidentEsService {
 
     private final RestTemplate restTemplate = new RestTemplate(); // 주입 방식으로 대체해도 OK
@@ -76,7 +78,7 @@ public class AccidentEsService {
         } catch (InvalidRequestException e) {
             throw new InvalidRequestException(e.getMessage(), e);
         } catch (Exception e) {
-            System.out.println(e);
+            log.error(String.valueOf(e));
             throw new RuntimeException("사고 현황 : 예상치 못한 오류", e);
         }
     }

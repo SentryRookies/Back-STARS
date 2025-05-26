@@ -45,16 +45,16 @@ public class AuthService {
      * @return 토큰과 사용자 정보가 포함된 응답
      */
     public AuthDto.LoginResponse login(AuthDto.LoginRequest request) {
-        log.info("로그인 시도: ", request.getUser_id());
+        log.debug("로그인 시도: {}", request.getUser_id());
 
         // 1. 사용자 조회 (userId로 조회)
         Member member = memberRepository.findByUserId(request.getUser_id())
                 .orElseThrow(() -> {
-                    System.out.println("사용자를 찾을 수 없음: " + request.getUser_id());
+                    log.error("사용자를 찾을 수 없음: {}", request.getUser_id());
                     return new RuntimeException("사용자를 찾을 수 없습니다");
                 });
 
-        System.out.println("사용자 찾음: ID=" + member.getMemberId() + ", UserID=" + member.getUserId());
+        log.debug("사용자 찾음: ID={}, UserID={}", member.getMemberId(), member.getUserId());
 
         // 2. 인증 시도
         try {
@@ -64,23 +64,23 @@ public class AuthService {
                             request.getPassword()
                     )
             );
-            System.out.println("인증 성공");
+            log.debug("인증 성공");
         } catch (Exception e) {
-            System.out.println("인증 실패: " + e.getMessage());
+            log.error("인증 실패: {}", e.getMessage());
             throw e;
         }
 
         // 3. 기존 토큰이 있으면 삭제
         Optional<RefreshToken> existingToken = tokenService.findRefreshTokenByMemberId(member.getMemberId());
         if (existingToken.isPresent()) {
-            System.out.println("기존 리프레시 토큰 발견: 사용자 ID = " + member.getMemberId() + ", 삭제 진행");
+            log.debug("기존 리프레시 토큰 발견: 사용자 ID = {}, 삭제 진행", member.getMemberId());
             tokenService.deleteRefreshToken(member.getMemberId());
         }
 
         // 기존 토큰 버전이 있으면 삭제 (이전 토큰 무효화)
         String versionKey = TOKEN_VERSION_PREFIX + member.getMemberId();
         if (Boolean.TRUE.equals(redisTemplate.hasKey(versionKey))) {
-            System.out.println("기존 토큰 버전 발견: 사용자 ID = " + member.getMemberId() + ", 삭제 진행");
+            log.debug("기존 토큰 버전 발견: 사용자 ID = {}, 삭제 진행", member.getMemberId());
             redisTemplate.delete(versionKey);
         }
 
@@ -101,7 +101,7 @@ public class AuthService {
         String tokenId = jwtUtil.extractTokenId(accessToken);
         saveTokenVersion(member.getMemberId(), tokenId);
 
-        System.out.println("새 토큰 발급 완료: 액세스 토큰 유효 시간 = 45분, 사용자 ID = " + member.getMemberId() + ", 토큰 ID = " + tokenId);
+        log.debug("새 토큰 발급 완료: 액세스 토큰 유효 시간 = 45분, 사용자 ID = {}, 토큰 ID = {}", member.getMemberId(), tokenId);
 
         // 6. 결과 반환
         return AuthDto.LoginResponse.builder()
@@ -127,14 +127,14 @@ public class AuthService {
         String versionKey = TOKEN_VERSION_PREFIX + memberId;
         if (Boolean.TRUE.equals(redisTemplate.hasKey(versionKey))) {
             redisTemplate.delete(versionKey);
-            System.out.println("토큰 버전 삭제 완료: 사용자 ID = " + memberId);
+            log.debug("토큰 버전 삭제 완료: 사용자 ID = {}", memberId);
         }
 
         // 2. 리프레시 토큰 삭제
         tokenService.deleteRefreshToken(memberId);
-        System.out.println("리프레시 토큰 삭제 완료: 사용자 ID = " + memberId);
+        log.debug("리프레시 토큰 삭제 완료: 사용자 ID = {}", memberId);
 
-        System.out.println("로그아웃 완료: 사용자 ID = " + memberId);
+        log.debug("로그아웃 완료: 사용자 ID = {}", memberId);
 
         // 3. 성공 리턴
         return AuthDto.LogoutResponse.builder()
@@ -188,7 +188,7 @@ public class AuthService {
         String tokenId = jwtUtil.extractTokenId(newAccessToken);
         saveTokenVersion(userId, tokenId);
 
-        System.out.println("액세스 토큰 재발급 완료: 유효 시간 = 45분, 사용자 ID = " + userId + ", 토큰 ID = " + tokenId);
+        log.debug("액세스 토큰 재발급 완료: 유효 시간 = 45분, 사용자 ID = {}, 토큰 ID = {}", userId, tokenId);
 
         return newAccessToken;
     }
@@ -201,7 +201,7 @@ public class AuthService {
     private void saveTokenVersion(Long userId, String tokenId) {
         String key = TOKEN_VERSION_PREFIX + userId;
         redisTemplate.opsForValue().set(key, tokenId, TOKEN_VERSION_TTL, TimeUnit.SECONDS);
-        System.out.println("토큰 버전 저장: 사용자 ID = " + userId + ", 토큰 ID = " + tokenId);
+        log.debug("토큰 버전 저장: 사용자 ID = {}, 토큰 ID = {}", userId, tokenId);
     }
 
     /**
@@ -220,9 +220,7 @@ public class AuthService {
 
         boolean isLatest = latestTokenId.equals(tokenId);
         if (!isLatest) {
-            System.out.println("토큰 버전 불일치: 사용자 ID = " + userId +
-                    ", 요청 토큰 ID = " + tokenId +
-                    ", 최신 토큰 ID = " + latestTokenId);
+            log.debug("토큰 버전 불일치: 사용자 ID = {}, 요청 토큰 ID = {}, 최신 토큰 ID = {}", userId, tokenId, latestTokenId);
         }
 
         return isLatest;

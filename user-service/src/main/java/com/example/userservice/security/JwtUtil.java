@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
+@Slf4j
 public class JwtUtil {
 
     private SecretKey secretKey;
@@ -38,7 +40,7 @@ public class JwtUtil {
         this.accessTokenExpiration = 1000L * 60 * 45;         // 45분
         this.refreshTokenExpiration = 1000L * 60 * 60 * 6;    // 6시간
 
-        System.out.println("JWT 설정 완료: 액세스 토큰 = " + (accessTokenExpiration / 60000) + "분, 리프레시 토큰 = " + (refreshTokenExpiration / 60000) + "분");
+        log.debug("JWT 설정 완료: 액세스 토큰 = {}분, 리프레시 토큰 = {}분", accessTokenExpiration / 60000, refreshTokenExpiration / 60000);
     }
 
     // 사용자 이름 추출

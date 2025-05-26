@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/main")
+@Slf4j
 public class CongestionController {
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
     private final CongestionPreviousCache congestionPreviousCache;
@@ -39,7 +41,7 @@ public class CongestionController {
 
         // 초기데이터 투입
         try {
-            System.out.println("혼잡도 초기 데이터 푸시 중...");
+            log.info("혼잡도 초기 데이터 푸시 중...");
             var congestionList = congestionService.getCongestion();
 
             emitter.send(SseEmitter.event()
@@ -75,7 +77,7 @@ public class CongestionController {
                     .name("congestion-alert")
                     .data(changedList));
 
-            System.out.println(".. 혼잡도 초기 데이터 푸시 완료");
+            log.info(".. 혼잡도 초기 데이터 푸시 완료");
             
         } catch (IOException | IllegalStateException e) {
             emitter.completeWithError(e);

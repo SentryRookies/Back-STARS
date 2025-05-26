@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.errors.InvalidRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CongestionService {
     private static final RestTemplate restTemplate = new RestTemplate();
 
@@ -31,7 +33,7 @@ public class CongestionService {
             // 오늘 날짜 구하기
             String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             String apiUrl = String.format(elastic_url + "/seoul_citydata_congestion_%s/_search", today);
-            System.out.println(apiUrl);
+            // System.out.println(apiUrl);
 
             // JSON Body 생성
             String jsonBody = String.format("{\n" +
@@ -93,8 +95,8 @@ public class CongestionService {
         }catch (InvalidRequestException e) {
             throw new InvalidRequestException(e.getMessage(), e);
         }catch (Exception e){
-            System.out.println(e);
-            throw new RuntimeException("예상치 못한 오류",e);
+            log.error(String.valueOf(e));
+            throw new RuntimeException("예상치 못한 오류", e);
         }
     }
 }

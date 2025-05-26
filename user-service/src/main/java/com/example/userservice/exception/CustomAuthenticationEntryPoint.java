@@ -3,6 +3,7 @@ package com.example.userservice.exception;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@Slf4j
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
@@ -25,7 +27,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             detailedMessage += " | 원인: " + cause.getMessage();
         }
         // 로그에 예외 내용 남기기
-        System.out.println("인증 실패 발생:"+detailedMessage+", 요청 URI: " + request.getRequestURI() + authException.getMessage()+ request.getRequestURI()+ authException);
+        log.error("인증 실패 발생:{}, 요청 URI: {} {}", detailedMessage, request.getRequestURI(), authException.getMessage());
 
         sendErrorResponse(response, HttpStatus.UNAUTHORIZED, detailedMessage, request.getRequestURI());
     }
