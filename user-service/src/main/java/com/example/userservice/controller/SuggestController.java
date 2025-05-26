@@ -8,6 +8,7 @@ import com.example.userservice.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -125,6 +126,8 @@ public class SuggestController {
             return ResponseEntity.ok(responseArray);
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             return ResponseEntity.status(e.getStatusCode()).body("FastAPI 호출 중 오류 발생: " + e.getMessage());
+        } catch (HttpMessageNotReadableException e) {
+            return ResponseEntity.ok("[]");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("내부 서버 오류가 발생했습니다: " + e.getMessage());
         }
