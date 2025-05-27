@@ -16,6 +16,8 @@ public class Cors {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true); // 인증 정보 포함 X
         config.setAllowedOrigins(List.of(
+                "https://localhost:5173",
+                "https://www.seoultravel.life",
                 "http://localhost:5173",
                 "http://192.168.0.186:5173",
                 "http://58.127.241.84:5173",
