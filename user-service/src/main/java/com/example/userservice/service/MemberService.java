@@ -3,6 +3,7 @@ package com.example.userservice.service;
 import com.example.userservice.dto.MemberDto;
 import com.example.userservice.dto.MemberSign;
 import com.example.userservice.entity.Member;
+import com.example.userservice.repository.FavoriteRepository;
 import com.example.userservice.repository.jpa.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FavoriteRepository favoriteRepository;
 
     // 일반 사용자 회원가입 (기본 권한은 ROLE_USER)
     public Member registerUser(MemberSign dto) {
@@ -143,8 +145,13 @@ public class MemberService {
     public void deleteMemberById(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+
+        //즐겨찾기 먼저 삭제
+        favoriteRepository.deleteAllByMember(member);
+        // 회원 삭제
         memberRepository.delete(member);
     }
+
 
 
 
