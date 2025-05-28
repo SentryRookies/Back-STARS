@@ -1,7 +1,5 @@
 package com.example.userservice.dto;
 
-import com.example.userservice.entity.Favorite;
-import jakarta.persistence.Column;
 import lombok.Data;
 
 @Data
@@ -21,5 +19,6 @@ public class FavoriteDto {
         this.name = name;
         this.address = address;
     }
+
 
 }
