@@ -58,31 +58,35 @@ public class CulturalEventService {
 
     private void saveEvents(List<CulturalEventItem> eventItems) {
         List<CulturalEvent> events = eventParserService.toEntityList(eventItems);
-        List<Area> areas = areaRepository.findAll(); // 🔹 모든 지역 좌표 불러오기
+        List<Area> areas = areaRepository.findAll();
 
-        for (CulturalEvent event : events) {
-            if (!culturalEventRepository.existsByTitleAndAddressAndStartDate(
-                    event.getTitle(), event.getAddress(), event.getStartDate())) {
+            for (CulturalEvent event : events) {
+                if (!culturalEventRepository.existsByTitleAndAddressAndStartDate(
+                        event.getTitle(), event.getAddress(), event.getStartDate())) {
+                    try{
+                        // 행사 위치 기준 가장 가까운 지역 찾기
+                        Area nearestArea = findNearestArea(event.getLat().doubleValue(), event.getLon().doubleValue(), areas);
+                        event.setArea(nearestArea); // 🔹 지역 설정
 
-                // 행사 위치 기준 가장 가까운 지역 찾기
-                Area nearestArea = findNearestArea(event.getLat().doubleValue(), event.getLon().doubleValue(), areas);
-                event.setArea(nearestArea); // 🔹 지역 설정
+                        culturalEventRepository.save(event);
+                    }catch (Exception e){
+                        log.error(e.getMessage()+event.getTitle());
+                    }
+                }else{
+                    // 이미 있는 데이터인데 종료일이 지났으면 삭제
+                    List<CulturalEvent> existing = culturalEventRepository.findByTitleAndAddressAndStartDate(
+                            event.getTitle(), event.getAddress(), event.getStartDate());
 
-                culturalEventRepository.save(event);
-            }else{
-                // 이미 있는 데이터인데 종료일이 지났으면 삭제
-                List<CulturalEvent> existing = culturalEventRepository.findByTitleAndAddressAndStartDate(
-                        event.getTitle(), event.getAddress(), event.getStartDate());
-
-                if (existing != null){
-                    for (CulturalEvent existingEvent : existing) {
-                        if(existingEvent.getEndDate() != null && existingEvent.getEndDate().isBefore(LocalDate.now().atStartOfDay())){
-                            culturalEventRepository.delete(existingEvent);
+                    if (existing != null){
+                        for (CulturalEvent existingEvent : existing) {
+                            if(existingEvent.getEndDate() != null && existingEvent.getEndDate().isBefore(LocalDate.now().atStartOfDay())){
+                                culturalEventRepository.delete(existingEvent);
+                            }
                         }
                     }
                 }
             }
-        }
+
     }
 
     private Area findNearestArea(double lat, double lon, List<Area> areas) {
