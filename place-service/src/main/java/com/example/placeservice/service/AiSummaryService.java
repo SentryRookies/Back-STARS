@@ -38,13 +38,8 @@ public class AiSummaryService {
     }
 
     private AiSummaryParsedResponse parseSummaryContent(AiSummaryResponse raw) {
-        log.info(raw.toString());
-        log.info(raw.getContent());
-        if (raw.getContent() != null && raw.getContent().contains("Summary not found")) {
-            return AiSummaryParsedResponse.builder().build();
-        }else {
-            String content = raw.getContent();
-
+        String content = raw.getContent();
+        try {
             List<String> posKeywords = extractKeywords(content, "\\[긍정 키워드\\](.*)");
             List<String> negKeywords = extractKeywords(content, "\\[부정 키워드\\](.*)");
             int posCount = extractInt(content, "\\[긍정 라벨 수\\]\\s*(\\d+)");
@@ -56,6 +51,10 @@ public class AiSummaryService {
                     .positiveCount(posCount)
                     .negativeCount(negCount)
                     .build();
+        }catch (Exception e){
+            log.debug(content);
+            log.error(e.getMessage());
+            return AiSummaryParsedResponse.builder().build();
         }
     }
 
