@@ -27,35 +27,36 @@ public class AiSummaryService {
     }
 
     public AiSummaryParsedResponse getSummaryParsed(String targetType, String targetId) {
-        try {
-            AiSummaryResponse raw = webClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/summary/{target_type}/{target_id}")
-                            .build(targetType, targetId))
-                    .retrieve()
-                    .bodyToMono(AiSummaryResponse.class)
-                    .block();
-            return parseSummaryContent(Objects.requireNonNull(raw));
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return null;
-        }
+        AiSummaryResponse raw = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/summary/{target_type}/{target_id}")
+                        .build(targetType, targetId))
+                .retrieve()
+                .bodyToMono(AiSummaryResponse.class)
+                .block();
+        return parseSummaryContent(Objects.requireNonNull(raw));
     }
 
     private AiSummaryParsedResponse parseSummaryContent(AiSummaryResponse raw) {
-        String content = raw.getContent();
+        log.info(raw.toString());
+        log.info(raw.getContent());
+        if (raw.getContent() != null && raw.getContent().contains("Summary not found")) {
+            return AiSummaryParsedResponse.builder().build();
+        }else {
+            String content = raw.getContent();
 
-        List<String> posKeywords = extractKeywords(content, "\\[긍정 키워드\\](.*)");
-        List<String> negKeywords = extractKeywords(content, "\\[부정 키워드\\](.*)");
-        int posCount = extractInt(content, "\\[긍정 라벨 수\\]\\s*(\\d+)");
-        int negCount = extractInt(content, "\\[부정 라벨 수\\]\\s*(\\d+)");
+            List<String> posKeywords = extractKeywords(content, "\\[긍정 키워드\\](.*)");
+            List<String> negKeywords = extractKeywords(content, "\\[부정 키워드\\](.*)");
+            int posCount = extractInt(content, "\\[긍정 라벨 수\\]\\s*(\\d+)");
+            int negCount = extractInt(content, "\\[부정 라벨 수\\]\\s*(\\d+)");
 
-        return AiSummaryParsedResponse.builder()
-                .positiveKeywords(posKeywords)
-                .negativeKeywords(negKeywords)
-                .positiveCount(posCount)
-                .negativeCount(negCount)
-                .build();
+            return AiSummaryParsedResponse.builder()
+                    .positiveKeywords(posKeywords)
+                    .negativeKeywords(negKeywords)
+                    .positiveCount(posCount)
+                    .negativeCount(negCount)
+                    .build();
+        }
     }
 
     private List<String> extractKeywords(String content, String pattern) {
