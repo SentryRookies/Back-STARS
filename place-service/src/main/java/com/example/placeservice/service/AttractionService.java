@@ -21,6 +21,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
@@ -61,12 +63,11 @@ public class AttractionService {
 
                     // seoul_attraction_id 중복 체크
                     if (attractionRepository.existsBySeoulAttractionId(table.getId())) return null;
-                    if (Integer.valueOf(table.getId()) >= 31345 && Integer.valueOf(table.getId()) <= 53595) return null;
+                    if (Integer.parseInt(table.getId()) >= 31345 && Integer.parseInt(table.getId()) <= 53595) return null;
 
                     // 👇: 조건에 따라 Area 객체를 지정
                     Area area = findAreaByCondition(table, areaList);  // 예: 주소나 지역코드 등으로 판단
                     if (area == null) return null;
-
 
                     Attraction attraction = new Attraction();
                     attraction.setSeoulAttractionId(table.getId());
@@ -75,7 +76,13 @@ public class AttractionService {
                     attraction.setLat(new BigDecimal(table.getMapY()));
                     attraction.setLon(new BigDecimal(table.getMapX()));
                     attraction.setPhone(table.getTel());
-                    attraction.setHomepageUrl(table.getHomepage());
+
+
+                    if(normalizeAndValidateUrl(table.getHomepage()) != null){
+                        attraction.setHomepageUrl(normalizeAndValidateUrl(table.getHomepage()));
+                    }
+
+//                    attraction.setHomepageUrl(table.getHomepage());
                     attraction.setCloseDay(table.getCloseDay());
                     attraction.setUseTime(table.getUseTime());
                     attraction.setArea(area);
@@ -111,7 +118,6 @@ public class AttractionService {
         }
     }
 
-    // 1. 관광지 기준 가장 가까운 area를 찾는다
     private Area findAreaByCondition(AttractionDto.AttractionTable table, List<Area> areaList) {
         double lat = Double.parseDouble(table.getMapY());
         double lon = Double.parseDouble(table.getMapX());
@@ -200,5 +206,33 @@ public class AttractionService {
             log.error("관광지 정보 조회 오류 발생 : {}", e.getMessage());
             throw new RuntimeException("예상치 못한 오류",e);
         }
+    }
+
+    // 접속이 가능한 홈페이지인지 확인
+    public String normalizeAndValidateUrl(String rawUrl) {
+        if (rawUrl == null || rawUrl.isBlank()) return null;
+
+        // 기본적인 정제
+        String url = rawUrl.trim();
+        if (!url.startsWith("http")) {
+            url = "https://" + url;
+        }
+
+        try {
+            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+            conn.setRequestMethod("HEAD");
+            conn.setConnectTimeout(1000);
+            conn.setReadTimeout(1000);
+            int code = conn.getResponseCode();
+
+            if (code >= 200 && code < 400) {
+                return url;
+            }else{
+                return null;
+            }
+        } catch (Exception e) {
+            return null; // 실패 시 null 반환
+        }
+
     }
 }
