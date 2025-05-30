@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -54,7 +55,12 @@ public class AiSummaryService {
         }catch (Exception e){
             log.debug(content);
             log.error(e.getMessage());
-            return AiSummaryParsedResponse.builder().build();
+            return AiSummaryParsedResponse.builder()
+                    .positiveKeywords(Collections.singletonList(""))
+                    .negativeKeywords(Collections.singletonList(""))
+                    .positiveCount(0)
+                    .negativeCount(0)
+                    .build();
         }
     }
 
