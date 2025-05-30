@@ -2,6 +2,7 @@ package com.example.placeservice.service;
 
 import com.example.placeservice.dto.AiSummaryResponse;
 import com.example.placeservice.dto.AiSummaryParsedResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -12,6 +13,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Service
 public class AiSummaryService {
 
@@ -25,15 +27,19 @@ public class AiSummaryService {
     }
 
     public AiSummaryParsedResponse getSummaryParsed(String targetType, String targetId) {
-        AiSummaryResponse raw = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/summary/{target_type}/{target_id}")
-                        .build(targetType, targetId))
-                .retrieve()
-                .bodyToMono(AiSummaryResponse.class)
-                .block();
-
-        return parseSummaryContent(Objects.requireNonNull(raw));
+        try {
+            AiSummaryResponse raw = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/summary/{target_type}/{target_id}")
+                            .build(targetType, targetId))
+                    .retrieve()
+                    .bodyToMono(AiSummaryResponse.class)
+                    .block();
+            return parseSummaryContent(Objects.requireNonNull(raw));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
     }
 
     private AiSummaryParsedResponse parseSummaryContent(AiSummaryResponse raw) {
